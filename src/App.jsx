@@ -2,6 +2,7 @@ import React from "react";
 
 //- Component & Page Imports
 import Auth from "./components/Auth";
+import Tile from "./components/Tile";
 import "./App.css";
 
 //- Firebase Imports
@@ -27,6 +28,7 @@ const App = (props) => {
   return (
     <FirebaseContext.Provider value={{ user, db }}>
       <Auth signOut={signOut} signInWithGoogle={signInWithGoogle} />
+      <Tile face="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fherschelian.files.wordpress.com%2F2011%2F04%2Fmahjong-tiles-dragons.jpg&f=1&nofb=1" />
     </FirebaseContext.Provider>
   );
 };
