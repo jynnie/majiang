@@ -16,6 +16,7 @@ const firebaseAppAuth = firebaseApp.auth();
 const providers = {
   googleProvider: new firebase.auth.GoogleAuthProvider(),
 };
+const db = firebase.firestore();
 
 export const FirebaseContext = React.createContext(null);
 
@@ -24,7 +25,7 @@ const App = (props) => {
   const { user, signOut, signInWithGoogle } = props;
 
   return (
-    <FirebaseContext.Provider value={{ user }}>
+    <FirebaseContext.Provider value={{ user, db }}>
       <Auth signOut={signOut} signInWithGoogle={signInWithGoogle} />
     </FirebaseContext.Provider>
   );
