@@ -5,6 +5,9 @@ import Auth from "./components/Auth";
 import Tile from "./components/Tile";
 import "./App.css";
 
+//- Game Engine
+import GameEngine from "./engine/GameEngine";
+
 //- Firebase Imports
 import withFirebaseAuth from "react-with-firebase-auth";
 import firebase from "firebase";
@@ -28,7 +31,7 @@ const App = (props) => {
   return (
     <FirebaseContext.Provider value={{ user, db }}>
       <Auth signOut={signOut} signInWithGoogle={signInWithGoogle} />
-      <Tile face="https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fherschelian.files.wordpress.com%2F2011%2F04%2Fmahjong-tiles-dragons.jpg&f=1&nofb=1" />
+      <Tile face="/DianXin/baiban.svg" />
     </FirebaseContext.Provider>
   );
 };
