@@ -1,3 +1,5 @@
+import { GameEngine } from "../engine/GameEngine";
+
 export interface Deck {
   visualDeckId: string;
   cards: Card[];
@@ -9,7 +11,7 @@ export interface Card {
   defaultParams: any;
   value: number | string | null;
 
-  visualCardIndex?: number;
+  visualCardIndex: number;
   instanceId?: string;
   params?: any;
 }
@@ -17,7 +19,7 @@ export interface Card {
 export interface VisualDeck {
   id: string;
   name: string;
-  description: string;
+  description?: string;
   visualCards: string[];
   colors?: any;
 }
@@ -38,15 +40,23 @@ export interface Rules {
   gameParams: any;
   playerParams: any;
 
-  onTurnStart: () => {};
-  onTurnEnd: () => {};
-  onGameEnd: () => {};
+  onGameStart: (p: GameEngine) => void;
+  onCardClick: (p: ActionParams) => void;
+  onTurnStart?: () => void;
+  onTurnEnd?: () => void;
+  onGameEnd?: () => void;
 
   playerActions: Action[];
 }
 
+export interface ActionParams {
+  executingPlayerId: string;
+  gameEngine: GameEngine;
+  card?: Card;
+}
+
 export interface Action {
   name: string;
-  isAvailable: () => boolean;
-  onExecute: () => {};
+  isAvailable: (p: ActionParams) => boolean;
+  onExecute: (p: ActionParams) => any;
 }

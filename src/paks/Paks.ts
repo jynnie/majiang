@@ -1,6 +1,7 @@
 import DianXinClass from "./mhjng/DianXin";
+import CardPak from "./CardPak";
 
-const allPaks: any = {};
+const allPaks: { [id: string]: CardPak } = {};
 
 const DianXin = new DianXinClass({});
 

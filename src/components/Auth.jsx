@@ -1,5 +1,7 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { FirebaseContext } from "../App";
+
+import GameEngine from "../engine/GameEngine";
 
 export const Auth = (props) => {
   const { user, db } = useContext(FirebaseContext);
@@ -28,10 +30,15 @@ export const Auth = (props) => {
     if (signInWithGoogle) signInWithGoogle().then((res) => handleSignIn(res));
   };
 
-  if (user)
-    console.debug(
-      `🥳 ${user.displayName} has signed in from ${user.providerData[0].providerId} 🥳`,
-    );
+  const uuid = user?.uid;
+  useEffect(() => {
+    if (user && user.uid) {
+      console.debug(
+        `🥳 ${user.displayName} has signed in from ${user.providerData[0].providerId} 🥳`,
+      );
+      GameEngine.user = user.uid;
+    }
+  }, [user, uuid]);
 
   return (
     <div>

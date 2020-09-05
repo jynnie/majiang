@@ -7,11 +7,13 @@
 }
 
 .Tile-container {
-  margin: 100px;
+  /* margin: 100px; */
   display: inline-block;
   position: relative;
   transform-style: preserve-3d;
   transition: all 1s;
+
+  cursor: pointer;
 }
 
 .Tile-container.one {
@@ -28,7 +30,7 @@
   position: absolute;
   backface-visibility: inherit;
   border-radius: 4px;
-  background-color: green;
+  background-color: #c39540;
   border: 2px var(--border-color) solid;
   box-shadow: 0 0 0 0 var(--border-color);
 }
@@ -84,7 +86,7 @@
 
 /*------ TILE ROTATIONS ------*/
 .Tile-front {
-  background-color: yellow;
+  background-color: beige;
   background-position: center;
   background-size: cover;
   transform: translateZ(var(--tile-depth));
