@@ -150,7 +150,13 @@ export class GameEngine {
     const availableActions: Action[] = [];
 
     allActions?.forEach((action) => {
-      if (action.isAvailable({ executingPlayerId: id, gameEngine: this })) {
+      const isAvailable = action.isAvailable({
+        executingPlayerId: id,
+        gameEngine: this,
+      });
+      if (Array.isArray(isAvailable)) {
+        isAvailable.forEach((subaction) => availableActions.push(subaction));
+      } else if (isAvailable) {
         availableActions.push(action);
       }
     });
@@ -187,7 +193,7 @@ export class GameEngine {
       if (p.id === playerId) return { ...p, ...newParams };
       else return p;
     });
-    console.log("📙 Updated Player", playerId, this.playerParams);
+    console.log("📙 Updated Player", playerId);
   };
 }
 

@@ -6,12 +6,12 @@
  */
 
 import CardPak from "../CardPak";
-import { Card, ActionParams, Rules } from "../CardPakTypes";
+import { Card, Deck, Rules, Action, ActionParams } from "../CardPakTypes";
 
 // TODO: Deal with conflicting Peng vs Draw
 // TODO: Deal with conflicting Peng vs Chi
 
-const TILES = [
+const NUMBER_TILES = [
   {
     name: "yibing",
     defaultParams: { suit: "tong" },
@@ -176,7 +176,9 @@ const TILES = [
     value: 9,
     visualCardIndex: 17,
   },
+];
 
+const DRAGON_WIND_TILES = [
   {
     name: "dong",
     defaultParams: { suit: "feng" },
@@ -222,6 +224,8 @@ const TILES = [
   },
 ];
 
+const TILES = [...NUMBER_TILES, ...DRAGON_WIND_TILES];
+
 const makeTiles = () => {
   const fourOfEachTile = [...TILES, ...TILES, ...TILES, ...TILES];
   return fourOfEachTile.map((tile, i) => ({
@@ -231,17 +235,31 @@ const makeTiles = () => {
 };
 
 //---------------------------------------#262C86
+interface DianXinDeck extends Deck {
+  cards: Tile[];
+}
+
+interface Tile extends Card {
+  value: number | string;
+  defaultParams: { suit: string };
+  params?: { suit: string };
+}
+
+interface NumberTile extends Tile {
+  value: number;
+}
+
 interface DianXinPlayerParams {
-  closedHand: Card[];
-  openHand: Card[][];
-  playedTiles: Card[];
+  closedHand: Tile[];
+  openHand: Tile[][];
+  playedTiles: Tile[];
   points: number;
 }
 
 interface DianXinGameParams {
-  wall: Card[];
-  deadWall: Card[];
-  lastPlay?: { by: string; card: Card };
+  wall: Tile[];
+  deadWall: Tile[];
+  lastPlay?: { by: string; card: Tile };
 }
 
 interface DianXinRules extends Rules {
@@ -251,7 +269,7 @@ interface DianXinRules extends Rules {
 
 //---------------------------------------#262C86
 class DianXin extends CardPak {
-  deck = {
+  deck: DianXinDeck = {
     visualDeckId: "dx-traditional",
     cards: makeTiles(),
   };
@@ -367,22 +385,17 @@ class DianXin extends CardPak {
           // FIXME: switch to get myParams
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
           const lastPlay = gameEngine.gameParams.lastPlay;
-          const available = this.canIPeng(playerParams, lastPlay);
+          const makesAMeld = this.canIPeng(playerParams, lastPlay);
           const hasFullHand = this.hasAFullHand(playerParams);
 
-          return available && !hasFullHand;
+          return makesAMeld && !hasFullHand;
         },
         onExecute: ({ executingPlayerId, gameEngine }) => {
           const lastPlay = gameEngine.gameParams.lastPlay;
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
 
           // Remove the tile from playedTiles of other player
-          const playedPlayerParams = gameEngine.getPlayerParams(lastPlay.by);
-          const playedTiles = playedPlayerParams.playedTiles.filter(
-            (t: Card) => t.id !== lastPlay.card.id,
-          );
-          const newPlayedPlayerParams = { ...playedPlayerParams, playedTiles };
-          gameEngine.updatePlayer(lastPlay.by, newPlayedPlayerParams);
+          this.removeLastPlayedTile({ executingPlayerId, gameEngine });
 
           // Put the tile and your matching tiles in openHand
           const matching = playerParams.closedHand
@@ -391,11 +404,11 @@ class DianXin extends CardPak {
           const meld = [lastPlay.card, ...matching];
           const openHand = [...playerParams.openHand, meld];
           const closedHand = playerParams.closedHand.filter(
-            (t: Card) => !this.matchInValueAndSuit(lastPlay.card)(t),
+            (t: Card) => meld.findIndex((m) => m.id === t.id) === -1,
           );
           const newPlayerParams = { ...playerParams, openHand, closedHand };
 
-          // Remove the tile from lastPlayed
+          // Update params
           gameEngine.updatePlayer(executingPlayerId, newPlayerParams);
           gameEngine.updateGameParams({ lastPlay: undefined });
           gameEngine.claimTurn(executingPlayerId);
@@ -406,16 +419,90 @@ class DianXin extends CardPak {
         isAvailable: ({ executingPlayerId, gameEngine }) => {
           // FIXME: switch to get myParams
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
-          return false;
+          const lastPlay = gameEngine.gameParams.lastPlay;
+          const makesAMeld = this.canIGang(playerParams, lastPlay);
+          const hasFullHand = this.hasAFullHand(playerParams);
+
+          return makesAMeld && !hasFullHand;
         },
-        onExecute: () => {},
+        onExecute: ({ executingPlayerId, gameEngine }) => {
+          const lastPlay = gameEngine.gameParams.lastPlay;
+          const playerParams = gameEngine.getPlayerParams(executingPlayerId);
+
+          // Remove the tile from playedTiles of other player
+          this.removeLastPlayedTile({ executingPlayerId, gameEngine });
+
+          // Put the tile and your matching tiles in openHand
+          const matching = playerParams.closedHand.filter(
+            this.matchInValueAndSuit(lastPlay.card),
+          );
+          const meld = [lastPlay.card, ...matching];
+          const openHand = [...playerParams.openHand, meld];
+          const closedHand = playerParams.closedHand.filter(
+            (t: Card) => meld.findIndex((m) => m.id === t.id) === -1,
+          );
+
+          // Draw another tile
+          const deadWall: Card[] = gameEngine.gameParams.deadWall;
+          const drawnTile = deadWall.shift();
+          closedHand.push(drawnTile);
+          const newPlayerParams = { ...playerParams, openHand, closedHand };
+
+          // Update params
+          gameEngine.updatePlayer(executingPlayerId, newPlayerParams);
+          gameEngine.updateGameParams({ lastPlay: undefined, deadWall });
+          gameEngine.claimTurn(executingPlayerId);
+        },
       },
       {
         name: "Chi",
         isAvailable: ({ executingPlayerId, gameEngine }) => {
-          // FIXME: switch to get myParams
+          const lastPlay = gameEngine.gameParams.lastPlay;
+          if (!lastPlay) return false;
+
+          // Was last play was by the previous player
+          const lastPlayerParams = gameEngine.getPlayerParams(lastPlay?.by);
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
-          return false;
+          const lastWasRightBeforeMe =
+            (playerParams.seat - lastPlayerParams.seat + 4) % 4 === 1;
+          if (!lastWasRightBeforeMe) return false;
+
+          // Does it finish one of your melds?
+          const makesAMeld = this.canIChi(playerParams, lastPlay);
+          if (!makesAMeld) return false;
+
+          // Make array of actions from ones that start a meld
+          const availableMelds: Action[] = makesAMeld.map((startTile) => ({
+            name: `Chi ${startTile.value} ${Number(startTile.value) + 1} ${
+              Number(startTile.value) + 2
+            }`,
+            isAvailable: () => true,
+            onExecute: ({ executingPlayerId, gameEngine }) => {
+              const lastPlay = gameEngine.gameParams.lastPlay;
+              const playerParams = gameEngine.getPlayerParams(
+                executingPlayerId,
+              );
+
+              // Remove the tile from playedTiles of other player
+              this.removeLastPlayedTile({ executingPlayerId, gameEngine });
+
+              // Put the tile and your matching tiles in openHand
+              const meld = [lastPlay.card, ...playerParams.closedHand].filter(
+                this.matchStaircaseStartingAt(startTile),
+              );
+              const openHand = [...playerParams.openHand, meld];
+              const closedHand = playerParams.closedHand.filter(
+                (t: Card) => meld.findIndex((m) => m.id === t.id) === -1,
+              );
+              const newPlayerParams = { ...playerParams, openHand, closedHand };
+
+              // Update params
+              gameEngine.updatePlayer(executingPlayerId, newPlayerParams);
+              gameEngine.updateGameParams({ lastPlay: undefined });
+              gameEngine.claimTurn(executingPlayerId);
+            },
+          }));
+          return availableMelds;
         },
         onExecute: () => {},
       },
@@ -438,6 +525,20 @@ class DianXin extends CardPak {
   }
 
   //---------------------------------------#262C86
+  //- Helper Setters
+  removeLastPlayedTile = ({ gameEngine }: ActionParams) => {
+    const lastPlay = gameEngine.gameParams.lastPlay;
+
+    const playedPlayerParams = gameEngine.getPlayerParams(lastPlay.by);
+    const playedTiles = playedPlayerParams.playedTiles.filter(
+      (t: Card) => t.id !== lastPlay.card.id,
+    );
+    const newPlayedPlayerParams = { ...playedPlayerParams, playedTiles };
+    gameEngine.updatePlayer(lastPlay.by, newPlayedPlayerParams);
+  };
+
+  //---------------------------------------#262C86
+  //- Helper Getters
   hasAFullHand = ({ closedHand, openHand }: DianXinPlayerParams) => {
     return closedHand.length + openHand.length * 3 >= this.FULL_HAND_SIZE;
   };
@@ -464,10 +565,100 @@ class DianXin extends CardPak {
     return matching.length >= 3;
   };
 
-  matchInValueAndSuit = (tile: Card) => {
-    return (t: Card) =>
-      t.value === tile.value && t.params.suit === tile.params.suit;
+  canIChi = (
+    { closedHand }: DianXinPlayerParams,
+    lastPlay: DianXinGameParams["lastPlay"],
+  ) => {
+    if (!lastPlay) return false;
+    if (typeof lastPlay.card.value !== "number") return false;
+
+    const tile = lastPlay.card;
+    const matchingSuit = closedHand.filter(this.matchInSuit(tile));
+    const withinTwo = matchingSuit.filter(this.matchValueWithinTwo(tile));
+
+    const possibleChis = [...withinTwo, tile]
+      .sort((a, b) => Number(a.value) - Number(b.value))
+      .filter(
+        (startingTile, i, self) =>
+          typeof startingTile.value === "number" &&
+          this.valueInArray(startingTile.value + 1, self) &&
+          this.valueInArray(startingTile.value + 2, self) &&
+          this.firstOne(startingTile, i, self),
+      );
+
+    return possibleChis;
   };
+
+  //---------------------------------------#262C86
+  //- Helpers Filters
+  firstOne = (
+    tile: {
+      value: number | string;
+      params?: { suit?: string };
+    },
+    index: number,
+    self: Tile[],
+  ) =>
+    index ===
+    self.findIndex(
+      (t) => t.value === tile.value && t.params?.suit === tile.params?.suit,
+    );
+
+  valueInArray = (value: number | string, array: Tile[]) => {
+    return array.findIndex((t) => t.value === value) > -1;
+  };
+
+  matchInSuit = (tile: Card) => {
+    return (t: Card) => t.params.suit === tile.params.suit;
+  };
+
+  matchValueWithinTwo = (tile: Card) => {
+    const lowerBound = Number(tile.value) - 2;
+    const upperBound = Number(tile.value) + 2;
+    return (t: Card) =>
+      Number(t.value) >= lowerBound && Number(t.value) <= upperBound;
+  };
+
+  matchInValueAndSuit = (tile: {
+    value: number | string;
+    params?: { suit?: string };
+  }) => {
+    return (t: Card) =>
+      t.value === tile.value && t.params.suit === tile.params?.suit;
+  };
+
+  firstMatchInValueAndSuit = (tile: {
+    value: number | string;
+    params?: { suit?: string };
+  }) => {
+    console.log(
+      "Looking for a first match with",
+      tile.value,
+      tile.params?.suit,
+    );
+    return (t: Card, index: number, self: Tile[]) =>
+      t.value === tile.value &&
+      t.params.suit === tile.params?.suit &&
+      this.firstOne(tile, index, self);
+  };
+
+  matchStaircaseStartingAt = (startTile: Tile) => (
+    t: Tile,
+    i: number,
+    self: Tile[],
+  ) =>
+    this.firstMatchInValueAndSuit({
+      value: startTile.value,
+      params: { suit: startTile.params?.suit },
+    })(t, i, self) ||
+    this.firstMatchInValueAndSuit({
+      value: Number(startTile.value) + 1,
+      params: { suit: startTile.params?.suit },
+    })(t, i, self) ||
+    this.firstMatchInValueAndSuit({
+      value: Number(startTile.value) + 2,
+      params: { suit: startTile.params?.suit },
+    })(t, i, self);
 }
 
 export default DianXin;

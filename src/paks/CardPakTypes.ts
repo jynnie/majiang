@@ -57,6 +57,6 @@ export interface ActionParams {
 
 export interface Action {
   name: string;
-  isAvailable: (p: ActionParams) => boolean;
+  isAvailable: (p: ActionParams) => boolean | Action[];
   onExecute: (p: ActionParams) => any;
 }
