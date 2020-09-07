@@ -8,9 +8,14 @@
 import CardPak from "../CardPak";
 import { Card, Deck, Rules, Action, ActionParams } from "../CardPakTypes";
 
+import { sum } from "../../utils";
+
 // TODO: Deal with conflicting Peng vs Draw
 // TODO: Deal with conflicting Peng vs Chi
+// TODO: Deal with conflicting X vs Hu
 
+//---------------------------------------#00D4B2
+//- TILES
 const NUMBER_TILES = [
   {
     name: "yibing",
@@ -234,7 +239,8 @@ const makeTiles = () => {
   }));
 };
 
-//---------------------------------------#262C86
+//---------------------------------------#00D4B2
+//- INTERFACES
 interface DianXinDeck extends Deck {
   cards: Tile[];
 }
@@ -242,11 +248,7 @@ interface DianXinDeck extends Deck {
 interface Tile extends Card {
   value: number | string;
   defaultParams: { suit: string };
-  params?: { suit: string };
-}
-
-interface NumberTile extends Tile {
-  value: number;
+  params?: { suit: string; hide?: boolean };
 }
 
 interface DianXinPlayerParams {
@@ -267,7 +269,178 @@ interface DianXinRules extends Rules {
   playerParams: DianXinPlayerParams;
 }
 
-//---------------------------------------#262C86
+interface HandMatrix {
+  [suit: string]: { [key: string]: number };
+}
+
+//---------------------------------------#00D4B2
+//- TILE MATRIX
+interface TotalsMatrix {
+  [key: string]: {
+    suit: string;
+    total: number;
+    hasPair: boolean;
+    tm3: boolean;
+  };
+}
+
+/**
+ * TileMatrix handles a lot of the logic
+ * of determining whether a hand has proper
+ * melds.
+ */
+class TileMatrix {
+  handMatrix: HandMatrix = {
+    tiao: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
+    tong: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
+    wan: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
+    feng: { dong: 0, nan: 0, xi: 0, bei: 0 },
+    long: { facai: 0, hongzhong: 0, baiban: 0 },
+  };
+
+  NUMBERED_SUITS = ["tong", "tiao", "wan"];
+  WIND_N_DRAGON_SUITS = ["feng", "long"];
+
+  constructor(closedHand: Tile[]) {
+    console.log(closedHand);
+    closedHand.map((tile) => {
+      if (tile.params?.suit) this.handMatrix[tile.params.suit][tile.value] += 1;
+    });
+  }
+
+  get isWinnable() {
+    const windNDragonsOk = this.checkWindsNDragons();
+    // console.log("👀", "Winds n dragons", windNDragonsOk);
+    if (windNDragonsOk === false) return false;
+
+    const totalsMatrix = this.checkTotals();
+    // console.log("👀", "Totals", totalsMatrix);
+    if (totalsMatrix === false) return false;
+
+    const meldsOk = this.checkMelds(totalsMatrix);
+    // console.log("👀", "Melds", meldsOk);
+    return meldsOk;
+  }
+
+  checkWindsNDragons = () => {
+    // Make sure all the fengs & longs are part melds
+    let windsNDragonsOk = true;
+    this.WIND_N_DRAGON_SUITS.forEach((suit) => {
+      Object.values(this.handMatrix[suit]).forEach((tileType) => {
+        if (tileType !== 3 && tileType !== 0) {
+          windsNDragonsOk = false;
+          return false;
+        }
+      });
+    });
+    return windsNDragonsOk;
+  };
+
+  checkTotals = () => {
+    // Get totals for each suit and see if they match up
+    const totalsMatrix: TotalsMatrix = {};
+    // console.log("👀", this.handMatrix);
+
+    this.NUMBERED_SUITS.forEach((suit) => {
+      const suitTotal = sum(Object.values(this.handMatrix[suit]));
+      totalsMatrix[suit] = {
+        suit,
+        total: suitTotal,
+        hasPair: (suitTotal - 2) % 3 === 0,
+        tm3: suitTotal % 3 === 0,
+      };
+    });
+    const totalsArray = Object.values(totalsMatrix);
+    const onlyOnePair = sum(totalsArray.map((m) => m.hasPair)) === 1;
+    const allSuitsCouldHaveMelds =
+      sum(totalsArray.map((m) => m.tm3)) + Number(onlyOnePair) === 3;
+    // console.log("👀", totalsMatrix, onlyOnePair, allSuitsCouldHaveMelds);
+    if (!onlyOnePair || !allSuitsCouldHaveMelds) return false;
+
+    return totalsMatrix;
+  };
+
+  checkMelds = (totalsMatrix: TotalsMatrix) => {
+    // Check the suit with the pair for validity
+    let suitWithPairOk = false;
+    const suitWithPair = Object.values(totalsMatrix).filter((t) => t.hasPair)[0]
+      .suit;
+    const tilesWithMoreThanOne = Object.values(
+      this.handMatrix[suitWithPair],
+    ).reduce((acc: number[], count, i) => (count > 1 ? [...acc, i] : acc), []);
+    // console.log("👀", "Suit with pair is", suitWithPair);
+    if (tilesWithMoreThanOne.length === 0) return false;
+    // For all possible pairs, remove the pair and
+    // check if the remaining tiles fit into melds
+    tilesWithMoreThanOne.forEach((tile) => {
+      const suitMatrix = Object.values(this.handMatrix[suitWithPair]);
+      suitMatrix[tile] -= 2;
+      const suitOk = this.checkMeldsInSuit(
+        totalsMatrix[suitWithPair].total,
+        suitMatrix,
+      );
+
+      // As long as one permutation of removing a
+      // pair works, then this suit is okay.
+      if (suitOk) {
+        suitWithPairOk = true;
+        return true;
+      }
+    });
+    // console.log("👀", "Suit with pair okay", suitWithPairOk);
+    if (suitWithPairOk === false) return false;
+
+    // Check the other suits for validity
+    let suitsOkay = true;
+    this.NUMBERED_SUITS.filter((suit) => suit !== suitWithPair).forEach(
+      (suit) => {
+        const suitOk = this.checkMeldsInSuit(
+          totalsMatrix[suit].total,
+          Object.values(this.handMatrix[suit]),
+        );
+
+        if (suitOk === false) {
+          // console.log("👀", "Suit failed", suit);
+          suitsOkay = false;
+          return false;
+        }
+      },
+    );
+    return suitsOkay;
+  };
+
+  checkMeldsInSuit = (suitTotal: number, suitMatrix: number[]) => {
+    if (suitTotal > 0) {
+      // Remove pengs
+      suitMatrix = suitMatrix.map((tile) => tile % 3);
+
+      // Try staircases
+      let staircaseMatrix = suitMatrix.map((_) => 0);
+      let i = 0;
+      for (let loops = 0; loops <= suitTotal / 3; loops++) {
+        if (suitMatrix[i] && suitMatrix[i + 1] && suitMatrix[i + 2]) {
+          if (staircaseMatrix[i]) staircaseMatrix[i] += 1;
+          else staircaseMatrix[i] = 1;
+          suitMatrix[i] -= 1;
+          suitMatrix[i + 1] -= 1;
+          suitMatrix[i + 2] -= 1;
+        } else staircaseMatrix[i] = 0;
+
+        if (suitMatrix[i] === 0) i += 1;
+      }
+      // console.log("👀", "staircase", staircaseMatrix);
+      // console.log("👀", "suitMatrix", suitMatrix, sum(suitMatrix));
+
+      // If after trying to put together melds, we have extra
+      // then this suit doesn't turn into good melds
+      return sum(suitMatrix) === 0;
+    }
+    return true;
+  };
+}
+
+//---------------------------------------#00D4B2
+//- MAIN CLASS RULES
 class DianXin extends CardPak {
   deck: DianXinDeck = {
     visualDeckId: "dx-traditional",
@@ -292,10 +465,18 @@ class DianXin extends CardPak {
     },
 
     onGameStart: (gameEngine) => {
+      // FIXME: Unseed hand
       const shuffledDeck = this.shuffledDeck.map((tile) => ({
         ...tile,
         params: tile.defaultParams,
       }));
+      // const shuffledDeck = this.deck.cards
+      //   .map((tile) => ({
+      //     ...tile,
+      //     params: tile.defaultParams,
+      //   }))
+      //   .sort((a, b) => (a.params.suit < b.params.suit ? 1 : 0))
+      //   .sort((a, b) => Number(a.value) - Number(b.value));
 
       // Deal tiles to walls
       const deadWallStart = shuffledDeck.length - 14;
@@ -353,6 +534,8 @@ class DianXin extends CardPak {
     },
 
     playerActions: [
+      //---------------------------------------#00D4B2
+      //- Draw
       {
         name: "Draw",
         isAvailable: ({ executingPlayerId, gameEngine }) => {
@@ -379,6 +562,8 @@ class DianXin extends CardPak {
           gameEngine.updateReact();
         },
       },
+      //---------------------------------------#00D4B2
+      //- Peng
       {
         name: "Peng",
         isAvailable: ({ executingPlayerId, gameEngine }) => {
@@ -414,6 +599,51 @@ class DianXin extends CardPak {
           gameEngine.claimTurn(executingPlayerId);
         },
       },
+      //---------------------------------------#00D4B2
+      //- Gang
+      {
+        name: "An Gang",
+        isAvailable: ({ executingPlayerId, gameEngine }) => {
+          // FIXME: switch to get myParams
+          const playerParams = gameEngine.getPlayerParams(executingPlayerId);
+          const isMyTurn = gameEngine.isPlayersTurn(executingPlayerId);
+          const makesAMeld = this.canIAnGang(playerParams);
+          if (makesAMeld.length === 0 || !isMyTurn) return false;
+
+          const availableMelds: Action[] = makesAMeld.map((tile) => ({
+            name: `An Gang ${tile.name}`,
+            isAvailable: () => true,
+            onExecute: ({ executingPlayerId, gameEngine }) => {
+              const playerParams = gameEngine.getPlayerParams(
+                executingPlayerId,
+              );
+
+              // Put the tile and your matching tiles in openHand
+              const meld = playerParams.closedHand
+                .filter(this.matchInValueAndSuit(tile))
+                .map((t: Tile) => ({ ...t, hide: true }));
+              const openHand = [...playerParams.openHand, meld];
+              const closedHand = playerParams.closedHand.filter(
+                (t: Tile) => meld.findIndex((m: Tile) => m.id === t.id) === -1,
+              );
+
+              // Draw another tile
+              const deadWall: Card[] = gameEngine.gameParams.deadWall;
+              const drawnTile = deadWall.shift();
+              closedHand.push(drawnTile);
+              const newPlayerParams = { ...playerParams, openHand, closedHand };
+
+              // Update params
+              gameEngine.updatePlayer(executingPlayerId, newPlayerParams);
+              gameEngine.claimTurn(executingPlayerId);
+            },
+          }));
+          return availableMelds;
+        },
+        onExecute: () => {},
+      },
+      //---------------------------------------#00D4B2
+      //- An Gang
       {
         name: "Gang",
         isAvailable: ({ executingPlayerId, gameEngine }) => {
@@ -454,6 +684,8 @@ class DianXin extends CardPak {
           gameEngine.claimTurn(executingPlayerId);
         },
       },
+      //---------------------------------------#00D4B2
+      //- Chi
       {
         name: "Chi",
         isAvailable: ({ executingPlayerId, gameEngine }) => {
@@ -506,12 +738,33 @@ class DianXin extends CardPak {
         },
         onExecute: () => {},
       },
+      //---------------------------------------#00D4B2
+      //- Hu
       {
         name: "Hu",
         isAvailable: ({ executingPlayerId, gameEngine }) => {
           // FIXME: switch to get myParams
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
-          return false;
+          const hasFullHand = this.hasAFullHand(playerParams);
+          const lastPlay = gameEngine.gameParams.lastPlay;
+
+          let hand: Tile[] = [];
+
+          // If your closed hand is full, check your closed
+          // hand is winnable
+          if (hasFullHand) hand = playerParams.closedHand;
+          // Otherwise, try adding the last played tile to your
+          // hand and see if that makes it a winning thing
+          else if (!!lastPlay)
+            hand = [lastPlay.card, ...playerParams.closedHand];
+          // console.log("👀");
+          // console.log("👀", executingPlayerId);
+
+          if (hand.length === 0) return false;
+
+          const tileMatrix = new TileMatrix(hand);
+          console.log("👀", executingPlayerId, tileMatrix.isWinnable);
+          return tileMatrix.isWinnable;
         },
         onExecute: () => {},
       },
@@ -524,7 +777,7 @@ class DianXin extends CardPak {
     super(props, "mhjng-dianxin");
   }
 
-  //---------------------------------------#262C86
+  //---------------------------------------#00D4B2
   //- Helper Setters
   removeLastPlayedTile = ({ gameEngine }: ActionParams) => {
     const lastPlay = gameEngine.gameParams.lastPlay;
@@ -537,7 +790,7 @@ class DianXin extends CardPak {
     gameEngine.updatePlayer(lastPlay.by, newPlayedPlayerParams);
   };
 
-  //---------------------------------------#262C86
+  //---------------------------------------#00D4B2
   //- Helper Getters
   hasAFullHand = ({ closedHand, openHand }: DianXinPlayerParams) => {
     return closedHand.length + openHand.length * 3 >= this.FULL_HAND_SIZE;
@@ -565,6 +818,15 @@ class DianXin extends CardPak {
     return matching.length >= 3;
   };
 
+  canIAnGang = ({ closedHand }: DianXinPlayerParams) => {
+    const matching = closedHand
+      .filter(this.firstOne)
+      .filter(
+        (tile) => closedHand.filter(this.matchInValueAndSuit(tile)).length > 3,
+      );
+    return matching;
+  };
+
   canIChi = (
     { closedHand }: DianXinPlayerParams,
     lastPlay: DianXinGameParams["lastPlay"],
@@ -589,7 +851,7 @@ class DianXin extends CardPak {
     return possibleChis;
   };
 
-  //---------------------------------------#262C86
+  //---------------------------------------#00D4B2
   //- Helpers Filters
   firstOne = (
     tile: {

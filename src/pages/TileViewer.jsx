@@ -20,7 +20,7 @@ const TileViewer = ({ player }) => {
 
   return (
     <Box borderTop="1px solid cadetblue" marginTop={24}>
-      Player: {player.seat} {isMyTurn && "👋🏼"}
+      Player: {player.id} {isMyTurn && "👋🏼"}
       <Box>
         {availableActions.map((action) => (
           <button
@@ -54,8 +54,11 @@ const TileViewer = ({ player }) => {
       </Box>
       <Box>
         <Box>Open hand</Box>
+        {/* TODO: Make it so you can see your hidden tiles */}
         {openHand &&
-          openHand.map((tile, i) => <Tile face={tile.visual} key={i} />)}
+          openHand.map((tile, i) => (
+            <Tile face={!tile.hide && tile.visual} key={i} />
+          ))}
       </Box>
       <Box>
         <Box>Played tiles</Box>

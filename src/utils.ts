@@ -5,3 +5,9 @@ export const shuffle = (a: Array<any>) => {
   }
   return a;
 };
+
+export const sum = (array: Array<any>) => {
+  let total = 0;
+  array.forEach((a) => (total += a));
+  return total;
+};
