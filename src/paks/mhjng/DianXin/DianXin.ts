@@ -5,10 +5,10 @@
  * based off of Cantonese rules.
  */
 
-import CardPak from "../CardPak";
-import { Card, Deck, Rules, Action, ActionParams } from "../CardPakTypes";
+import CardPak from "../../CardPak";
+import { Card, Deck, Rules, Action, ActionParams } from "../../CardPakTypes";
 
-import { sum } from "../../utils";
+import { TileMatrix } from "./TileMatrix";
 
 // TODO: Deal with conflicting Peng vs Draw
 // TODO: Deal with conflicting Peng vs Chi
@@ -229,7 +229,7 @@ const DRAGON_WIND_TILES = [
   },
 ];
 
-const TILES = [...NUMBER_TILES, ...DRAGON_WIND_TILES];
+export const TILES = [...NUMBER_TILES, ...DRAGON_WIND_TILES];
 
 const makeTiles = () => {
   const fourOfEachTile = [...TILES, ...TILES, ...TILES, ...TILES];
@@ -245,7 +245,7 @@ interface DianXinDeck extends Deck {
   cards: Tile[];
 }
 
-interface Tile extends Card {
+export interface Tile extends Card {
   value: number | string;
   defaultParams: { suit: string };
   params?: { suit: string; hide?: boolean };
@@ -267,176 +267,6 @@ interface DianXinGameParams {
 interface DianXinRules extends Rules {
   gameParams: DianXinGameParams;
   playerParams: DianXinPlayerParams;
-}
-
-interface HandMatrix {
-  [suit: string]: { [key: string]: number };
-}
-
-//---------------------------------------#00D4B2
-//- TILE MATRIX
-interface TotalsMatrix {
-  [key: string]: {
-    suit: string;
-    total: number;
-    hasPair: boolean;
-    tm3: boolean;
-  };
-}
-
-/**
- * TileMatrix handles a lot of the logic
- * of determining whether a hand has proper
- * melds.
- */
-class TileMatrix {
-  handMatrix: HandMatrix = {
-    tiao: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
-    tong: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
-    wan: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
-    feng: { dong: 0, nan: 0, xi: 0, bei: 0 },
-    long: { facai: 0, hongzhong: 0, baiban: 0 },
-  };
-
-  NUMBERED_SUITS = ["tong", "tiao", "wan"];
-  WIND_N_DRAGON_SUITS = ["feng", "long"];
-
-  constructor(closedHand: Tile[]) {
-    console.log(closedHand);
-    closedHand.map((tile) => {
-      if (tile.params?.suit) this.handMatrix[tile.params.suit][tile.value] += 1;
-    });
-  }
-
-  get isWinnable() {
-    const windNDragonsOk = this.checkWindsNDragons();
-    // console.log("👀", "Winds n dragons", windNDragonsOk);
-    if (windNDragonsOk === false) return false;
-
-    const totalsMatrix = this.checkTotals();
-    // console.log("👀", "Totals", totalsMatrix);
-    if (totalsMatrix === false) return false;
-
-    const meldsOk = this.checkMelds(totalsMatrix);
-    // console.log("👀", "Melds", meldsOk);
-    return meldsOk;
-  }
-
-  checkWindsNDragons = () => {
-    // Make sure all the fengs & longs are part melds
-    let windsNDragonsOk = true;
-    this.WIND_N_DRAGON_SUITS.forEach((suit) => {
-      Object.values(this.handMatrix[suit]).forEach((tileType) => {
-        if (tileType !== 3 && tileType !== 0) {
-          windsNDragonsOk = false;
-          return false;
-        }
-      });
-    });
-    return windsNDragonsOk;
-  };
-
-  checkTotals = () => {
-    // Get totals for each suit and see if they match up
-    const totalsMatrix: TotalsMatrix = {};
-    // console.log("👀", this.handMatrix);
-
-    this.NUMBERED_SUITS.forEach((suit) => {
-      const suitTotal = sum(Object.values(this.handMatrix[suit]));
-      totalsMatrix[suit] = {
-        suit,
-        total: suitTotal,
-        hasPair: (suitTotal - 2) % 3 === 0,
-        tm3: suitTotal % 3 === 0,
-      };
-    });
-    const totalsArray = Object.values(totalsMatrix);
-    const onlyOnePair = sum(totalsArray.map((m) => m.hasPair)) === 1;
-    const allSuitsCouldHaveMelds =
-      sum(totalsArray.map((m) => m.tm3)) + Number(onlyOnePair) === 3;
-    // console.log("👀", totalsMatrix, onlyOnePair, allSuitsCouldHaveMelds);
-    if (!onlyOnePair || !allSuitsCouldHaveMelds) return false;
-
-    return totalsMatrix;
-  };
-
-  checkMelds = (totalsMatrix: TotalsMatrix) => {
-    // Check the suit with the pair for validity
-    let suitWithPairOk = false;
-    const suitWithPair = Object.values(totalsMatrix).filter((t) => t.hasPair)[0]
-      .suit;
-    const tilesWithMoreThanOne = Object.values(
-      this.handMatrix[suitWithPair],
-    ).reduce((acc: number[], count, i) => (count > 1 ? [...acc, i] : acc), []);
-    // console.log("👀", "Suit with pair is", suitWithPair);
-    if (tilesWithMoreThanOne.length === 0) return false;
-    // For all possible pairs, remove the pair and
-    // check if the remaining tiles fit into melds
-    tilesWithMoreThanOne.forEach((tile) => {
-      const suitMatrix = Object.values(this.handMatrix[suitWithPair]);
-      suitMatrix[tile] -= 2;
-      const suitOk = this.checkMeldsInSuit(
-        totalsMatrix[suitWithPair].total,
-        suitMatrix,
-      );
-
-      // As long as one permutation of removing a
-      // pair works, then this suit is okay.
-      if (suitOk) {
-        suitWithPairOk = true;
-        return true;
-      }
-    });
-    // console.log("👀", "Suit with pair okay", suitWithPairOk);
-    if (suitWithPairOk === false) return false;
-
-    // Check the other suits for validity
-    let suitsOkay = true;
-    this.NUMBERED_SUITS.filter((suit) => suit !== suitWithPair).forEach(
-      (suit) => {
-        const suitOk = this.checkMeldsInSuit(
-          totalsMatrix[suit].total,
-          Object.values(this.handMatrix[suit]),
-        );
-
-        if (suitOk === false) {
-          // console.log("👀", "Suit failed", suit);
-          suitsOkay = false;
-          return false;
-        }
-      },
-    );
-    return suitsOkay;
-  };
-
-  checkMeldsInSuit = (suitTotal: number, suitMatrix: number[]) => {
-    if (suitTotal > 0) {
-      // Remove pengs
-      suitMatrix = suitMatrix.map((tile) => tile % 3);
-
-      // Try staircases
-      let staircaseMatrix = suitMatrix.map((_) => 0);
-      let i = 0;
-      for (let loops = 0; loops <= suitTotal / 3; loops++) {
-        if (suitMatrix[i] && suitMatrix[i + 1] && suitMatrix[i + 2]) {
-          if (staircaseMatrix[i]) staircaseMatrix[i] += 1;
-          else staircaseMatrix[i] = 1;
-          suitMatrix[i] -= 1;
-          suitMatrix[i + 1] -= 1;
-          suitMatrix[i + 2] -= 1;
-        } else staircaseMatrix[i] = 0;
-
-        if (suitMatrix[i] === 0) i += 1;
-      }
-      // console.log("👀", "staircase", staircaseMatrix);
-      // console.log("👀", "suitMatrix", suitMatrix, sum(suitMatrix));
-
-      // If after trying to put together melds, we have extra
-      // then this suit doesn't turn into good melds
-      return sum(suitMatrix) === 0;
-    }
-    return true;
-  };
 }
 
 //---------------------------------------#00D4B2

@@ -11,3 +11,6 @@ export const sum = (array: Array<any>) => {
   array.forEach((a) => (total += a));
   return total;
 };
+
+export const oVal = Object.values;
+export const oKey = Object.keys;
