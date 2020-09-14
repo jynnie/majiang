@@ -1,14 +1,20 @@
 /**
  * DianXin 点心
  *
- * This is the most basic version of Chinese mahjong,
+ * This is the most basic version of Chinese majiang,
  * based off of Cantonese rules.
  */
 
-import CardPak from "../../CardPak";
-import { Card, Deck, Rules, Action, ActionParams } from "../../CardPakTypes";
+import CardPak from "../../../engine/CardPak";
+import {
+  Card,
+  Deck,
+  Rules,
+  Action,
+  ActionParams,
+} from "../../../engine/CardPakTypes";
 
-import { TileMatrix } from "./TileMatrix";
+import { TileMatrix } from "../TileMatrix";
 
 // TODO: Deal with conflicting Peng vs Draw
 // TODO: Deal with conflicting Peng vs Chi

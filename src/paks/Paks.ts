@@ -1,5 +1,5 @@
-import DianXinClass from "./mhjng/DianXin/DianXin";
-import CardPak from "./CardPak";
+import DianXinClass from "./mjng/DianXin/DianXin";
+import CardPak from "../engine/CardPak";
 
 const allPaks: { [id: string]: CardPak } = {};
 

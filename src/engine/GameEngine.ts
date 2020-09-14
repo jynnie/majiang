@@ -1,7 +1,7 @@
 /**
- * GameEngine v1
+ * GameEngine card.pak v1
  *
- * Mostly just built to play diff. version of mahjong
+ * Mostly just built to play diff. version of majiang
  */
 
 import Paks from "../paks/Paks";

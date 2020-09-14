@@ -1,7 +1,7 @@
 import expect from "expect.js";
 
 import { TILES } from "./DianXin";
-import { TileMatrix } from "./TileMatrix";
+import { TileMatrix } from "../TileMatrix";
 
 //---------------------------------------#00D4B2
 //- Test cases
