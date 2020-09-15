@@ -5,7 +5,7 @@
  */
 
 import Paks from "../paks/Paks";
-import { Action, Card } from "../paks/CardPakTypes";
+import { Action, Card } from "./CardPakTypes";
 
 import { shuffle } from "../utils";
 
@@ -55,7 +55,6 @@ export class GameEngine {
     this.userId = id;
   }
 
-  //---------------------------------------#00D4B2
   //-- No Room --//
 
   createRoom = () => {
@@ -72,7 +71,6 @@ export class GameEngine {
     this.players.push({ id: this.userId });
   };
 
-  //---------------------------------------#00D4B2
   //-- In Lobby --//
 
   startGame = async (cardPakId: string) => {
@@ -110,7 +108,6 @@ export class GameEngine {
     pak.rules.onGameStart(this);
   };
 
-  //---------------------------------------#00D4B2
   //-- In Game --//
 
   // endGame = () => {};
@@ -127,7 +124,6 @@ export class GameEngine {
     this.updateReact();
   };
 
-  //---------------------------------------#00D4B2
   //-- Helpful Getters for In Game --//
 
   getPlayer = (id: string) => {
@@ -180,7 +176,6 @@ export class GameEngine {
     return this.pak?.rules;
   }
 
-  //---------------------------------------#00D4B2
   //-- Helpers --//
 
   updateGameParams = (newParams: any) => {

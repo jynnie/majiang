@@ -24,7 +24,7 @@ const providers = {
 const db = firebase.firestore();
 
 export const FirebaseContext = React.createContext(null);
-// TODO: Switch to using EngineContext, also init Engine here
+// FIXME: Switch to using EngineContext, also init Engine here
 export const EngineContext = React.createContext({ engine: null });
 
 //- App Setup

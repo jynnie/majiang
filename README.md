@@ -1,16 +1,22 @@
 # Majiang「麻将」
 
-A web-based platform for variations of Majiang (also written Mahjong); built on top of the *card.pak* engine. 
+A web-based platform for variations of Majiang (also written Mahjong); built on top of the _card.pak_ engine.
 
 ## 🐣 Progress
 
 - [ ] DianXin rule set
+  - [ ] Hu execute
+  - [ ] Deal with conflicting Peng vs Draw
+  - [ ] Deal with conflicting Peng vs Chi
+  - [ ] Deal with conflicting X vs Hu
 - [ ] Front end beauty
 - [ ] Networking to Firebase
 - [ ] Dealing with conflicting calls
 - [ ] Random room generation
+- [ ] Design in between screens
+- [ ] Points systems
 
-## 🎒 Custom Rules 
+## 🎒 Custom Rules
 
 > This section is still in progress!
 
@@ -19,6 +25,7 @@ A web-based platform for variations of Majiang (also written Mahjong); built on 
 ```sh
 $ yarn install
 ```
+
 ```sh
 $ yarn start
 ```

@@ -4,7 +4,7 @@
  * All card paks are made from these
  */
 
-import { Deck, Card, Rules } from "../paks/CardPakTypes";
+import { Deck, Card, Rules } from "./CardPakTypes";
 import { DianXinDefault } from "../paks/mjng/VisualDeck";
 
 import { shuffle } from "../utils";

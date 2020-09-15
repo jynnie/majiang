@@ -19,8 +19,11 @@ import { TileMatrix } from "../TileMatrix";
 // TODO: Deal with conflicting Peng vs Draw
 // TODO: Deal with conflicting Peng vs Chi
 // TODO: Deal with conflicting X vs Hu
+// Proposed solution: Draw isn't available unless
+// everyone who has an available action skips,
+// which is saved as a player param and resets
+// to false on turn advance.
 
-//---------------------------------------#00D4B2
 //- TILES
 const NUMBER_TILES = [
   {
@@ -245,7 +248,6 @@ const makeTiles = () => {
   }));
 };
 
-//---------------------------------------#00D4B2
 //- INTERFACES
 interface DianXinDeck extends Deck {
   cards: Tile[];
@@ -275,7 +277,6 @@ interface DianXinRules extends Rules {
   playerParams: DianXinPlayerParams;
 }
 
-//---------------------------------------#00D4B2
 //- MAIN CLASS RULES
 class DianXin extends CardPak {
   deck: DianXinDeck = {
@@ -370,7 +371,6 @@ class DianXin extends CardPak {
     },
 
     playerActions: [
-      //---------------------------------------#00D4B2
       //- Draw
       {
         name: "Draw",
@@ -398,7 +398,6 @@ class DianXin extends CardPak {
           gameEngine.updateReact();
         },
       },
-      //---------------------------------------#00D4B2
       //- Peng
       {
         name: "Peng",
@@ -435,7 +434,6 @@ class DianXin extends CardPak {
           gameEngine.claimTurn(executingPlayerId);
         },
       },
-      //---------------------------------------#00D4B2
       //- Gang
       {
         name: "An Gang",
@@ -478,7 +476,6 @@ class DianXin extends CardPak {
         },
         onExecute: () => {},
       },
-      //---------------------------------------#00D4B2
       //- An Gang
       {
         name: "Gang",
@@ -520,7 +517,6 @@ class DianXin extends CardPak {
           gameEngine.claimTurn(executingPlayerId);
         },
       },
-      //---------------------------------------#00D4B2
       //- Chi
       {
         name: "Chi",
@@ -574,7 +570,6 @@ class DianXin extends CardPak {
         },
         onExecute: () => {},
       },
-      //---------------------------------------#00D4B2
       //- Hu
       {
         name: "Hu",
@@ -602,7 +597,9 @@ class DianXin extends CardPak {
           console.log("👀", executingPlayerId, tileMatrix.isWinnable);
           return tileMatrix.isWinnable;
         },
-        onExecute: () => {},
+        onExecute: () => {
+          // TODO: Hu execution
+        },
       },
     ],
   };
@@ -613,7 +610,6 @@ class DianXin extends CardPak {
     super(props, "mhjng-dianxin");
   }
 
-  //---------------------------------------#00D4B2
   //- Helper Setters
   removeLastPlayedTile = ({ gameEngine }: ActionParams) => {
     const lastPlay = gameEngine.gameParams.lastPlay;
@@ -626,7 +622,6 @@ class DianXin extends CardPak {
     gameEngine.updatePlayer(lastPlay.by, newPlayedPlayerParams);
   };
 
-  //---------------------------------------#00D4B2
   //- Helper Getters
   hasAFullHand = ({ closedHand, openHand }: DianXinPlayerParams) => {
     return closedHand.length + openHand.length * 3 >= this.FULL_HAND_SIZE;
@@ -687,7 +682,6 @@ class DianXin extends CardPak {
     return possibleChis;
   };
 
-  //---------------------------------------#00D4B2
   //- Helpers Filters
   firstOne = (
     tile: {
