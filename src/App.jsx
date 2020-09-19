@@ -45,6 +45,7 @@ const App = (props) => {
       stagePage = <GamePage />;
       break;
     case Stages.gameEnd:
+      stagePage = "Game end";
       break;
     case Stages.noRoom:
     default:

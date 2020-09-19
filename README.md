@@ -5,7 +5,7 @@ A web-based platform for variations of Majiang (also written Mahjong); built on 
 ## 🐣 Progress
 
 - [ ] DianXin rule set
-  - [ ] Hu execute
+  - [x] Hu execute
   - [ ] Deal with conflicting Peng vs Draw
   - [ ] Deal with conflicting Peng vs Chi
   - [ ] Deal with conflicting X vs Hu

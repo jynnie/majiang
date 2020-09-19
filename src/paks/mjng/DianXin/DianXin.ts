@@ -524,9 +524,13 @@ class DianXin extends CardPak {
           const lastPlay = gameEngine.gameParams.lastPlay;
           if (!lastPlay) return false;
 
+          // You can't chi after you've already drawn
+          const playerParams = gameEngine.getPlayerParams(executingPlayerId);
+          const hasFullHand = this.hasAFullHand(playerParams);
+          if (hasFullHand) return false;
+
           // Was last play was by the previous player
           const lastPlayerParams = gameEngine.getPlayerParams(lastPlay?.by);
-          const playerParams = gameEngine.getPlayerParams(executingPlayerId);
           const lastWasRightBeforeMe =
             (playerParams.seat - lastPlayerParams.seat + 4) % 4 === 1;
           if (!lastWasRightBeforeMe) return false;
@@ -588,17 +592,27 @@ class DianXin extends CardPak {
           // hand and see if that makes it a winning thing
           else if (!!lastPlay)
             hand = [lastPlay.card, ...playerParams.closedHand];
-          // console.log("👀");
-          // console.log("👀", executingPlayerId);
 
           if (hand.length === 0) return false;
 
           const tileMatrix = new TileMatrix(hand);
-          console.log("👀", executingPlayerId, tileMatrix.isWinnable);
           return tileMatrix.isWinnable;
         },
-        onExecute: () => {
-          // TODO: Hu execution
+        onExecute: ({ executingPlayerId, gameEngine }) => {
+          const playerParams = gameEngine.getPlayerParams(executingPlayerId);
+          const hasFullHand = this.hasAFullHand(playerParams);
+          const lastPlay = gameEngine.gameParams.lastPlay;
+
+          let hand;
+          if (hasFullHand) hand = playerParams.closedHand;
+          else hand = [lastPlay.card, ...playerParams.closedHand];
+
+          const points = playerParams.points + 1;
+
+          const newParams = { ...playerParams, points, closedHand: hand };
+          gameEngine.updatePlayer(executingPlayerId, newParams);
+          gameEngine.updateGameParams({ lastPlay: undefined });
+          gameEngine.endGame();
         },
       },
     ],

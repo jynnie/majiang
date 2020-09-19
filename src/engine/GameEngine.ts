@@ -110,8 +110,6 @@ export class GameEngine {
 
   //-- In Game --//
 
-  // endGame = () => {};
-
   finishTurn = () => {
     this.gameParams.seatTurn =
       (this.gameParams.seatTurn + 1) % this.players.length;
@@ -121,6 +119,11 @@ export class GameEngine {
   claimTurn = (id: string) => {
     const player = this.getPlayerParams(id);
     this.gameParams.seatTurn = player.seat;
+    this.updateReact();
+  };
+
+  endGame = () => {
+    this.gameEnded = true;
     this.updateReact();
   };
 
