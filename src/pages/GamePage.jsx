@@ -1,13 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
+
+import { EngineContext } from "../App";
 
 import TileViewer from "./TileViewer";
-import GameEngine from "../engine/GameEngine";
 
 const GamePage = () => {
+  const { GE } = useContext(EngineContext);
+
   return (
     <>
       In Game
-      {GameEngine.playerParams.map((player) => (
+      {GE.playerParams.map((player) => (
         <TileViewer key={player.id} player={player} />
       ))}
     </>

@@ -194,7 +194,3 @@ export class GameEngine {
     console.log("📙 Updated Player", playerId);
   };
 }
-
-const ENG = new GameEngine();
-
-export default ENG;

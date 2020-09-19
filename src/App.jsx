@@ -7,7 +7,7 @@ import GamePage from "./pages/GamePage";
 import "./App.css";
 
 //- Game Engine
-import GameEngine, { Stages } from "./engine/GameEngine";
+import { GameEngine, Stages } from "./engine/GameEngine";
 
 //- Firebase Imports
 import withFirebaseAuth from "react-with-firebase-auth";
@@ -22,10 +22,11 @@ const providers = {
   googleProvider: new firebase.auth.GoogleAuthProvider(),
 };
 const db = firebase.firestore();
-
 export const FirebaseContext = React.createContext(null);
-// FIXME: Switch to using EngineContext, also init Engine here
-export const EngineContext = React.createContext({ engine: null });
+
+//- Game Engine Setup
+const GE = new GameEngine();
+export const EngineContext = React.createContext({ GE: GE });
 
 //- App Setup
 const App = (props) => {
@@ -33,11 +34,11 @@ const App = (props) => {
   const [, setUpdate] = useState(null);
 
   useEffect(() => {
-    GameEngine.attachReact(setUpdate);
+    GE.attachReact(setUpdate);
   }, []);
 
   let stagePage;
-  switch (GameEngine.stage) {
+  switch (GE.stage) {
     case Stages.inLobby:
       stagePage = <LobbyPage />;
       break;
@@ -49,12 +50,12 @@ const App = (props) => {
       break;
     case Stages.noRoom:
     default:
-      stagePage = <button onClick={GameEngine.createRoom}>create room</button>;
+      stagePage = <button onClick={GE.createRoom}>create room</button>;
       break;
   }
 
   return (
-    <EngineContext.Provider value={{ engine: GameEngine }}>
+    <EngineContext.Provider value={{ GE }}>
       <FirebaseContext.Provider value={{ user, db }}>
         <Auth signOut={signOut} signInWithGoogle={signInWithGoogle} />
         {stagePage}

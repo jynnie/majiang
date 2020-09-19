@@ -1,10 +1,9 @@
 import React, { useContext, useEffect } from "react";
-import { FirebaseContext } from "../App";
-
-import GameEngine from "../engine/GameEngine";
+import { FirebaseContext, EngineContext } from "../App";
 
 export const Auth = (props) => {
   const { user, db } = useContext(FirebaseContext);
+  const { GE } = useContext(EngineContext);
   const { signOut, signInWithGoogle } = props;
 
   const handleSignIn = (res) => {
@@ -36,7 +35,7 @@ export const Auth = (props) => {
       console.debug(
         `🥳 ${user.displayName} has signed in from ${user.providerData[0].providerId} 🥳`,
       );
-      GameEngine.user = user.uid;
+      GE.user = user.uid;
     }
   }, [user, uuid]);
 

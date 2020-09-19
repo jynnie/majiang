@@ -1,22 +1,25 @@
-import React from "react";
+import React, { useContext } from "react";
 import Box from "ui-box";
 
+import { EngineContext } from "../App";
+
 import Tile from "../components/Tile";
-import GameEngine from "../engine/GameEngine";
 
 const TileViewer = ({ player }) => {
-  const closedHand = GameEngine.pak
+  const { GE } = useContext(EngineContext);
+
+  const closedHand = GE.pak
     ?.getVisualsOf(player.closedHand)
     .sort((a, b) => a.value - b.value)
     .sort((a, b) => a.params.suit < b.params.suit);
   const openHand = player.openHand?.reduce(
-    (acc, meld) => [...acc, ...GameEngine.pak?.getVisualsOf(meld)],
+    (acc, meld) => [...acc, ...GE.pak?.getVisualsOf(meld)],
     [],
   );
-  const playedTiles = GameEngine.pak?.getVisualsOf(player.playedTiles);
-  const isMyTurn = GameEngine.isPlayersTurn(player.id);
+  const playedTiles = GE.pak?.getVisualsOf(player.playedTiles);
+  const isMyTurn = GE.isPlayersTurn(player.id);
 
-  const availableActions = GameEngine.getAvailableActions(player.id);
+  const availableActions = GE.getAvailableActions(player.id);
 
   return (
     <Box borderTop="1px solid cadetblue" marginTop={24}>
@@ -28,7 +31,7 @@ const TileViewer = ({ player }) => {
             onClick={() =>
               action.onExecute({
                 executingPlayerId: player.id,
-                gameEngine: GameEngine,
+                gameEngine: GE,
               })
             }
           >
@@ -43,10 +46,10 @@ const TileViewer = ({ player }) => {
             face={tile.visual}
             key={i}
             onClick={() =>
-              GameEngine.pak.rules.onCardClick({
+              GE.pak.rules.onCardClick({
                 executingPlayerId: player.id,
                 card: tile,
-                gameEngine: GameEngine,
+                GE: GE,
               })
             }
           />

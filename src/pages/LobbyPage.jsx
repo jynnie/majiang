@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 
-import GameEngine from "../engine/GameEngine";
+import { EngineContext } from "../App";
 
 const LobbyPage = () => {
+  const { GE } = useContext(EngineContext);
+
   return (
     <>
       Lobby
-      <button onClick={GameEngine.startGame}>Start Game</button>
+      <button onClick={GE.startGame}>Start Game</button>
     </>
   );
 };
