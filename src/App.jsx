@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 
 //- Component & Page Imports
 import Auth from "./components/Auth";
+import HomePage from "./pages/HomePage";
 import LobbyPage from "./pages/LobbyPage";
 import GamePage from "./pages/GamePage";
 import "./App.css";
@@ -35,6 +36,7 @@ const App = (props) => {
 
   useEffect(() => {
     GE.attachReact(setUpdate);
+    GE.attachFirebase(db);
   }, []);
 
   let stagePage;
@@ -50,7 +52,7 @@ const App = (props) => {
       break;
     case Stages.noRoom:
     default:
-      stagePage = <button onClick={GE.createRoom}>create room</button>;
+      stagePage = <HomePage />;
       break;
   }
 

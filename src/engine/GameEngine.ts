@@ -9,6 +9,8 @@ import { Action, Card } from "./CardPakTypes";
 
 import { shuffle } from "../utils";
 
+import firebase from "firebase";
+
 export enum Stages {
   noRoom = "NO_ROOM",
   inLobby = "IN_LOBBY",
@@ -17,7 +19,8 @@ export enum Stages {
 }
 
 export class GameEngine {
-  userId: string | null = null;
+  userId?: string = undefined;
+  username?: string = undefined;
 
   pakId: string = "mhjng-dianxin";
   roomId: string | null = null;
@@ -29,6 +32,8 @@ export class GameEngine {
   players: { id: string }[] = [];
 
   localUpdater: ((val: any) => void) | null = null;
+  db?: firebase.firestore.Firestore = undefined;
+  roomRef?: firebase.firestore.DocumentReference = undefined;
 
   constructor(props?: any) {
     console.log("...Booting GameEngine...");
@@ -36,6 +41,10 @@ export class GameEngine {
 
   attachReact = (setUpdate: (val: any) => void) => {
     this.localUpdater = setUpdate;
+  };
+
+  attachFirebase = (db: firebase.firestore.Firestore) => {
+    this.db = db;
   };
 
   // FIXME: updateReact is called manually in DianXin when it shouldn't be
@@ -51,24 +60,75 @@ export class GameEngine {
     return Stages.noRoom;
   }
 
-  set user(id: string) {
-    this.userId = id;
+  get randomId() {
+    const firstPartNum = (Math.random() * 46656) | 0;
+    const secondPartNum = (Math.random() * 46656) | 0;
+    const firstPart = ("00" + firstPartNum.toString(36)).slice(-2);
+    const secondPart = ("00" + secondPartNum.toString(36)).slice(-2);
+    return firstPart + secondPart;
+  }
+
+  set user(user: any) {
+    this.userId = user.uid;
+    this.username = user.displayName;
   }
 
   //-- No Room --//
 
-  createRoom = () => {
+  createRoom = (roomId?: string) => {
     if (!this.userId) return;
 
-    this.roomId = "1";
-    this.joinRoom();
-    this.updateReact();
+    this.roomId = roomId || this.randomId;
+    this.roomRef = this.db?.collection("rooms").doc(this.roomId);
+
+    this.roomRef?.set({
+      pakId: this.pakId,
+      hostPlayerId: this.userId,
+      gameEnded: null,
+    });
+
+    this.joinRoom(this.roomId);
   };
 
-  joinRoom = () => {
+  joinRoom = (roomId?: string) => {
     if (!this.userId) return;
+    if (!this.roomRef && !roomId) return;
 
+    if (!this.roomRef && roomId) {
+      this.roomRef = this.db?.collection("rooms").doc(roomId);
+      this.roomId = roomId;
+    }
+
+    this.roomRef?.get().then((doc) => {
+      if (!doc.exists && roomId) {
+        this.createRoom(roomId);
+      } else if (doc.exists) {
+        this.roomRef
+          ?.collection("players")
+          .doc(this.userId)
+          .set({
+            id: this.userId,
+            name: this.username,
+          })
+          .then(() => {
+            this.updateReact();
+          });
+      }
+    });
+
+    // FIXME: set players to the collection snapshot
     this.players.push({ id: this.userId });
+  };
+
+  // For artificially adding players to the room
+  addPlayerToRoom = ({ id, name }: { id: string; name: string }) => {
+    if (!this.roomRef) return;
+
+    this.roomRef?.collection("players").doc(id).set({
+      id,
+      name,
+    });
+    this.players.push({ id });
   };
 
   //-- In Lobby --//
@@ -77,9 +137,9 @@ export class GameEngine {
     this.gameEnded = false;
 
     // FIXME: Artificially, adding in players
-    this.players.push({ id: "player a" });
-    this.players.push({ id: "player b" });
-    this.players.push({ id: "player c" });
+    this.addPlayerToRoom({ id: "a", name: "player a" });
+    this.addPlayerToRoom({ id: "b", name: "player b" });
+    this.addPlayerToRoom({ id: "c", name: "player c" });
 
     await this.setupNewGame();
     this.updateReact();

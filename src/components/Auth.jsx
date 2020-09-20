@@ -35,7 +35,7 @@ export const Auth = (props) => {
       console.debug(
         `🥳 ${user.displayName} has signed in from ${user.providerData[0].providerId} 🥳`,
       );
-      GE.user = user.uid;
+      GE.user = user;
     }
   }, [user, uuid]);
 
