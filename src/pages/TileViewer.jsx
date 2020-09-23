@@ -49,7 +49,7 @@ const TileViewer = ({ player }) => {
               GE.pak.rules.onCardClick({
                 executingPlayerId: player.id,
                 card: tile,
-                GE: GE,
+                gameEngine: GE,
               })
             }
           />

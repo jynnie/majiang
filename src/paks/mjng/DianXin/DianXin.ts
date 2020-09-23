@@ -249,6 +249,7 @@ const makeTiles = () => {
   }));
 };
 
+//----------------------------------#01F2DF
 //- INTERFACES
 interface DianXinDeck extends Deck {
   cards: Tile[];
@@ -262,6 +263,7 @@ export interface Tile extends Card {
 
 interface DianXinPlayerParams {
   closedHand: Tile[];
+  // FIXME: Nested arrays are not supported
   openHand: Tile[][];
   playedTiles: Tile[];
   points: number;
@@ -270,7 +272,7 @@ interface DianXinPlayerParams {
 interface DianXinGameParams {
   wall: Tile[];
   deadWall: Tile[];
-  lastPlay?: { by: string; card: Tile };
+  lastPlay: { by: string; card: Tile } | null;
 }
 
 interface DianXinRules extends Rules {
@@ -278,6 +280,7 @@ interface DianXinRules extends Rules {
   playerParams: DianXinPlayerParams;
 }
 
+//----------------------------------#01F2DF
 //- MAIN CLASS RULES
 class DianXin extends CardPak {
   deck: DianXinDeck = {
@@ -293,7 +296,7 @@ class DianXin extends CardPak {
     gameParams: {
       wall: [],
       deadWall: [],
-      lastPlay: undefined,
+      lastPlay: null,
     },
     playerParams: {
       closedHand: [], // Tiles in any order
@@ -389,7 +392,7 @@ class DianXin extends CardPak {
         onExecute: ({ executingPlayerId, gameEngine }) => {
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
 
-          const wall: Card[] = gameEngine.gameParams.wall;
+          const wall: Card[] = gameEngine.gameParams?.wall;
           const drawnTile = wall.shift();
           const closedHand = [...playerParams.closedHand, drawnTile];
 
@@ -407,14 +410,14 @@ class DianXin extends CardPak {
         isAvailable: ({ executingPlayerId, gameEngine }) => {
           // FIXME: switch to get myParams
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
-          const lastPlay = gameEngine.gameParams.lastPlay;
+          const lastPlay = gameEngine.gameParams?.lastPlay;
           const makesAMeld = this.canIPeng(playerParams, lastPlay);
           const hasFullHand = this.hasAFullHand(playerParams);
 
           return makesAMeld && !hasFullHand;
         },
         onExecute: ({ executingPlayerId, gameEngine }) => {
-          const lastPlay = gameEngine.gameParams.lastPlay;
+          const lastPlay = gameEngine.gameParams?.lastPlay;
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
 
           // Remove the tile from playedTiles of other player
@@ -466,7 +469,7 @@ class DianXin extends CardPak {
               );
 
               // Draw another tile
-              const deadWall: Card[] = gameEngine.gameParams.deadWall;
+              const deadWall: Card[] = gameEngine.gameParams?.deadWall;
               const drawnTile = deadWall.shift();
               closedHand.push(drawnTile);
               const newPlayerParams = { ...playerParams, openHand, closedHand };
@@ -487,14 +490,14 @@ class DianXin extends CardPak {
         isAvailable: ({ executingPlayerId, gameEngine }) => {
           // FIXME: switch to get myParams
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
-          const lastPlay = gameEngine.gameParams.lastPlay;
+          const lastPlay = gameEngine.gameParams?.lastPlay;
           const makesAMeld = this.canIGang(playerParams, lastPlay);
           const hasFullHand = this.hasAFullHand(playerParams);
 
           return makesAMeld && !hasFullHand;
         },
         onExecute: ({ executingPlayerId, gameEngine }) => {
-          const lastPlay = gameEngine.gameParams.lastPlay;
+          const lastPlay = gameEngine.gameParams?.lastPlay;
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
 
           // Remove the tile from playedTiles of other player
@@ -511,7 +514,7 @@ class DianXin extends CardPak {
           );
 
           // Draw another tile
-          const deadWall: Card[] = gameEngine.gameParams.deadWall;
+          const deadWall: Card[] = gameEngine.gameParams?.deadWall;
           const drawnTile = deadWall.shift();
           closedHand.push(drawnTile);
           const newPlayerParams = { ...playerParams, openHand, closedHand };
@@ -527,7 +530,7 @@ class DianXin extends CardPak {
       {
         name: "Chi",
         isAvailable: ({ executingPlayerId, gameEngine }) => {
-          const lastPlay = gameEngine.gameParams.lastPlay;
+          const lastPlay = gameEngine.gameParams?.lastPlay;
           if (!lastPlay) return false;
 
           // You can't chi after you've already drawn
@@ -552,7 +555,7 @@ class DianXin extends CardPak {
             }`,
             isAvailable: () => true,
             onExecute: ({ executingPlayerId, gameEngine }) => {
-              const lastPlay = gameEngine.gameParams.lastPlay;
+              const lastPlay = gameEngine.gameParams?.lastPlay;
               const playerParams = gameEngine.getPlayerParams(
                 executingPlayerId,
               );
@@ -588,7 +591,7 @@ class DianXin extends CardPak {
           // FIXME: switch to get myParams
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
           const hasFullHand = this.hasAFullHand(playerParams);
-          const lastPlay = gameEngine.gameParams.lastPlay;
+          const lastPlay = gameEngine.gameParams?.lastPlay;
 
           let hand: Tile[] = [];
 
@@ -608,7 +611,7 @@ class DianXin extends CardPak {
         onExecute: ({ executingPlayerId, gameEngine }) => {
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
           const hasFullHand = this.hasAFullHand(playerParams);
-          const lastPlay = gameEngine.gameParams.lastPlay;
+          const lastPlay = gameEngine.gameParams?.lastPlay;
 
           let hand;
           if (hasFullHand) hand = playerParams.closedHand;
@@ -634,7 +637,7 @@ class DianXin extends CardPak {
   //----------------------------------#01F2DF
   //- Helper Setters
   removeLastPlayedTile = ({ gameEngine }: ActionParams) => {
-    const lastPlay = gameEngine.gameParams.lastPlay;
+    const lastPlay = gameEngine.gameParams?.lastPlay;
 
     const playedPlayerParams = gameEngine.getPlayerParams(lastPlay.by);
     const playedTiles = playedPlayerParams.playedTiles.filter(
@@ -747,11 +750,6 @@ class DianXin extends CardPak {
     value: number | string;
     params?: { suit?: string };
   }) => {
-    console.log(
-      "Looking for a first match with",
-      tile.value,
-      tile.params?.suit,
-    );
     return (t: Card, index: number, self: Tile[]) =>
       t.value === tile.value &&
       t.params.suit === tile.params?.suit &&

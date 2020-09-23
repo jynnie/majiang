@@ -29,7 +29,7 @@ export class GameEngine {
   cards?: Card[];
   gameParams: any = null;
   playerParams: any = null;
-  gameEnded: boolean | null = null;
+  _gameEnded: boolean | null = null;
   players: { id: string }[] = [];
 
   localUpdater: ((val: any) => void) | null = null;
@@ -101,36 +101,28 @@ export class GameEngine {
       this.roomId = roomId;
     }
 
-    this.roomRef?.get().then((doc) => {
-      if (!doc.exists && roomId) {
-        this.createRoom(roomId);
-      } else if (doc.exists) {
-        this.roomRef
-          ?.collection("players")
-          .doc(this.userId)
-          .set({
-            id: this.userId,
-            name: this.username,
-          })
-          .then(() => {
-            this.updateReact();
-          });
+    this.roomRef?.get().then(async (doc) => {
+      if (!doc.exists && roomId) this.createRoom(roomId);
+      else if (doc.exists && this.userId && this.username) {
+        await this.addPlayerToRoom({ id: this.userId, name: this.username });
+        this.updateReact();
       }
     });
 
-    // FIXME: set players to the collection snapshot
-    this.players.push({ id: this.userId });
+    this.subscribeToGameEnded();
   };
 
-  // For artificially adding players to the room
-  addPlayerToRoom = ({ id, name }: { id: string; name: string }) => {
+  addPlayerToRoom = async ({ id, name }: { id: string; name: string }) => {
     if (!this.roomRef) return;
 
-    this.roomRef?.collection("players").doc(id).set({
+    // FIXME: set players to the collection snapshot
+    this.players.push({ id });
+
+    return this.roomRef?.collection("players").doc(id).set({
       id,
       name,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     });
-    this.players.push({ id });
   };
 
   //----------------------------------#01F2DF
@@ -152,43 +144,116 @@ export class GameEngine {
     const pak = this.pak;
     if (!pak || !pak.rules) return;
 
-    this.playerParams = await shuffle([...this.players]).map((player, i) => ({
-      ...player,
-      ...pak.rules?.playerParams,
-      // FIXME: Actually check player seats
-      seat: i,
-    }));
+    const playerParamsRef = this.roomRef?.collection("playerParams");
+    this.playerParams = await shuffle([...this.players]).map((player, i) => {
+      const initialParams = {
+        ...player,
+        ...pak.rules?.playerParams,
+        // FIXME: Actually check player seats
+        seat: i,
+      };
+      playerParamsRef?.doc(player.id).set(initialParams);
+      return initialParams;
+    });
+    this.subscribeToPlayerParams();
 
+    // TODO: Does this need to be networked?
     this.cards = pak.deck?.cards.map((card) => ({
       ...card,
       params: card.defaultParams,
     }));
 
-    this.gameParams = pak.rules.gameParams;
+    // Set initial gameParams
+    this.roomRef?.set(
+      {
+        gameParams: pak.rules.gameParams,
+      },
+      { merge: true },
+    );
+    this.subscribeToGameParams();
 
-    if (pak.rules.turnBased) this.gameParams.seatTurn = 0;
+    if (pak.rules.turnBased) {
+      this.updateGameParams({ seatTurn: 0 });
+    }
 
     pak.rules.onGameStart(this);
   };
 
   //----------------------------------#01F2DF
+  //-- Firebase Subscribers --//
+
+  subscribeToPlayerParams = () => {
+    const unsubscribe = this.roomRef
+      ?.collection("playerParams")
+      .onSnapshot((snapshot) => {
+        const data: any[] = [];
+        snapshot.forEach((doc) => data.push(doc.data()));
+        this.playerParams = data;
+        this.updateReact();
+        console.log("👀 Received new player params", this.playerParams);
+      });
+    return unsubscribe;
+  };
+
+  subscribeToGameParams = () => {
+    const unsubscribe = this.roomRef?.onSnapshot((doc) => {
+      const data = doc.data()?.gameParams;
+      this.gameParams = data;
+      this.updateReact();
+      console.log("👀 Received new game params", this.gameParams);
+    });
+    return unsubscribe;
+  };
+
+  subscribeToGameEnded = () => {
+    const unsubscribe = this.roomRef?.onSnapshot((doc) => {
+      const data = doc.data()?.gameEnded;
+      this._gameEnded = data;
+      this.updateReact();
+      console.log("👀 Received new game ended", this.gameParams);
+    });
+    return unsubscribe;
+  };
+
+  get gameEnded() {
+    return this._gameEnded;
+  }
+
+  set gameEnded(newEnd) {
+    this.roomRef?.set(
+      {
+        gameEnded: newEnd,
+      },
+      { merge: true },
+    );
+  }
+
+  //----------------------------------#01F2DF
   //-- In Game --//
 
   finishTurn = () => {
-    this.gameParams.seatTurn =
-      (this.gameParams.seatTurn + 1) % this.players.length;
+    // FIXME: I think players.length might not work
+    this.updateGameParams({
+      seatTurn: (this.gameParams.seatTurn + 1) % this.players.length,
+    });
     this.updateReact();
   };
 
   claimTurn = (id: string) => {
     const player = this.getPlayerParams(id);
-    this.gameParams.seatTurn = player.seat;
+    this.updateGameParams({
+      seatTurn: player.seat,
+    });
     this.updateReact();
   };
 
   endGame = () => {
     this.gameEnded = true;
     this.updateReact();
+  };
+
+  leaveRoom = () => {
+    // TODO: Remove player from room, etc
   };
 
   //----------------------------------#01F2DF
@@ -206,7 +271,7 @@ export class GameEngine {
     if (!this.rules?.turnBased) return true;
 
     const playerParams = this.getPlayerParams(id);
-    return playerParams.seat === this.gameParams.seatTurn;
+    return playerParams.seat === this.gameParams?.seatTurn;
   };
 
   getAvailableActions = (id: string) => {
@@ -248,15 +313,25 @@ export class GameEngine {
   //-- Helpers --//
 
   updateGameParams = (newParams: any) => {
-    this.gameParams = { ...this.gameParams, ...newParams };
-    console.log("📙 Updated Game Params", this.gameParams);
+    this.roomRef?.set(
+      {
+        gameParams: newParams,
+      },
+      { merge: true },
+    );
+    console.log("📙 Updated Game Params");
   };
 
   updatePlayer = (playerId: string, newParams: any) => {
-    this.playerParams = this.playerParams.map((p: any) => {
-      if (p.id === playerId) return { ...p, ...newParams };
-      else return p;
-    });
+    this.roomRef
+      ?.collection("playerParams")
+      .doc(playerId)
+      .set(
+        {
+          ...newParams,
+        },
+        { merge: true },
+      );
     console.log("📙 Updated Player", playerId);
   };
 }

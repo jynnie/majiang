@@ -15,6 +15,7 @@ A web-based platform for variations of Majiang (also written Mahjong); built on 
 - [ ] Random room generation
 - [ ] Design in between screens
 - [ ] Points systems
+- [ ] Handling disconnects; how easy would it be to move Engine to server
 
 ## 🎒 Custom Rules
 

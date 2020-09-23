@@ -10,7 +10,7 @@ const GamePage = () => {
   return (
     <>
       In Game
-      {GE.playerParams.map((player) => (
+      {GE.playerParams?.map((player) => (
         <TileViewer key={player.id} player={player} />
       ))}
     </>
