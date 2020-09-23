@@ -27,6 +27,7 @@ type ConditionFunction = (
 const HONORS_SUITS = ["feng", "long"];
 const NUMBERED_SUITS = ["tong", "tiao", "wan"];
 
+//----------------------------------#01F2DF
 export class TileMatrix {
   closedHandMatrix: HandMatrix = {
     tiao: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
@@ -64,6 +65,7 @@ export class TileMatrix {
     this.additionalConditions = additionalConditions;
   }
 
+  //----------------------------------#01F2DF
   get isWinnable() {
     const suitWithPair = this.checkTotals();
     // console.log("👀", "Totals", totalsMatrix);
@@ -219,5 +221,6 @@ export class TileMatrix {
     return true;
   };
 
+  //----------------------------------#01F2DF
   getClosedSuitVals = (suit: string) => oVal(this.closedHandMatrix[suit]);
 }

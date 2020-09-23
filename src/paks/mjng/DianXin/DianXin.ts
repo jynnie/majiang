@@ -24,6 +24,7 @@ import { TileMatrix } from "../TileMatrix";
 // which is saved as a player param and resets
 // to false on turn advance.
 
+//----------------------------------#01F2DF
 //- TILES
 const NUMBER_TILES = [
   {
@@ -371,6 +372,7 @@ class DianXin extends CardPak {
     },
 
     playerActions: [
+      //----------------------------------#01F2DF
       //- Draw
       {
         name: "Draw",
@@ -398,6 +400,7 @@ class DianXin extends CardPak {
           gameEngine.updateReact();
         },
       },
+      //----------------------------------#01F2DF
       //- Peng
       {
         name: "Peng",
@@ -434,6 +437,7 @@ class DianXin extends CardPak {
           gameEngine.claimTurn(executingPlayerId);
         },
       },
+      //----------------------------------#01F2DF
       //- Gang
       {
         name: "An Gang",
@@ -476,6 +480,7 @@ class DianXin extends CardPak {
         },
         onExecute: () => {},
       },
+      //----------------------------------#01F2DF
       //- An Gang
       {
         name: "Gang",
@@ -517,6 +522,7 @@ class DianXin extends CardPak {
           gameEngine.claimTurn(executingPlayerId);
         },
       },
+      //----------------------------------#01F2DF
       //- Chi
       {
         name: "Chi",
@@ -574,6 +580,7 @@ class DianXin extends CardPak {
         },
         onExecute: () => {},
       },
+      //----------------------------------#01F2DF
       //- Hu
       {
         name: "Hu",
@@ -624,6 +631,7 @@ class DianXin extends CardPak {
     super(props, "mhjng-dianxin");
   }
 
+  //----------------------------------#01F2DF
   //- Helper Setters
   removeLastPlayedTile = ({ gameEngine }: ActionParams) => {
     const lastPlay = gameEngine.gameParams.lastPlay;
@@ -636,6 +644,7 @@ class DianXin extends CardPak {
     gameEngine.updatePlayer(lastPlay.by, newPlayedPlayerParams);
   };
 
+  //----------------------------------#01F2DF
   //- Helper Getters
   hasAFullHand = ({ closedHand, openHand }: DianXinPlayerParams) => {
     return closedHand.length + openHand.length * 3 >= this.FULL_HAND_SIZE;
@@ -696,6 +705,7 @@ class DianXin extends CardPak {
     return possibleChis;
   };
 
+  //----------------------------------#01F2DF
   //- Helpers Filters
   firstOne = (
     tile: {

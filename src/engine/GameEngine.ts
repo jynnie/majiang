@@ -18,6 +18,7 @@ export enum Stages {
   gameEnd = "GAME_END",
 }
 
+//----------------------------------#01F2DF
 export class GameEngine {
   userId?: string = undefined;
   username?: string = undefined;
@@ -36,7 +37,7 @@ export class GameEngine {
   roomRef?: firebase.firestore.DocumentReference = undefined;
 
   constructor(props?: any) {
-    console.log("...Booting GameEngine...");
+    console.log(".•˚•.Booting GameEngine˚•.•˚");
   }
 
   attachReact = (setUpdate: (val: any) => void) => {
@@ -73,6 +74,7 @@ export class GameEngine {
     this.username = user.displayName;
   }
 
+  //----------------------------------#01F2DF
   //-- No Room --//
 
   createRoom = (roomId?: string) => {
@@ -131,6 +133,7 @@ export class GameEngine {
     this.players.push({ id });
   };
 
+  //----------------------------------#01F2DF
   //-- In Lobby --//
 
   startGame = async (cardPakId: string) => {
@@ -168,6 +171,7 @@ export class GameEngine {
     pak.rules.onGameStart(this);
   };
 
+  //----------------------------------#01F2DF
   //-- In Game --//
 
   finishTurn = () => {
@@ -187,6 +191,7 @@ export class GameEngine {
     this.updateReact();
   };
 
+  //----------------------------------#01F2DF
   //-- Helpful Getters for In Game --//
 
   getPlayer = (id: string) => {
@@ -239,6 +244,7 @@ export class GameEngine {
     return this.pak?.rules;
   }
 
+  //----------------------------------#01F2DF
   //-- Helpers --//
 
   updateGameParams = (newParams: any) => {
