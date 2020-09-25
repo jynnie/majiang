@@ -109,7 +109,10 @@ export class GameEngine {
       }
     });
 
+    this.subscribeToPlayerParams();
+    this.subscribeToGameParams();
     this.subscribeToGameEnded();
+    this.subscribeToPlayers();
   };
 
   addPlayerToRoom = async ({ id, name }: { id: string; name: string }) => {
@@ -155,7 +158,6 @@ export class GameEngine {
       playerParamsRef?.doc(player.id).set(initialParams);
       return initialParams;
     });
-    this.subscribeToPlayerParams();
 
     // TODO: Does this need to be networked?
     this.cards = pak.deck?.cards.map((card) => ({
@@ -170,7 +172,6 @@ export class GameEngine {
       },
       { merge: true },
     );
-    this.subscribeToGameParams();
 
     if (pak.rules.turnBased) {
       this.updateGameParams({ seatTurn: 0 });
@@ -181,6 +182,19 @@ export class GameEngine {
 
   //----------------------------------#01F2DF
   //-- Firebase Subscribers --//
+
+  subscribeToPlayers = () => {
+    const unsubscribe = this.roomRef
+      ?.collection("players")
+      .onSnapshot((snapshot) => {
+        const data: any[] = [];
+        snapshot.forEach((doc) => data.push(doc.data()));
+        this.players = data;
+        this.updateReact();
+        console.log("👀 Received new players", this.players);
+      });
+    return unsubscribe;
+  };
 
   subscribeToPlayerParams = () => {
     const unsubscribe = this.roomRef
@@ -210,7 +224,7 @@ export class GameEngine {
       const data = doc.data()?.gameEnded;
       this._gameEnded = data;
       this.updateReact();
-      console.log("👀 Received new game ended", this.gameParams);
+      console.log("👀 Received new game ended", this._gameEnded);
     });
     return unsubscribe;
   };
@@ -231,9 +245,8 @@ export class GameEngine {
   //----------------------------------#01F2DF
   //-- In Game --//
 
-  finishTurn = () => {
-    // FIXME: I think players.length might not work
-    this.updateGameParams({
+  finishTurn = async () => {
+    await this.updateGameParams({
       seatTurn: (this.gameParams.seatTurn + 1) % this.players.length,
     });
     this.updateReact();
@@ -313,17 +326,18 @@ export class GameEngine {
   //-- Helpers --//
 
   updateGameParams = (newParams: any) => {
-    this.roomRef?.set(
+    const update = this.roomRef?.set(
       {
         gameParams: newParams,
       },
       { merge: true },
     );
-    console.log("📙 Updated Game Params");
+    console.log("📙 Updated Game Params", newParams);
+    return update;
   };
 
   updatePlayer = (playerId: string, newParams: any) => {
-    this.roomRef
+    const update = this.roomRef
       ?.collection("playerParams")
       .doc(playerId)
       .set(
@@ -332,6 +346,7 @@ export class GameEngine {
         },
         { merge: true },
       );
-    console.log("📙 Updated Player", playerId);
+    console.log("📙 Updated Player", playerId, newParams);
+    return update;
   };
 }
