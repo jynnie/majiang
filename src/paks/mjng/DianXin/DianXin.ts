@@ -14,6 +14,8 @@ import {
   ActionParams,
 } from "../../../engine/CardPakTypes";
 
+import { oVal } from "../../../utils";
+
 import { TileMatrix } from "../TileMatrix";
 
 // TODO: Deal with conflicting Peng vs Draw
@@ -264,7 +266,7 @@ export interface Tile extends Card {
 interface DianXinPlayerParams {
   closedHand: Tile[];
   // FIXME: Nested arrays are not supported
-  openHand: Tile[][];
+  openHand: { [key: string]: Tile[] };
   playedTiles: Tile[];
   points: number;
 }
@@ -300,7 +302,7 @@ class DianXin extends CardPak {
     },
     playerParams: {
       closedHand: [], // Tiles in any order
-      openHand: [], // Array of tiles open to be seen, grouped by meld
+      openHand: {}, // Array of tiles open to be seen, grouped by meld
       playedTiles: [],
       points: 0,
     },
@@ -428,7 +430,7 @@ class DianXin extends CardPak {
             .filter(this.matchInValueAndSuit(lastPlay.card))
             .slice(0, 2);
           const meld = [lastPlay.card, ...matching];
-          const openHand = [...playerParams.openHand, meld];
+          const openHand = this.createOpenHandWith(playerParams, meld);
           const closedHand = playerParams.closedHand.filter(
             (t: Card) => meld.findIndex((m) => m.id === t.id) === -1,
           );
@@ -436,7 +438,7 @@ class DianXin extends CardPak {
 
           // Update params
           gameEngine.updatePlayer(executingPlayerId, newPlayerParams);
-          gameEngine.updateGameParams({ lastPlay: undefined });
+          gameEngine.updateGameParams({ lastPlay: null });
           gameEngine.claimTurn(executingPlayerId);
         },
       },
@@ -463,7 +465,7 @@ class DianXin extends CardPak {
               const meld = playerParams.closedHand
                 .filter(this.matchInValueAndSuit(tile))
                 .map((t: Tile) => ({ ...t, hide: true }));
-              const openHand = [...playerParams.openHand, meld];
+              const openHand = this.createOpenHandWith(playerParams, meld);
               const closedHand = playerParams.closedHand.filter(
                 (t: Tile) => meld.findIndex((m: Tile) => m.id === t.id) === -1,
               );
@@ -508,7 +510,7 @@ class DianXin extends CardPak {
             this.matchInValueAndSuit(lastPlay.card),
           );
           const meld = [lastPlay.card, ...matching];
-          const openHand = [...playerParams.openHand, meld];
+          const openHand = this.createOpenHandWith(playerParams, meld);
           const closedHand = playerParams.closedHand.filter(
             (t: Card) => meld.findIndex((m) => m.id === t.id) === -1,
           );
@@ -521,7 +523,7 @@ class DianXin extends CardPak {
 
           // Update params
           gameEngine.updatePlayer(executingPlayerId, newPlayerParams);
-          gameEngine.updateGameParams({ lastPlay: undefined, deadWall });
+          gameEngine.updateGameParams({ lastPlay: null, deadWall });
           gameEngine.claimTurn(executingPlayerId);
         },
       },
@@ -567,7 +569,7 @@ class DianXin extends CardPak {
               const meld = [lastPlay.card, ...playerParams.closedHand].filter(
                 this.matchStaircaseStartingAt(startTile),
               );
-              const openHand = [...playerParams.openHand, meld];
+              const openHand = this.createOpenHandWith(playerParams, meld);
               const closedHand = playerParams.closedHand.filter(
                 (t: Card) => meld.findIndex((m) => m.id === t.id) === -1,
               );
@@ -575,7 +577,7 @@ class DianXin extends CardPak {
 
               // Update params
               gameEngine.updatePlayer(executingPlayerId, newPlayerParams);
-              gameEngine.updateGameParams({ lastPlay: undefined });
+              gameEngine.updateGameParams({ lastPlay: null });
               gameEngine.claimTurn(executingPlayerId);
             },
           }));
@@ -621,7 +623,7 @@ class DianXin extends CardPak {
 
           const newParams = { ...playerParams, points, closedHand: hand };
           gameEngine.updatePlayer(executingPlayerId, newParams);
-          gameEngine.updateGameParams({ lastPlay: undefined });
+          gameEngine.updateGameParams({ lastPlay: null });
           gameEngine.endGame();
         },
       },
@@ -647,10 +649,16 @@ class DianXin extends CardPak {
     gameEngine.updatePlayer(lastPlay.by, newPlayedPlayerParams);
   };
 
+  createOpenHandWith = (playerParams: any, meld: any[]) => {
+    const openHand = { ...playerParams.openHand };
+    openHand[oVal(playerParams.openHand).length] = meld;
+    return openHand;
+  };
+
   //----------------------------------#01F2DF
   //- Helper Getters
   hasAFullHand = ({ closedHand, openHand }: DianXinPlayerParams) => {
-    return closedHand.length + openHand.length * 3 >= this.FULL_HAND_SIZE;
+    return closedHand.length + oVal(openHand).length * 3 >= this.FULL_HAND_SIZE;
   };
 
   canIPeng = (
@@ -706,6 +714,10 @@ class DianXin extends CardPak {
       );
 
     return possibleChis;
+  };
+
+  getOpenHand = (player: DianXinPlayerParams) => {
+    return player.openHand ? oVal(player.openHand) : [];
   };
 
   //----------------------------------#01F2DF

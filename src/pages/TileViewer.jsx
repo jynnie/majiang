@@ -12,10 +12,9 @@ const TileViewer = ({ player }) => {
     ?.getVisualsOf(player.closedHand)
     .sort((a, b) => a.value - b.value)
     .sort((a, b) => a.params.suit < b.params.suit);
-  const openHand = player.openHand?.reduce(
-    (acc, meld) => [...acc, ...GE.pak?.getVisualsOf(meld)],
-    [],
-  );
+  const openHand = GE.pak
+    ?.getOpenHand(player)
+    .reduce((acc, meld) => [...acc, ...GE.pak?.getVisualsOf(meld)], []);
   const playedTiles = GE.pak?.getVisualsOf(player.playedTiles);
   const isMyTurn = GE.isPlayersTurn(player.id);
 
