@@ -1,7 +1,7 @@
 import expect from "expect.js";
 
-import { TILES } from "./DianXin";
-import { TileMatrix } from "../TileMatrix";
+import { TILES } from "./DianXin/DianXin";
+import { TileMatrix } from "./TileMatrix";
 
 //---------------------------------------#00D4B2
 //- Test cases
@@ -39,6 +39,14 @@ const WINNING_LONG_PAIR_HAND = [
   "liuwan",
   "qiwan",
   "bawan",
+].map((t) => TILES.find((a) => a.name === t));
+
+const WINNING_WIND_PAIR_HAND = [
+  "liuwan",
+  "wuwan",
+  "bei",
+  "bei",
+  "siwan",
 ].map((t) => TILES.find((a) => a.name === t));
 
 const FAILING_NO_PAIR_HAND = [
@@ -105,8 +113,13 @@ describe("TileMatrix", () => {
       expect(tm.isWinnable).to.be(true);
     });
 
-    it("checks winning hand with pair in honors", () => {
+    it("checks winning hand with pair in dragons", () => {
       const tm = new TileMatrix(WINNING_LONG_PAIR_HAND);
+      expect(tm.isWinnable).to.be(true);
+    });
+
+    it("checks winning hand with pair in wind", () => {
+      const tm = new TileMatrix(WINNING_WIND_PAIR_HAND);
       expect(tm.isWinnable).to.be(true);
     });
 

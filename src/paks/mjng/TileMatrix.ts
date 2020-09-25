@@ -33,14 +33,14 @@ export class TileMatrix {
     tiao: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
     tong: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
     wan: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
-    feng: { dong: 0, nan: 0, xi: 0, bei: 0 },
+    feng: { east: 0, south: 0, west: 0, north: 0 },
     long: { facai: 0, hongzhong: 0, baiban: 0 },
   };
   openHandMatrix: HandMatrix = {
     tiao: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
     tong: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
     wan: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
-    feng: { dong: 0, nan: 0, xi: 0, bei: 0 },
+    feng: { east: 0, south: 0, west: 0, north: 0 },
     long: { facai: 0, hongzhong: 0, baiban: 0 },
   };
   additionalConditions?: ConditionFunction[] = [];
@@ -68,7 +68,7 @@ export class TileMatrix {
   //----------------------------------#01F2DF
   get isWinnable() {
     const suitWithPair = this.checkTotals();
-    // console.log("👀", "Totals", totalsMatrix);
+    // console.log("👀", "Totals", suitWithPair);
     if (!suitWithPair) return false;
 
     const suitWithPairOkay = this.checkMeldsNPair(suitWithPair);
@@ -104,6 +104,7 @@ export class TileMatrix {
         tm3: suitTotal % 3 === 0,
       });
     });
+    // console.log("👀 Totals", totals);
 
     const onlyOneT2m3 = sum(totals.map((m) => m.t2m3)) === 1;
     const sumsToNumSuits =
