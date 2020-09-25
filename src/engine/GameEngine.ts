@@ -80,7 +80,7 @@ export class GameEngine {
   createRoom = (roomId?: string) => {
     if (!this.userId) return;
 
-    this.roomId = roomId || this.randomId;
+    this.roomId = typeof roomId === "string" ? roomId : this.randomId;
     this.roomRef = this.db?.collection("rooms").doc(this.roomId);
 
     this.roomRef?.set({
