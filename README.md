@@ -11,6 +11,7 @@ A web-based platform for variations of Majiang (also written Mahjong); built on 
   - [ ] Deal with conflicting X vs Hu
 - [ ] Front end beauty
 - [x] Networking to Firebase
+  - [ ] Should I be using Realtime > Firestore
 - [ ] Dealing with conflicting calls
 - [ ] Random room generation
 - [ ] Design in between screens

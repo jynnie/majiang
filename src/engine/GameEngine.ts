@@ -166,12 +166,7 @@ export class GameEngine {
     }));
 
     // Set initial gameParams
-    this.roomRef?.set(
-      {
-        gameParams: pak.rules.gameParams,
-      },
-      { merge: true },
-    );
+    this.updateGameParams(pak.rules.gameParams);
 
     if (pak.rules.turnBased) {
       this.updateGameParams({ seatTurn: 0 });
@@ -210,12 +205,14 @@ export class GameEngine {
   };
 
   subscribeToGameParams = () => {
-    const unsubscribe = this.roomRef?.onSnapshot((doc) => {
-      const data = doc.data()?.gameParams;
-      this.gameParams = data;
-      this.updateReact();
-      console.log("👀 Received new game params", this.gameParams);
-    });
+    const unsubscribe = this.roomRef
+      ?.collection("gameParams")
+      .doc("gameParams")
+      .onSnapshot((doc) => {
+        this.gameParams = doc.data();
+        this.updateReact();
+        console.log("👀 Received new game params", this.gameParams);
+      });
     return unsubscribe;
   };
 
@@ -326,12 +323,10 @@ export class GameEngine {
   //-- Helpers --//
 
   updateGameParams = (newParams: any) => {
-    const update = this.roomRef?.set(
-      {
-        gameParams: newParams,
-      },
-      { merge: true },
-    );
+    const update = this.roomRef
+      ?.collection("gameParams")
+      .doc("gameParams")
+      .set(newParams, { merge: true });
     console.log("📙 Updated Game Params", newParams);
     return update;
   };
