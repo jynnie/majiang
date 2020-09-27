@@ -7,22 +7,19 @@ export const Auth = (props) => {
   const { signOut, signInWithGoogle } = props;
 
   const handleSignIn = (res) => {
-    const usersRef = db.collection("users");
     const id = res.user.uid; // Returned from signIn() promise
-    usersRef
-      .doc(id)
-      .get()
-      .then((doc) => {
-        if (!doc.exists) {
-          // If we have no user of this uid saved
-          usersRef.doc(id).set({
-            // Create a new user document
-            uid: id,
-            displayName: res.user.displayName,
-            provider: res.credential.providerId,
-          });
-        }
-      });
+    const usersRef = db.ref("users/" + id);
+    usersRef.once("value").then((doc) => {
+      if (!doc.val()) {
+        // If we have no user of this uid saved
+        usersRef.set({
+          // Create a new user document
+          uid: id,
+          displayName: res.user.displayName,
+          provider: res.credential.providerId,
+        });
+      }
+    });
   };
 
   const handleSignInWithGoogle = () => {

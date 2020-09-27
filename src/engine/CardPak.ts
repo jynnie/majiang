@@ -33,7 +33,8 @@ class CardPak {
   }
 
   getVisualsOf = (hand: Card[]) => {
-    return hand.map((tile) => ({
+    if (!Array.isArray(hand)) return [];
+    return hand?.map((tile) => ({
       ...tile,
       visual: DianXinDefault.visualCards[tile.visualCardIndex],
     }));

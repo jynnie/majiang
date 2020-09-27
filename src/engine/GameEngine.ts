@@ -7,7 +7,7 @@
 import Paks from "../paks/Paks";
 import { Action, Card } from "./CardPakTypes";
 
-import { shuffle } from "../utils";
+import { oVal, shuffle } from "../utils";
 
 import firebase from "firebase";
 
@@ -33,8 +33,9 @@ export class GameEngine {
   players: { id: string }[] = [];
 
   localUpdater: ((val: any) => void) | null = null;
-  db?: firebase.firestore.Firestore = undefined;
-  roomRef?: firebase.firestore.DocumentReference = undefined;
+  db?: firebase.database.Database = undefined;
+  roomRef: (ref?: string) => firebase.database.Reference | undefined = () =>
+    undefined;
 
   constructor(props?: any) {
     console.log(".•˚•.Booting GameEngine˚•.•˚");
@@ -44,7 +45,7 @@ export class GameEngine {
     this.localUpdater = setUpdate;
   };
 
-  attachFirebase = (db: firebase.firestore.Firestore) => {
+  attachFirebase = (db: firebase.database.Database) => {
     this.db = db;
   };
 
@@ -77,13 +78,20 @@ export class GameEngine {
   //----------------------------------#01F2DF
   //-- No Room --//
 
+  makeRoomRef = (roomId: string) => {
+    return (ref?: string): firebase.database.Reference | undefined => {
+      if (!ref) return this.db?.ref(`rooms/${roomId}`);
+      return this.db?.ref(`rooms/${roomId}/${ref}`);
+    };
+  };
+
   createRoom = (roomId?: string) => {
     if (!this.userId) return;
 
     this.roomId = typeof roomId === "string" ? roomId : this.randomId;
-    this.roomRef = this.db?.collection("rooms").doc(this.roomId);
+    this.roomRef = this.makeRoomRef(this.roomId);
 
-    this.roomRef?.set({
+    this.roomRef()?.set({
       pakId: this.pakId,
       hostPlayerId: this.userId,
       gameEnded: null,
@@ -92,22 +100,26 @@ export class GameEngine {
     this.joinRoom(this.roomId);
   };
 
-  joinRoom = (roomId?: string) => {
+  joinRoom = async (roomId?: string) => {
+    console.log(this.userId, this.roomRef, roomId);
     if (!this.userId) return;
     if (!this.roomRef && !roomId) return;
 
-    if (!this.roomRef && roomId) {
-      this.roomRef = this.db?.collection("rooms").doc(roomId);
+    if (!this.roomRef() && roomId) {
       this.roomId = roomId;
+      this.roomRef = this.makeRoomRef(this.roomId);
     }
 
-    this.roomRef?.get().then(async (doc) => {
-      if (!doc.exists && roomId) this.createRoom(roomId);
-      else if (doc.exists && this.userId && this.username) {
-        await this.addPlayerToRoom({ id: this.userId, name: this.username });
-        this.updateReact();
-      }
-    });
+    await this.roomRef()
+      ?.once("value")
+      .then(async (doc) => {
+        const docExists = !!doc.val();
+        if (!docExists && roomId) this.createRoom(roomId);
+        else if (docExists && this.userId && this.username) {
+          await this.addPlayerToRoom({ id: this.userId, name: this.username });
+          this.updateReact();
+        }
+      });
 
     this.subscribeToPlayerParams();
     this.subscribeToGameParams();
@@ -121,10 +133,10 @@ export class GameEngine {
     // FIXME: set players to the collection snapshot
     this.players.push({ id });
 
-    return this.roomRef?.collection("players").doc(id).set({
+    return this.roomRef(`players/${id}`)?.set({
       id,
       name,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      timestamp: firebase.database.ServerValue.TIMESTAMP,
     });
   };
 
@@ -147,7 +159,6 @@ export class GameEngine {
     const pak = this.pak;
     if (!pak || !pak.rules) return;
 
-    const playerParamsRef = this.roomRef?.collection("playerParams");
     this.playerParams = await shuffle([...this.players]).map((player, i) => {
       const initialParams = {
         ...player,
@@ -155,7 +166,8 @@ export class GameEngine {
         // FIXME: Actually check player seats
         seat: i,
       };
-      playerParamsRef?.doc(player.id).set(initialParams);
+      this.updatePlayer(player.id, initialParams);
+      // this.roomRef("playerParams/" + player.id)?.set(initialParams);
       return initialParams;
     });
 
@@ -179,47 +191,37 @@ export class GameEngine {
   //-- Firebase Subscribers --//
 
   subscribeToPlayers = () => {
-    const unsubscribe = this.roomRef
-      ?.collection("players")
-      .onSnapshot((snapshot) => {
-        const data: any[] = [];
-        snapshot.forEach((doc) => data.push(doc.data()));
-        this.players = data;
-        this.updateReact();
-        console.log("👀 Received new players", this.players);
-      });
+    const unsubscribe = this.roomRef("players")?.on("value", (doc) => {
+      const data = doc.val();
+      this.players = data ? oVal(data) : [];
+      this.updateReact();
+      console.log("👀 Received new players", this.players);
+    });
     return unsubscribe;
   };
 
   subscribeToPlayerParams = () => {
-    const unsubscribe = this.roomRef
-      ?.collection("playerParams")
-      .onSnapshot((snapshot) => {
-        const data: any[] = [];
-        snapshot.forEach((doc) => data.push(doc.data()));
-        this.playerParams = data;
-        this.updateReact();
-        console.log("👀 Received new player params", this.playerParams);
-      });
+    const unsubscribe = this.roomRef("playerParams")?.on("value", (doc) => {
+      const data = doc.val();
+      this.playerParams = data ? oVal(data) : [];
+      this.updateReact();
+      console.log("👀 Received new player params", this.playerParams);
+    });
     return unsubscribe;
   };
 
   subscribeToGameParams = () => {
-    const unsubscribe = this.roomRef
-      ?.collection("gameParams")
-      .doc("gameParams")
-      .onSnapshot((doc) => {
-        this.gameParams = doc.data();
-        this.updateReact();
-        console.log("👀 Received new game params", this.gameParams);
-      });
+    const unsubscribe = this.roomRef("gameParams")?.on("value", (doc) => {
+      this.gameParams = doc.val();
+      this.updateReact();
+      console.log("👀 Received new game params", this.gameParams);
+    });
     return unsubscribe;
   };
 
   subscribeToGameEnded = () => {
-    const unsubscribe = this.roomRef?.onSnapshot((doc) => {
-      const data = doc.data()?.gameEnded;
-      this._gameEnded = data;
+    const unsubscribe = this.roomRef("gameEnded")?.on("value", (doc) => {
+      this._gameEnded = doc.val();
       this.updateReact();
       console.log("👀 Received new game ended", this._gameEnded);
     });
@@ -231,12 +233,7 @@ export class GameEngine {
   }
 
   set gameEnded(newEnd) {
-    this.roomRef?.set(
-      {
-        gameEnded: newEnd,
-      },
-      { merge: true },
-    );
+    this.roomRef("gameEnded")?.set(newEnd);
   }
 
   //----------------------------------#01F2DF
@@ -273,8 +270,12 @@ export class GameEngine {
     return this.players.find((player) => id === player.id);
   };
 
-  getPlayerParams = (id: string) => {
-    return this.playerParams.find((player: any) => id === player.id);
+  getPlayerParams = (id?: string) => {
+    if (!id) return this.pak.rules?.playerParams;
+    const storedParams = this.playerParams.find(
+      (player: any) => id === player.id,
+    );
+    return { ...this.pak.rules?.playerParams, ...storedParams };
   };
 
   isPlayersTurn = (id: string) => {
@@ -304,7 +305,7 @@ export class GameEngine {
   };
 
   get myParams() {
-    return this.playerParams.find((player: any) => this.userId === player.id);
+    return this.getPlayerParams(this.userId);
   }
 
   get lastPlayedCard() {
@@ -323,24 +324,15 @@ export class GameEngine {
   //-- Helpers --//
 
   updateGameParams = (newParams: any) => {
-    const update = this.roomRef
-      ?.collection("gameParams")
-      .doc("gameParams")
-      .set(newParams, { merge: true });
+    const update = this.roomRef("gameParams")?.update(newParams);
     console.log("📙 Updated Game Params", newParams);
     return update;
   };
 
   updatePlayer = (playerId: string, newParams: any) => {
-    const update = this.roomRef
-      ?.collection("playerParams")
-      .doc(playerId)
-      .set(
-        {
-          ...newParams,
-        },
-        { merge: true },
-      );
+    const update = this.roomRef("playerParams/" + playerId)?.update({
+      ...newParams,
+    });
     console.log("📙 Updated Player", playerId, newParams);
     return update;
   };

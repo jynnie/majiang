@@ -22,7 +22,7 @@ const firebaseAppAuth = firebaseApp.auth();
 const providers = {
   googleProvider: new firebase.auth.GoogleAuthProvider(),
 };
-const db = firebase.firestore();
+const db = firebase.database();
 export const FirebaseContext = React.createContext(null);
 
 //- Game Engine Setup
