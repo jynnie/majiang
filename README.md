@@ -9,9 +9,10 @@ This current iteration gives all clients access to other players information. Th
 - [ ] DianXin rule set
   - [x] Hu execute
   - [x] Deal with conflicting action vs Draw
-  - [ ] Deal with conflicting Peng vs Draw
-  - [ ] Deal with conflicting Peng vs Chi
-  - [ ] Deal with conflicting X vs Hu
+  - [x] Deal with conflicting Peng vs Draw
+  - [x] Deal with conflicting Peng vs Chi
+  - [x] Deal with conflicting X vs Hu
+  - [ ] What happens when no more tiles
 - [ ] Front end beauty
   - [ ] Sorting hand
   - [ ] Rearranging tiles

@@ -411,6 +411,13 @@ class DianXin extends CardPak {
       {
         name: "Peng",
         isAvailable: ({ executingPlayerId, gameEngine }) => {
+          // Deal with conflicting Hu
+          const huKing = this.canAnyoneElse("Hu", {
+            executingPlayerId,
+            gameEngine,
+          });
+          if (huKing) return false;
+
           // FIXME: switch to get myParams
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
           const lastPlay = gameEngine.gameParams?.lastPlay;
@@ -450,11 +457,18 @@ class DianXin extends CardPak {
       {
         name: "An Gang",
         isAvailable: ({ executingPlayerId, gameEngine }) => {
+          // Deal with conflicting Hu
+          const huKing = this.canAnyoneElse("Hu", {
+            executingPlayerId,
+            gameEngine,
+          });
+          if (huKing) return false;
+
           // FIXME: switch to get myParams
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
           const isMyTurn = gameEngine.isPlayersTurn(executingPlayerId);
-          const makesAMeld = this.canIAnGang(playerParams);
           const alreadySkipped = playerParams.skipped;
+          const makesAMeld = this.canIAnGang(playerParams);
           if (makesAMeld.length === 0 || !isMyTurn || alreadySkipped)
             return false;
 
@@ -496,6 +510,13 @@ class DianXin extends CardPak {
       {
         name: "Gang",
         isAvailable: ({ executingPlayerId, gameEngine }) => {
+          // Deal with conflicting Hu
+          const huKing = this.canAnyoneElse("Hu", {
+            executingPlayerId,
+            gameEngine,
+          });
+          if (huKing) return false;
+
           // FIXME: switch to get myParams
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
           const lastPlay = gameEngine.gameParams?.lastPlay;
@@ -540,12 +561,26 @@ class DianXin extends CardPak {
       {
         name: "Chi",
         isAvailable: ({ executingPlayerId, gameEngine }) => {
+          // Deal with conflicting Hu
+          const huKing = this.canAnyoneElse("Hu", {
+            executingPlayerId,
+            gameEngine,
+          });
+          if (huKing) return false;
+
           const lastPlay = gameEngine.gameParams?.lastPlay;
           if (!lastPlay) return false;
 
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
           const alreadySkipped = playerParams.skipped;
           if (alreadySkipped) return false;
+
+          // Deal with conflicting Peng
+          const pengKing = this.canAnyoneElse("Peng", {
+            executingPlayerId,
+            gameEngine,
+          });
+          if (pengKing) return false;
 
           // You can't chi after you've already drawn
           const hasFullHand = this.hasAFullHand(playerParams);
@@ -768,8 +803,8 @@ class DianXin extends CardPak {
     const searchActions = this.rules.playerActions.filter(
       (a) => !ignoreTheseActions.includes(a.name),
     );
-    const availableActions: Action[] = [];
 
+    const availableActions: Action[] = [];
     searchActions?.forEach((action) => {
       const isAvailable = action.isAvailable({
         executingPlayerId,
@@ -799,6 +834,27 @@ class DianXin extends CardPak {
         return actions.length === 0 || skipped;
       });
     return sum(playersReady) === players.length - 1;
+  };
+
+  canAnyoneElse = (
+    actionName: string,
+    { executingPlayerId, gameEngine }: ActionParams,
+  ) => {
+    const players: InitializedPlayerParam[] = gameEngine.playerParams;
+    if (!players) return null;
+
+    const action = this.rules.playerActions.find((a) => a.name === actionName);
+    const playersThatCan = players
+      .filter((p) => p.id !== executingPlayerId)
+      .map((p) => {
+        const isAvailable = action?.isAvailable({
+          executingPlayerId: p.id,
+          gameEngine,
+        });
+        const skipped = p.skipped;
+        return isAvailable && !skipped;
+      });
+    return sum(playersThatCan) > 0;
   };
 
   //----------------------------------#01F2DF

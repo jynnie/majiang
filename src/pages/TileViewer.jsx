@@ -22,7 +22,7 @@ const TileViewer = ({ player }) => {
 
   return (
     <Box borderTop="1px solid cadetblue" marginTop={24}>
-      Player: {player.id} {isMyTurn && "👋🏼"}
+      Player: {player.id} {player.seat} {isMyTurn && "👋🏼"}
       <Box>
         {availableActions.map((action) => (
           <button
