@@ -101,7 +101,6 @@ export class GameEngine {
   };
 
   joinRoom = async (roomId?: string) => {
-    console.log(this.userId, this.roomRef, roomId);
     if (!this.userId) return;
     if (!this.roomRef && !roomId) return;
 
@@ -129,9 +128,6 @@ export class GameEngine {
 
   addPlayerToRoom = async ({ id, name }: { id: string; name: string }) => {
     if (!this.roomRef) return;
-
-    // FIXME: set players to the collection snapshot
-    this.players.push({ id });
 
     return this.roomRef(`players/${id}`)?.set({
       id,

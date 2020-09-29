@@ -14,7 +14,7 @@ import {
   ActionParams,
 } from "../../../engine/CardPakTypes";
 
-import { oVal } from "../../../utils";
+import { oVal, sum } from "../../../utils";
 
 import { TileMatrix } from "../TileMatrix";
 
@@ -265,10 +265,15 @@ export interface Tile extends Card {
 
 interface DianXinPlayerParams {
   closedHand: Tile[];
-  // FIXME: Nested arrays are not supported
   openHand: { [key: string]: Tile[] };
   playedTiles: Tile[];
   points: number;
+  skipped: boolean;
+}
+
+interface InitializedPlayerParam extends DianXinPlayerParams {
+  id: string;
+  name: string;
 }
 
 interface DianXinGameParams {
@@ -305,21 +310,14 @@ class DianXin extends CardPak {
       openHand: {}, // Array of tiles open to be seen, grouped by meld
       playedTiles: [],
       points: 0,
+      skipped: false,
     },
 
     onGameStart: (gameEngine) => {
-      // FIXME: Unseed hand
       const shuffledDeck = this.shuffledDeck.map((tile) => ({
         ...tile,
         params: tile.defaultParams,
       }));
-      // const shuffledDeck = this.deck.cards
-      //   .map((tile) => ({
-      //     ...tile,
-      //     params: tile.defaultParams,
-      //   }))
-      //   .sort((a, b) => (a.params.suit < b.params.suit ? 1 : 0))
-      //   .sort((a, b) => Number(a.value) - Number(b.value));
 
       // Deal tiles to walls
       const deadWallStart = shuffledDeck.length - 14;
@@ -344,8 +342,6 @@ class DianXin extends CardPak {
     onGameEnd: () => {},
     onCardClick: ({ executingPlayerId, card, gameEngine }) => {
       if (!executingPlayerId) return;
-
-      // TODO: Should cardClick also handle Peng etc?
 
       // FIXME: switch to get isMyTurn
       const isMyTurn = gameEngine.isPlayersTurn(executingPlayerId);
@@ -385,10 +381,14 @@ class DianXin extends CardPak {
           const isMyTurn = gameEngine.isPlayersTurn(executingPlayerId);
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
 
-          // FIXME: Need to also check the openHand
           const hasAFullHand = this.hasAFullHand(playerParams);
 
-          if (!isMyTurn || hasAFullHand) return false;
+          const awaitingNoOne = this.onlyMyActionOrEveryoneSkipped({
+            executingPlayerId,
+            gameEngine,
+          });
+
+          if (!isMyTurn || hasAFullHand || !awaitingNoOne) return false;
           return true;
         },
         onExecute: ({ executingPlayerId, gameEngine }) => {
@@ -398,8 +398,9 @@ class DianXin extends CardPak {
           const drawnTile = wall.shift();
           const closedHand = [...playerParams.closedHand, drawnTile];
 
-          const newPlayerParams = { ...playerParams, closedHand };
+          const newPlayerParams = { closedHand };
 
+          this.resetSkips(gameEngine);
           gameEngine.updateGameParams({ wall });
           gameEngine.updatePlayer(executingPlayerId, newPlayerParams);
           gameEngine.updateReact();
@@ -415,8 +416,9 @@ class DianXin extends CardPak {
           const lastPlay = gameEngine.gameParams?.lastPlay;
           const makesAMeld = this.canIPeng(playerParams, lastPlay);
           const hasFullHand = this.hasAFullHand(playerParams);
+          const alreadySkipped = playerParams.skipped;
 
-          return makesAMeld && !hasFullHand;
+          return makesAMeld && !hasFullHand && !alreadySkipped;
         },
         onExecute: ({ executingPlayerId, gameEngine }) => {
           const lastPlay = gameEngine.gameParams?.lastPlay;
@@ -434,16 +436,17 @@ class DianXin extends CardPak {
           const closedHand = playerParams.closedHand.filter(
             (t: Card) => meld.findIndex((m) => m.id === t.id) === -1,
           );
-          const newPlayerParams = { ...playerParams, openHand, closedHand };
+          const newPlayerParams = { openHand, closedHand };
 
           // Update params
+          this.resetSkips(gameEngine);
           gameEngine.updatePlayer(executingPlayerId, newPlayerParams);
           gameEngine.updateGameParams({ lastPlay: null });
           gameEngine.claimTurn(executingPlayerId);
         },
       },
       //----------------------------------#01F2DF
-      //- Gang
+      //- An Gang
       {
         name: "An Gang",
         isAvailable: ({ executingPlayerId, gameEngine }) => {
@@ -451,7 +454,9 @@ class DianXin extends CardPak {
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
           const isMyTurn = gameEngine.isPlayersTurn(executingPlayerId);
           const makesAMeld = this.canIAnGang(playerParams);
-          if (makesAMeld.length === 0 || !isMyTurn) return false;
+          const alreadySkipped = playerParams.skipped;
+          if (makesAMeld.length === 0 || !isMyTurn || alreadySkipped)
+            return false;
 
           const availableMelds: Action[] = makesAMeld.map((tile) => ({
             name: `An Gang ${tile.name}`,
@@ -474,9 +479,10 @@ class DianXin extends CardPak {
               const deadWall: Card[] = gameEngine.gameParams?.deadWall;
               const drawnTile = deadWall.shift();
               closedHand.push(drawnTile);
-              const newPlayerParams = { ...playerParams, openHand, closedHand };
+              const newPlayerParams = { openHand, closedHand };
 
               // Update params
+              this.resetSkips(gameEngine);
               gameEngine.updatePlayer(executingPlayerId, newPlayerParams);
               gameEngine.claimTurn(executingPlayerId);
             },
@@ -486,7 +492,7 @@ class DianXin extends CardPak {
         onExecute: () => {},
       },
       //----------------------------------#01F2DF
-      //- An Gang
+      //- Gang
       {
         name: "Gang",
         isAvailable: ({ executingPlayerId, gameEngine }) => {
@@ -495,8 +501,9 @@ class DianXin extends CardPak {
           const lastPlay = gameEngine.gameParams?.lastPlay;
           const makesAMeld = this.canIGang(playerParams, lastPlay);
           const hasFullHand = this.hasAFullHand(playerParams);
+          const alreadySkipped = playerParams.skipped;
 
-          return makesAMeld && !hasFullHand;
+          return makesAMeld && !hasFullHand && !alreadySkipped;
         },
         onExecute: ({ executingPlayerId, gameEngine }) => {
           const lastPlay = gameEngine.gameParams?.lastPlay;
@@ -519,9 +526,10 @@ class DianXin extends CardPak {
           const deadWall: Card[] = gameEngine.gameParams?.deadWall;
           const drawnTile = deadWall.shift();
           closedHand.push(drawnTile);
-          const newPlayerParams = { ...playerParams, openHand, closedHand };
+          const newPlayerParams = { openHand, closedHand };
 
           // Update params
+          this.resetSkips(gameEngine);
           gameEngine.updatePlayer(executingPlayerId, newPlayerParams);
           gameEngine.updateGameParams({ lastPlay: null, deadWall });
           gameEngine.claimTurn(executingPlayerId);
@@ -535,8 +543,11 @@ class DianXin extends CardPak {
           const lastPlay = gameEngine.gameParams?.lastPlay;
           if (!lastPlay) return false;
 
-          // You can't chi after you've already drawn
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
+          const alreadySkipped = playerParams.skipped;
+          if (alreadySkipped) return false;
+
+          // You can't chi after you've already drawn
           const hasFullHand = this.hasAFullHand(playerParams);
           if (hasFullHand) return false;
 
@@ -573,14 +584,16 @@ class DianXin extends CardPak {
               const closedHand = playerParams.closedHand.filter(
                 (t: Card) => meld.findIndex((m) => m.id === t.id) === -1,
               );
-              const newPlayerParams = { ...playerParams, openHand, closedHand };
+              const newPlayerParams = { openHand, closedHand };
 
               // Update params
+              this.resetSkips(gameEngine);
               gameEngine.updatePlayer(executingPlayerId, newPlayerParams);
               gameEngine.updateGameParams({ lastPlay: null });
               gameEngine.claimTurn(executingPlayerId);
             },
           }));
+          if (availableMelds.length === 0) return false;
           return availableMelds;
         },
         onExecute: () => {},
@@ -594,6 +607,8 @@ class DianXin extends CardPak {
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
           const hasFullHand = this.hasAFullHand(playerParams);
           const lastPlay = gameEngine.gameParams?.lastPlay;
+          const alreadySkipped = playerParams.skipped;
+          if (alreadySkipped) return false;
 
           let hand: Tile[] = [];
 
@@ -620,11 +635,33 @@ class DianXin extends CardPak {
           else hand = [lastPlay.card, ...playerParams.closedHand];
 
           const points = playerParams.points + 1;
+          const newParams = { points, closedHand: hand };
 
-          const newParams = { ...playerParams, points, closedHand: hand };
+          this.resetSkips(gameEngine);
           gameEngine.updatePlayer(executingPlayerId, newParams);
           gameEngine.updateGameParams({ lastPlay: null });
           gameEngine.endGame();
+        },
+      },
+      //----------------------------------#01F2DF
+      //- Skip
+      {
+        name: "Skip",
+        isAvailable: ({ executingPlayerId, gameEngine }) => {
+          const playerParams = gameEngine.getPlayerParams(executingPlayerId);
+          const isMyTurn = gameEngine.isPlayersTurn(executingPlayerId);
+          const alreadySkipped = playerParams.skipped;
+          const actions = this.getAvailableActions({
+            executingPlayerId,
+            gameEngine,
+          });
+          const hasAvailableActions = actions.length > 0;
+
+          if (alreadySkipped || !hasAvailableActions || isMyTurn) return false;
+          return true;
+        },
+        onExecute: ({ executingPlayerId, gameEngine }) => {
+          gameEngine.updatePlayer(executingPlayerId, { skipped: true });
         },
       },
     ],
@@ -638,6 +675,12 @@ class DianXin extends CardPak {
 
   //----------------------------------#01F2DF
   //- Helper Setters
+  resetSkips = (gameEngine: ActionParams["gameEngine"]) => {
+    gameEngine.players.forEach((player) =>
+      gameEngine.updatePlayer(player.id, { skipped: false }),
+    );
+  };
+
   removeLastPlayedTile = ({ gameEngine }: ActionParams) => {
     const lastPlay = gameEngine.gameParams?.lastPlay;
 
@@ -718,6 +761,44 @@ class DianXin extends CardPak {
 
   getOpenHand = (player: DianXinPlayerParams) => {
     return player.openHand ? oVal(player.openHand) : [];
+  };
+
+  getAvailableActions = ({ executingPlayerId, gameEngine }: ActionParams) => {
+    const ignoreTheseActions = ["Skip", "Draw"];
+    const searchActions = this.rules.playerActions.filter(
+      (a) => !ignoreTheseActions.includes(a.name),
+    );
+    const availableActions: Action[] = [];
+
+    searchActions?.forEach((action) => {
+      const isAvailable = action.isAvailable({
+        executingPlayerId,
+        gameEngine,
+      });
+      if (isAvailable) availableActions.push(action);
+    });
+
+    return availableActions;
+  };
+
+  onlyMyActionOrEveryoneSkipped = ({
+    executingPlayerId,
+    gameEngine,
+  }: ActionParams) => {
+    const players: InitializedPlayerParam[] = gameEngine.playerParams;
+    if (!players) return null;
+
+    const playersReady = players
+      .filter((p) => p.id !== executingPlayerId)
+      .map((p) => {
+        const actions = this.getAvailableActions({
+          executingPlayerId: p.id,
+          gameEngine,
+        });
+        const skipped = p.skipped;
+        return actions.length === 0 || skipped;
+      });
+    return sum(playersReady) === players.length - 1;
   };
 
   //----------------------------------#01F2DF
