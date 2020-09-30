@@ -2,17 +2,28 @@
   --tile-width: 42px;
   --tile-height: calc(var(--tile-width) * 4 / 3);
   --tile-depth: calc(var(--tile-width) * 1 / 2);
+
+  --glowShadow: 0px 8px 7px #4753fc1f;
+  --glowShadow-raised: 0px 20px 7px #4753fc14;
 }
 
 .PlayTile-container {
   display: inline-block;
   position: relative;
-  transition: all 1s;
+  transition: all 0.32s;
 
   border: 1px solid var(--ink);
   background: var(--ink);
+  box-shadow: var(--glowShadow);
 
   cursor: pointer;
+}
+
+/*------ HOVER STYLES ------*/
+.PlayTile-container:hover {
+  box-shadow: var(--glowShadow-raised);
+  transform: translateY(-12px);
+  transition: all 0.54s;
 }
 
 /*------ TILE LAYERS ------*/
