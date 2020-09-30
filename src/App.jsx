@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Auth from "./components/Auth";
 import HomePage from "./pages/HomePage";
 import LobbyPage from "./pages/LobbyPage";
-import GamePage from "./pages/GamePage";
+import GamePage from "./pages/InGame/InGame";
 import "./App.css";
 
 //- Game Engine

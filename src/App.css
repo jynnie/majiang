@@ -1,2 +1,38 @@
+/*------ FONT IMPORTS  ------*/
+@import url("https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@600&family=Space+Mono:wght@400;700&display=swap");
+@font-face {
+  font-family: "Source Han Serif";
+  src: url("/public/SourceHanSerifTC-Regular.otf");
+  font-weight: normal;
+}
+@font-face {
+  font-family: "Source Han Serif";
+  src: url("/public/SourceHanSerifTC-SemiBold.otf");
+  font-weight: bold;
+}
+
+/*------ COLOR DECLARATIONS  ------*/
+/* prettier-ignore */
+:root {
+  --gold:   #cf8600;
+  --poppy:  #ac391b;
+  --ink:    #262c86;
+  --liquid: #07a7a1;
+  --lily:   #6fa38c;
+  --jade:   #3a8227;
+  --white:  #ffffff;
+  --paper:  #f1efec;
+  --ash:    #515151;
+}
+/* end prettier ignore */
+
 @media (prefers-reduced-motion: no-preference) {
+}
+
+/*------ BASIC BODY STYLES  ------*/
+body {
+  font-family: "Space Mono", monospace;
+  color: var(--ink);
+
+  background-color: var(--paper);
 }

@@ -1,0 +1,43 @@
+.PlayTile-container {
+  --tile-width: 42px;
+  --tile-height: calc(var(--tile-width) * 4 / 3);
+  --tile-depth: calc(var(--tile-width) * 1 / 2);
+}
+
+.PlayTile-container {
+  display: inline-block;
+  position: relative;
+  transition: all 1s;
+
+  border: 1px solid var(--ink);
+  background: var(--ink);
+
+  cursor: pointer;
+}
+
+/*------ TILE LAYERS ------*/
+.PlayTile-front {
+  background-color: var(--white);
+  background-position: center;
+  background-size: cover;
+
+  position: absolute;
+  top: 18%;
+}
+
+.PlayTile-top {
+  background: linear-gradient(180deg, #c8cbff -3.28%, var(--white) 13.93%);
+
+  position: absolute;
+  top: 9%;
+}
+
+.PlayTile-back {
+  background-color: var(--ink);
+}
+
+/*------ TILE HELPERS ------*/
+.PlayTile-side {
+  width: 100%;
+  height: calc(84.75% - 2px);
+}

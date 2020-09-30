@@ -1,0 +1,15 @@
+.OpenTile-container {
+  display: inline-block;
+  position: relative;
+  transition: all 1s;
+
+  border: 1px solid var(--ink);
+  background-position: center;
+  background-size: cover;
+
+  cursor: pointer;
+}
+
+.OpenTile-container.selected {
+  background-color: var(--white);
+}

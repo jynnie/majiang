@@ -1,0 +1,11 @@
+.ClosedTile-container {
+  display: inline-block;
+  position: relative;
+  transition: all 1s;
+
+  border: 1px solid var(--ink);
+  background-color: var(--ink);
+  opacity: 20%;
+
+  cursor: pointer;
+}
