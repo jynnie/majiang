@@ -4,6 +4,7 @@ import Box from "ui-box";
 import { EngineContext } from "../../../App";
 
 import Tile from "../../../components/Tile/Tile";
+import Seat from "../../../components/Seat/Seat";
 
 const TileViewer = ({ player }) => {
   const { GE } = useContext(EngineContext);
@@ -40,19 +41,21 @@ const TileViewer = ({ player }) => {
       </Box>
       <Box>
         <Box>Closed hand</Box>
-        {closedHand.map((tile, i) => (
-          <Tile
-            face={tile.visual}
-            key={i}
-            onClick={() =>
-              GE.pak.rules.onCardClick({
-                executingPlayerId: player.id,
-                card: tile,
-                gameEngine: GE,
-              })
-            }
-          />
-        ))}
+        <Seat>
+          {closedHand.map((tile, i) => (
+            <Tile
+              face={tile.visual}
+              key={i}
+              onClick={() =>
+                GE.pak.rules.onCardClick({
+                  executingPlayerId: player.id,
+                  card: tile,
+                  gameEngine: GE,
+                })
+              }
+            />
+          ))}
+        </Seat>
       </Box>
       <Box>
         <Box>Open hand</Box>

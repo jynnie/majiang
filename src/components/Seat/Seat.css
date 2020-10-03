@@ -1,0 +1,212 @@
+.Seat-tray {
+  --tray-short-side: calc(var(--square-size) * 0.08);
+
+  position: relative;
+
+  border: 1px solid var(--ink);
+}
+
+.Seat-top,
+.Seat-bottom {
+  width: var(--square-size);
+  height: var(--tray-short-side);
+}
+
+.Seat-left,
+.Seat-right {
+  width: var(--tray-short-side);
+  height: var(--square-size);
+}
+
+/*------ SEAT TILES #01F2DF ------*/
+.Seat-tiles {
+  position: absolute;
+  display: flex;
+  align-items: flex-end;
+}
+
+.Seat-left .Seat-tiles,
+.Seat-right .Seat-tiles {
+  width: 42%;
+  margin: 1%;
+
+  left: 50%;
+  transform: translateX(-50%);
+}
+.Seat-top .Seat-tiles,
+.Seat-bottom .Seat-tiles {
+  height: 42%;
+  margin: 1%;
+
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.Seat-bottom .Seat-tiles {
+  left: 0;
+}
+.Seat-top .Seat-tiles {
+  right: 0;
+}
+.Seat-right .Seat-tiles {
+  bottom: 0;
+}
+.Seat-left .Seat-tiles {
+  top: 0;
+}
+
+/*------ SEAT WIND #01F2DF ------*/
+.Seat-wind {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--ink);
+  font-family: "Space Mono";
+  font-size: calc(var(--tray-short-side) * 0.25);
+}
+
+.Seat-left .Seat-wind,
+.Seat-right .Seat-wind {
+  writing-mode: vertical-lr;
+  text-orientation: upright;
+}
+.Seat-left .Seat-wind-EN,
+.Seat-right .Seat-wind-EN {
+  letter-spacing: -0.32em;
+}
+
+.Seat-bottom .Seat-wind {
+  top: 103%;
+  left: 0;
+  right: 3%;
+  flex-direction: row;
+}
+.Seat-top .Seat-wind {
+  bottom: 103%;
+  left: 3%;
+  right: 0;
+  flex-direction: row-reverse;
+}
+.Seat-right .Seat-wind {
+  left: 107%;
+  top: 3%;
+  bottom: 0;
+  flex-direction: row-reverse;
+}
+.Seat-left .Seat-wind {
+  right: 107%;
+  top: 0;
+  bottom: 3%;
+  flex-direction: row;
+}
+
+.Seat-wind-line {
+  flex: 1;
+  border-top: 1px solid var(--ink);
+  border-right: 1px solid var(--ink);
+}
+
+.Seat-bottom .Seat-wind-line {
+  height: 0;
+  margin-right: 8px;
+}
+.Seat-top .Seat-wind-line {
+  height: 0;
+  margin-left: 8px;
+}
+.Seat-right .Seat-wind-line {
+  width: 0;
+  margin-top: 8px;
+}
+.Seat-left .Seat-wind-line {
+  width: 0;
+  margin-bottom: 8px;
+}
+
+/*------ SEAT TILE NUMBER #01F2DF ------*/
+.Seat-tileNumber {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--paper);
+  background-color: var(--ink);
+
+  font-family: "Space Mono";
+  font-size: calc(var(--tray-short-side) * 0.2);
+}
+
+.Seat-left .Seat-tileNumber,
+.Seat-right .Seat-tileNumber {
+  width: var(--tray-short-side);
+  height: 3%;
+
+  left: 50%;
+  transform: translateX(-50%);
+}
+.Seat-top .Seat-tileNumber,
+.Seat-bottom .Seat-tileNumber {
+  flex-direction: column;
+  width: 3%;
+  height: var(--tray-short-side);
+
+  top: 50%;
+  transform: translateY(-50%);
+}
+.Seat-bottom .Seat-tileNumber {
+  right: 0%;
+}
+.Seat-top .Seat-tileNumber {
+  left: 0%;
+}
+.Seat-right .Seat-tileNumber {
+  top: 0%;
+}
+.Seat-left .Seat-tileNumber {
+  bottom: 0%;
+}
+
+.Seat-top .Seat-tileNumber-slash,
+.Seat-bottom .Seat-tileNumber-slash {
+  text-orientation: mixed;
+  writing-mode: vertical-lr;
+}
+
+/*------ SEAT NAME #01F2DF ------*/
+.Seat-name {
+  position: absolute;
+
+  font-family: "Space Mono";
+  font-size: calc(var(--tray-short-side) * 0.4);
+}
+
+.Seat-left .Seat-name,
+.Seat-right .Seat-name {
+  left: 50%;
+  transform: translateX(-50%);
+
+  writing-mode: vertical-lr;
+  text-orientation: upright;
+  letter-spacing: -0.32em;
+}
+.Seat-top .Seat-name,
+.Seat-bottom .Seat-name {
+  top: 50%;
+  transform: translateY(-50%);
+  letter-spacing: 0.12em;
+}
+.Seat-bottom .Seat-name {
+  right: 5%;
+}
+.Seat-top .Seat-name {
+  left: 5%;
+}
+.Seat-right .Seat-name {
+  top: 5%;
+}
+.Seat-left .Seat-name {
+  bottom: 5%;
+}

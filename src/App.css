@@ -29,6 +29,18 @@
 @media (prefers-reduced-motion: no-preference) {
 }
 
+/*------ SQUARE SIZE  ------*/
+@media (orientation: landscape) {
+  :root {
+    --square-size: 90vh;
+  }
+}
+@media (orientation: portrait) {
+  :root {
+    --square-size: 90vw;
+  }
+}
+
 /*------ BASIC BODY STYLES  ------*/
 body {
   font-family: "Space Mono", monospace;
