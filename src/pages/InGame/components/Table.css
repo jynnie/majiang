@@ -1,0 +1,33 @@
+.Table {
+  --width: calc(var(--square-size) * 1.25);
+  --height: calc(var(--square-size) * 1.16);
+
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: var(--width);
+  height: var(--height);
+  margin: auto;
+
+  top: calc(50vh - (var(--height) / 2));
+  left: calc(50vw - (var(--width) / 2));
+}
+
+.Player {
+  position: absolute;
+}
+
+.Table .Player-bottom {
+  bottom: 0;
+}
+.Table .Player-top {
+  top: 0;
+}
+.Table .Player-left {
+  left: 0;
+}
+.Table .Player-right {
+  right: 0;
+}

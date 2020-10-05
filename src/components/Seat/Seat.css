@@ -22,27 +22,33 @@
 .Seat-tiles {
   position: absolute;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
 }
 
 .Seat-left .Seat-tiles,
 .Seat-right .Seat-tiles {
-  width: 42%;
-  margin: 1%;
+  flex-direction: column;
+  width: min-content;
+  margin: calc(var(--square-size) * 0.01);
 
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-100%);
 }
 .Seat-top .Seat-tiles,
 .Seat-bottom .Seat-tiles {
-  height: 42%;
-  margin: 1%;
+  height: min-content;
+  margin: calc(var(--square-size) * 0.01);
 
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(-100%);
 }
 
 .Seat-bottom .Seat-tiles {
+  height: 42%;
+  width: unset;
+  align-items: flex-end;
+  transform: translateY(-50%);
   left: 0;
 }
 .Seat-top .Seat-tiles {
@@ -53,6 +59,46 @@
 }
 .Seat-left .Seat-tiles {
   top: 0;
+}
+
+/*------ SEAT OPEN TILES #01F2DF ------*/
+.Seat-openTiles {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  image-rendering: optimizespeed;
+
+  --gap: calc(var(--square-size) * 0.03);
+}
+
+.Seat-bottom .Seat-openTiles {
+  right: var(--gap);
+  bottom: var(--tray-short-side);
+}
+.Seat-top .Seat-openTiles {
+  left: var(--gap);
+  top: var(--tray-short-side);
+}
+.Seat-right .Seat-openTiles {
+  top: var(--gap);
+  right: var(--tray-short-side);
+
+  transform: rotate(90deg);
+  transform-origin: center bottom;
+}
+.Seat-left .Seat-openTiles {
+  bottom: var(--gap);
+  left: var(--tray-short-side);
+
+  transform: rotate(90deg);
+  transform-origin: center top;
+}
+
+.Seat-meld {
+  display: flex;
+  margin: 4px;
 }
 
 /*------ SEAT WIND #01F2DF ------*/
@@ -142,7 +188,7 @@
 .Seat-left .Seat-tileNumber,
 .Seat-right .Seat-tileNumber {
   width: var(--tray-short-side);
-  height: 3%;
+  height: calc(var(--square-size) * 0.03);
 
   left: 50%;
   transform: translateX(-50%);
@@ -150,23 +196,23 @@
 .Seat-top .Seat-tileNumber,
 .Seat-bottom .Seat-tileNumber {
   flex-direction: column;
-  width: 3%;
+  width: calc(var(--square-size) * 0.03);
   height: var(--tray-short-side);
 
   top: 50%;
   transform: translateY(-50%);
 }
 .Seat-bottom .Seat-tileNumber {
-  right: 0%;
+  right: -1px;
 }
 .Seat-top .Seat-tileNumber {
-  left: 0%;
+  left: -1px;
 }
 .Seat-right .Seat-tileNumber {
-  top: 0%;
+  top: -1px;
 }
 .Seat-left .Seat-tileNumber {
-  bottom: 0%;
+  bottom: -1px;
 }
 
 .Seat-top .Seat-tileNumber-slash,
@@ -181,6 +227,7 @@
 
   font-family: "Space Mono";
   font-size: calc(var(--tray-short-side) * 0.4);
+  text-transform: lowercase;
 }
 
 .Seat-left .Seat-name,

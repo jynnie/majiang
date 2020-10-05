@@ -1,5 +1,6 @@
 import React from "react";
 import Box from "ui-box";
+import classnames from "classnames";
 
 import "./ClosedTile.css";
 
@@ -9,10 +10,11 @@ export const ClosedTile = ({ width = 42, vertical = false, ...props }) => {
 
   return (
     <Box
-      className="ClosedTile-container Tile-borderRadius"
+      className={classnames("ClosedTile-container", "Tile-borderRadius", {
+        "ClosedTile-vertical": vertical,
+      })}
       width={tileWidth}
       height={tileHeight}
-      tabIndex="0"
       {...props}
     />
   );

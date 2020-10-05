@@ -1,7 +1,7 @@
 .PlayTile-container {
-  --tile-width: 42px;
+  --tile-width: calc(var(--square-size) * 0.06208);
   --tile-height: calc(var(--tile-width) * 4 / 3);
-  --tile-depth: calc(var(--tile-width) * 1 / 2);
+  --tile-container-height: calc(var(--tile-height) * 1.18);
 
   --glowShadow: 0px 8px 7px #4753fc1f;
   --glowShadow-raised: 0px 20px 7px #4753fc14;
@@ -11,6 +11,9 @@
   display: inline-block;
   position: relative;
   transition: all 0.32s;
+
+  width: var(--tile-width);
+  height: var(--tile-container-height);
 
   border: 1px solid var(--ink);
   background: var(--ink);
@@ -50,5 +53,5 @@
 /*------ TILE HELPERS ------*/
 .PlayTile-side {
   width: 100%;
-  height: calc(84.75% - 2px);
+  height: calc(85% - 2px);
 }

@@ -304,6 +304,10 @@ export class GameEngine {
     return this.getPlayerParams(this.userId);
   }
 
+  get mySeat() {
+    return this.getPlayerParams(this.userId).seat;
+  }
+
   get lastPlayedCard() {
     return this.gameParams.lastPlay;
   }

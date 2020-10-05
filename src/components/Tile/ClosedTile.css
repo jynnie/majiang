@@ -1,11 +1,22 @@
 .ClosedTile-container {
+  --tile-width: calc(var(--square-size) * 0.05908);
+  --tile-height: calc(var(--tile-width) * 0.35);
+}
+
+.ClosedTile-container {
   display: inline-block;
   position: relative;
   transition: all 1s;
 
+  width: var(--tile-width);
+  height: var(--tile-height);
+
   border: 1px solid var(--ink);
   background-color: var(--ink);
   opacity: 20%;
+}
 
-  cursor: pointer;
+.ClosedTile-vertical {
+  width: var(--tile-height);
+  height: var(--tile-width);
 }

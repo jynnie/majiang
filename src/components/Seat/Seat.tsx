@@ -1,6 +1,8 @@
 import React from "react";
 import Box from "ui-box";
 
+import Tile from "../Tile/Tile";
+
 import "./Seat.css";
 
 export enum Orientation {
@@ -8,6 +10,18 @@ export enum Orientation {
   B = "bottom",
   R = "right",
   L = "left",
+}
+
+interface SeatProps {
+  isSelf: boolean;
+  orientation: Orientation;
+  name: string;
+  seat: number;
+  tiles: any[];
+  closedHand: any[];
+  openHand: any[][];
+  onTileClick: (tile: any) => {};
+  props: any;
 }
 
 const SeatToWind: { [key: number]: string } = {
@@ -25,18 +39,16 @@ const WindChinese: { [key: string]: string } = {
 };
 
 export const Seat = ({
+  isSelf = false,
   orientation = Orientation.B,
   name = "anonymous",
   seat = 0,
-  children,
+  tiles = [],
+  closedHand = [],
+  openHand = [],
+  onTileClick,
   ...props
-}: {
-  orientation: Orientation;
-  name: string;
-  seat: number;
-  children: any;
-  props: any;
-}) => {
+}: SeatProps) => {
   const wind = SeatToWind[seat];
   const windCN = WindChinese[wind];
 
@@ -44,16 +56,39 @@ export const Seat = ({
     <Box className={"Seat-tray Seat-" + orientation} {...props}>
       <Box className="Seat-name">{name}</Box>
       <Box className="Seat-tileNumber">
-        <span>0</span>
+        <span>{closedHand.length}</span>
         <span className="Seat-tileNumber-slash">/</span>
         <span>14</span>
       </Box>
-      <Box className="Seat-tiles">{children}</Box>
       <Box className="Seat-wind">
         <Box className="Seat-wind-line" />
         <span>
           <span className="Seat-wind-EN">{wind}</span>「{windCN}」
         </span>
+      </Box>
+
+      <Box className="Seat-tiles">
+        {closedHand.map((tile, i) => (
+          <Tile
+            key={i}
+            closed={!isSelf}
+            face={tile.visual}
+            // FIXME: Only onClick if isSelf
+            onClick={() => onTileClick(tile)}
+            vertical={[Orientation.L, Orientation.R].includes(orientation)}
+            margin={!isSelf && 1}
+          />
+        ))}
+      </Box>
+
+      <Box className="Seat-openTiles">
+        {openHand.map((meld) => (
+          <Box className="Seat-meld">
+            {meld.map((tile) => (
+              <Tile open key={tile.id} face={tile.visual} />
+            ))}
+          </Box>
+        ))}
       </Box>
     </Box>
   );

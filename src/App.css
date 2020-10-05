@@ -32,12 +32,12 @@
 /*------ SQUARE SIZE  ------*/
 @media (orientation: landscape) {
   :root {
-    --square-size: 90vh;
+    --square-size: 76vh;
   }
 }
 @media (orientation: portrait) {
   :root {
-    --square-size: 90vw;
+    --square-size: 72vw;
   }
 }
 
@@ -46,5 +46,16 @@ body {
   font-family: "Space Mono", monospace;
   color: var(--ink);
 
+  overflow: hidden;
   background-color: var(--paper);
+}
+
+#root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
