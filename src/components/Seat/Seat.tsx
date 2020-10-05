@@ -2,6 +2,7 @@ import React from "react";
 import Box from "ui-box";
 
 import Tile from "../Tile/Tile";
+import { WindChinese } from "../../components/ZhongWenHelpers";
 
 import "./Seat.css";
 
@@ -29,13 +30,6 @@ const SeatToWind: { [key: number]: string } = {
   1: "south",
   2: "west",
   3: "north",
-};
-
-const WindChinese: { [key: string]: string } = {
-  east: "東",
-  south: "南",
-  west: "西",
-  north: "北",
 };
 
 export const Seat = ({

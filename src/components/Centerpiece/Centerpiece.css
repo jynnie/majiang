@@ -1,0 +1,125 @@
+.Centerpiece-square {
+  --center-square-size: calc(var(--square-size) * 0.28508);
+
+  width: var(--center-square-size);
+  height: var(--center-square-size);
+
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: var(--poppy);
+
+  opacity: 0.4;
+}
+
+.Centerpiece-squareCut {
+  width: calc(100% - 6px);
+  height: calc(100% - 6px);
+
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: absolute;
+  background: var(--paper);
+}
+
+.Centerpiece-cut {
+  clip-path: polygon(
+    6% 0,
+    94% 0,
+    94% 0%,
+    94% 3%,
+    97% 6%,
+    100% 6%,
+    100% 94%,
+    97% 94%,
+    94% 97%,
+    94% 100%,
+    6% 100%,
+    6% 97%,
+    3% 94%,
+    0% 94%,
+    0 6%,
+    3% 6%,
+    6% 3%
+  );
+}
+.Centerpiece-innerCut {
+  clip-path: polygon(
+    6.5% 0,
+    93.5% 0,
+    93.5% 0%,
+    93.5% 2%,
+    98% 6.5%,
+    100% 6.5%,
+    100% 93.5%,
+    98% 93.5%,
+    93.5% 98%,
+    93.5% 100%,
+    6.5% 100%,
+    6.5% 98%,
+    2% 93.5%,
+    0% 93.5%,
+    0 6.5%,
+    2% 6.5%,
+    6.5% 2%
+  );
+}
+
+.Centerpiece-squareCut .Centerpiece-squareCut {
+  width: calc(100% - 9px);
+  height: calc(100% - 9px);
+  background: var(--poppy);
+}
+
+.Centerpiece-innerCut .Centerpiece-innerCut {
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
+  background: var(--paper);
+}
+
+/*------ ROUND WIND #01F2DF ------*/
+.Centerpiece-wind {
+  --circle-diameter: calc(var(--square-size) * 0.13146);
+
+  width: var(--circle-diameter);
+  height: var(--circle-diameter);
+  border-radius: 50%;
+  border: 3px solid var(--poppy);
+
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: var(--poppy);
+  font-size: calc(var(--circle-diameter) * 0.7);
+  font-family: "Noto Serif TC";
+  font-weight: bold;
+}
+
+.Centerpiece-wind-CN {
+  margin-top: -10%;
+}
+
+.Centerpiece-wind-EN {
+  position: absolute;
+  left: 90%;
+
+  background: var(--paper);
+
+  font-size: calc(var(--square-size) * 0.03545);
+  font-family: "Source Serif Pro";
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  line-height: 1em;
+}
+.Centerpiece-wind-EN ~ .Centerpiece-wind-EN {
+  right: 90%;
+  left: unset;
+  transform: rotate(180deg);
+}

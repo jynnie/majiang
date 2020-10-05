@@ -1,15 +1,5 @@
 /*------ FONT IMPORTS  ------*/
-@import url("https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@600&family=Space+Mono:wght@400;700&display=swap");
-@font-face {
-  font-family: "Source Han Serif";
-  src: url("/public/SourceHanSerifTC-Regular.otf");
-  font-weight: normal;
-}
-@font-face {
-  font-family: "Source Han Serif";
-  src: url("/public/SourceHanSerifTC-SemiBold.otf");
-  font-weight: bold;
-}
+@import url("https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@600&family=Space+Mono:wght@400;700&family=Noto+Serif+TC:wght@400;600&&display=swap");
 
 /*------ COLOR DECLARATIONS  ------*/
 /* prettier-ignore */

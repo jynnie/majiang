@@ -5,6 +5,7 @@ import Auth from "./components/Auth";
 import HomePage from "./pages/HomePage";
 import LobbyPage from "./pages/LobbyPage";
 import GamePage from "./pages/InGame/InGame";
+import WebFont from "webfontloader";
 import "./App.css";
 
 //- Game Engine

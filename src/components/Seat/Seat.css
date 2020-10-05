@@ -68,8 +68,6 @@
   align-items: center;
   justify-content: center;
 
-  image-rendering: optimizespeed;
-
   --gap: calc(var(--square-size) * 0.03);
 }
 
@@ -87,6 +85,7 @@
 
   transform: rotate(90deg);
   transform-origin: center bottom;
+  image-rendering: optimizespeed;
 }
 .Seat-left .Seat-openTiles {
   bottom: var(--gap);
@@ -94,6 +93,7 @@
 
   transform: rotate(90deg);
   transform-origin: center top;
+  image-rendering: optimizespeed;
 }
 
 .Seat-meld {

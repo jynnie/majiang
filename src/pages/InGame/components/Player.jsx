@@ -3,20 +3,8 @@ import Box from "ui-box";
 
 import { EngineContext } from "../../../App";
 
-import Tile from "../../../components/Tile/Tile";
 import Seat, { Orientation } from "../../../components/Seat/Seat";
-
-const getOrientation = (seat, mySeat) => {
-  const ori = {
-    0: Orientation.B,
-    1: Orientation.R,
-    2: Orientation.T,
-    3: Orientation.L,
-  };
-  let index = (seat - mySeat) % 4;
-  index = index >= 0 ? index : index + 4;
-  return ori[index];
-};
+import { getOrientation } from "./Table";
 
 const Player = ({ player }) => {
   const { GE } = useContext(EngineContext);
@@ -28,10 +16,8 @@ const Player = ({ player }) => {
   const openHand = GE.pak
     ?.getOpenHand(player)
     .reduce((acc, meld) => [...acc, GE.pak?.getVisualsOf(meld)], []);
-  const playedTiles = GE.pak?.getVisualsOf(player.playedTiles);
 
   const isSelf = GE.userId === player.id;
-  const isTurn = GE.isPlayersTurn(player.id);
 
   const orientation = getOrientation(player.seat, GE.mySeat);
 
@@ -72,13 +58,6 @@ const Player = ({ player }) => {
         openHand={openHand}
         onTileClick={handleTileClick}
       />
-      {/* 
-      <Box>
-        <Box>Played tiles</Box>
-        {playedTiles.map((tile, i) => (
-          <Tile.Open face={tile.visual} key={i} />
-        ))}
-      </Box> */}
     </Box>
   );
 };
