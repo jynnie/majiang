@@ -1,12 +1,17 @@
 import React from "react";
 import Box from "ui-box";
+import classnames from "classnames";
 
 import "./OpenTile.css";
 
-export const OpenTile = ({ face = null, ...props }) => {
+export const OpenTile = ({ className = null, face = null, ...props }) => {
   return (
     <Box
-      className="OpenTile-container Tile-borderRadius"
+      className={classnames(
+        className,
+        "OpenTile-container",
+        "Tile-borderRadius",
+      )}
       backgroundImage={face ? `url(${face})` : undefined}
       tabIndex="0"
       {...props}

@@ -13,6 +13,9 @@
   --white:  #ffffff;
   --paper:  #f1efec;
   --ash:    #515151;
+
+  --glowShadow: 0px 8px 7px #4753fc1f;
+  --glowShadow-raised: 0px 20px 7px #4753fc14;
 }
 /* end prettier ignore */
 

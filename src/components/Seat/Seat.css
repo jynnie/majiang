@@ -83,16 +83,16 @@
   top: var(--gap);
   right: var(--tray-short-side);
 
-  transform: rotate(90deg);
-  transform-origin: center bottom;
+  transform: rotate(-90deg) translateY(-100%);
+  transform-origin: right top;
   image-rendering: optimizespeed;
 }
 .Seat-left .Seat-openTiles {
   bottom: var(--gap);
   left: var(--tray-short-side);
 
-  transform: rotate(90deg);
-  transform-origin: center top;
+  transform: rotate(90deg) translateX(-100%);
+  transform-origin: left bottom;
   image-rendering: optimizespeed;
 }
 

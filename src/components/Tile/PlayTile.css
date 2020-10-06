@@ -2,9 +2,6 @@
   --tile-width: calc(var(--square-size) * 0.06208);
   --tile-height: calc(var(--tile-width) * 4 / 3);
   --tile-container-height: calc(var(--tile-height) * 1.18);
-
-  --glowShadow: 0px 8px 7px #4753fc1f;
-  --glowShadow-raised: 0px 20px 7px #4753fc14;
 }
 
 .PlayTile-container {

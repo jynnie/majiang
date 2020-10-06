@@ -79,7 +79,7 @@ export const Seat = ({
         {openHand.map((meld) => (
           <Box className="Seat-meld">
             {meld.map((tile) => (
-              <Tile open key={tile.id} face={tile.visual} />
+              <Tile.Open key={tile.id} face={tile.visual} />
             ))}
           </Box>
         ))}
