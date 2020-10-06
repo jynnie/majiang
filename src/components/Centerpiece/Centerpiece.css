@@ -1,8 +1,14 @@
-.Centerpiece-square {
+.Centerpiece {
   --center-square-size: calc(var(--square-size) * 0.28508);
 
   width: var(--center-square-size);
   height: var(--center-square-size);
+  position: relative;
+}
+
+.Centerpiece-square {
+  width: 100%;
+  height: 100%;
 
   position: relative;
   display: flex;
@@ -122,4 +128,96 @@
   right: 90%;
   left: unset;
   transform: rotate(180deg);
+}
+
+/*------ TILES REMAINING #01F2DF ------*/
+.Centerpiece-tilesRemaining {
+  position: absolute;
+  bottom: 12%;
+
+  font-size: calc(var(--center-square-size) * 0.0673);
+  color: var(--poppy);
+}
+
+.Centerpiece-tilesRemaining ~ .Centerpiece-tilesRemaining {
+  top: 12%;
+  bottom: unset;
+
+  transform: rotate(180deg);
+}
+
+/*------ PLAYED TILES #01F2DF ------*/
+.Centerpiece-playedTiles {
+  position: absolute;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: baseline;
+
+  width: var(--center-square-size);
+  height: var(--center-square-size);
+}
+
+.Centerpiece-tile-bottom {
+  bottom: 0;
+  transform: translateY(100%);
+}
+.Centerpiece-tile-top {
+  top: 0;
+  transform: translateY(-100%) rotate(180deg);
+}
+.Centerpiece-tile-left {
+  left: 0;
+  transform: translateX(-100%) rotate(90deg);
+}
+.Centerpiece-tile-right {
+  right: 0;
+  transform: translateX(100%) rotate(-90deg);
+}
+
+.Centerpiece-playedTiles .OpenTile-container {
+  --tile-width: calc(var(--center-square-size) * 0.14444);
+
+  margin-top: calc(var(--center-square-size) * 0.01);
+  margin-right: calc(var(--center-square-size) * 0.01);
+
+  opacity: 0.6;
+}
+
+.Centerpiece-playedTiles .OpenTile-container.isLastPlayed {
+  background-color: white;
+  opacity: 1;
+  box-shadow: var(--glowShadow);
+}
+
+/*------ TURN MARKER #01F2DF ------*/
+.Centerpiece-turn {
+  --marker-size: calc(var(--center-square-size) * 0.06735);
+
+  position: absolute;
+  opacity: 0;
+
+  border-style: solid;
+  border-width: var(--marker-size) var(--marker-size) 0 var(--marker-size);
+  border-color: var(--poppy) transparent transparent transparent;
+}
+
+.Centerpiece-turn-bottom {
+  bottom: 0;
+  transform: translateY(34%);
+}
+.Centerpiece-turn-top {
+  top: 0;
+  transform: translateY(-34%) rotate(180deg);
+}
+.Centerpiece-turn-left {
+  left: 0;
+  transform: translateX(-34%) rotate(90deg);
+}
+.Centerpiece-turn-right {
+  right: 0;
+  transform: translateX(34%) rotate(-90deg);
+}
+
+.Centerpiece-isTurn {
+  opacity: 1;
 }

@@ -85,7 +85,7 @@
 
   transform: rotate(-90deg) translateY(-100%);
   transform-origin: right top;
-  image-rendering: optimizespeed;
+  image-rendering: optimizequality;
 }
 .Seat-left .Seat-openTiles {
   bottom: var(--gap);
@@ -93,7 +93,7 @@
 
   transform: rotate(90deg) translateX(-100%);
   transform-origin: left bottom;
-  image-rendering: optimizespeed;
+  image-rendering: optimizequality;
 }
 
 .Seat-meld {

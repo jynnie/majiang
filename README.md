@@ -14,6 +14,10 @@ This current iteration gives all clients access to other players information. Th
   - [x] Deal with conflicting X vs Hu
   - [ ] What happens when no more tiles
 - [ ] Front end beauty
+  - [x] Turn marker
+  - [ ] Rework turn marker
+  - [x] Last played
+  - [ ] Action buttons
   - [ ] Hover on tile
   - [ ] Sorting hand
   - [ ] Rearranging tiles

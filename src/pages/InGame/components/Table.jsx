@@ -26,7 +26,7 @@ const Table = ({ players }) => {
 
   if (!players) return null;
 
-  const centerpieceData = players.forEach((player) => {
+  const centerpieceData = players.map((player) => {
     const orientation = getOrientation(player.seat, GE.mySeat);
     const playedTiles = GE.pak?.getVisualsOf(player.playedTiles);
     const isTurn = GE.isPlayersTurn(player.id);
@@ -35,7 +35,11 @@ const Table = ({ players }) => {
 
   return (
     <Box className="Table">
-      <Centerpiece data={centerpieceData} />
+      <Centerpiece
+        data={centerpieceData}
+        tilesRemaining={GE.gameParams.wall.length}
+        lastPlayed={GE.gameParams.lastPlay}
+      />
       {players.map((player) => (
         <Player key={player.id} player={player} />
       ))}
