@@ -49,7 +49,6 @@ export class GameEngine {
     this.db = db;
   };
 
-  // FIXME: updateReact is called manually in DianXin when it shouldn't be
   updateReact = () => {
     this.localUpdater && this.localUpdater(Math.random());
   };
@@ -141,11 +140,6 @@ export class GameEngine {
 
   startGame = async (cardPakId: string) => {
     this.gameEnded = false;
-
-    // FIXME: Artificially, adding in players
-    this.addPlayerToRoom({ id: "a", name: "player a" });
-    this.addPlayerToRoom({ id: "b", name: "player b" });
-    this.addPlayerToRoom({ id: "c", name: "player c" });
 
     await this.setupNewGame();
     this.updateReact();

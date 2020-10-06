@@ -37,7 +37,7 @@ const Table = ({ players }) => {
     <Box className="Table">
       <Centerpiece
         data={centerpieceData}
-        tilesRemaining={GE.gameParams?.wall.length}
+        tilesRemaining={GE.gameParams?.wall?.length}
         lastPlayed={GE.gameParams?.lastPlay}
       />
       {players.map((player) => (

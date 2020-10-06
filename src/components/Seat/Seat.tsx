@@ -73,8 +73,7 @@ export const Seat = ({
             key={i}
             closed={!isSelf}
             face={tile.visual}
-            // FIXME: Only onClick if isSelf
-            onClick={() => onTileClick(tile)}
+            onClick={isSelf && (() => onTileClick(tile))}
             vertical={[Orientation.L, Orientation.R].includes(orientation)}
             margin={!isSelf && 1}
           />
@@ -92,7 +91,8 @@ export const Seat = ({
       </Box>
 
       <Box className="Seat-actions">
-        {executingParams &&
+        {isSelf &&
+          executingParams &&
           availableActions.map((action) => (
             <Action
               key={action.name}

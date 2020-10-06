@@ -1,5 +1,6 @@
 .Centerpiece {
   --center-square-size: calc(var(--square-size) * 0.28508);
+  --circle-diameter: calc(var(--square-size) * 0.13146);
 
   width: var(--center-square-size);
   height: var(--center-square-size);
@@ -90,8 +91,6 @@
 
 /*------ ROUND WIND #01F2DF ------*/
 .Centerpiece-wind {
-  --circle-diameter: calc(var(--square-size) * 0.13146);
-
   width: var(--circle-diameter);
   height: var(--circle-diameter);
   border-radius: 50%;
@@ -199,23 +198,24 @@
   border-style: solid;
   border-width: var(--marker-size) var(--marker-size) 0 var(--marker-size);
   border-color: var(--poppy) transparent transparent transparent;
+  z-index: 999;
 }
 
 .Centerpiece-turn-bottom {
-  bottom: 0;
-  transform: translateY(34%);
+  bottom: calc(var(--circle-diameter) / 2);
+  transform: translateY(19%);
 }
 .Centerpiece-turn-top {
-  top: 0;
-  transform: translateY(-34%) rotate(180deg);
+  top: calc(var(--circle-diameter) / 2);
+  transform: translateY(-19%) rotate(180deg);
 }
 .Centerpiece-turn-left {
-  left: 0;
-  transform: translateX(-34%) rotate(90deg);
+  left: calc(var(--circle-diameter) / 2);
+  transform: translateX(-19%) rotate(90deg);
 }
 .Centerpiece-turn-right {
-  right: 0;
-  transform: translateX(34%) rotate(-90deg);
+  right: calc(var(--circle-diameter) / 2);
+  transform: translateX(19%) rotate(-90deg);
 }
 
 .Centerpiece-isTurn {

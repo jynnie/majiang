@@ -69,6 +69,10 @@
   left: calc(var(--square-size) * 0.042);
 }
 
+.Seat-actions .AnAction {
+  margin-right: calc(var(--square-size) * 0.03);
+}
+
 /*------ SEAT OPEN TILES #01F2DF ------*/
 .Seat-openTiles {
   position: absolute;

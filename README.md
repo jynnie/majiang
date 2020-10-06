@@ -15,21 +15,24 @@ This current iteration gives all clients access to other players information. Th
   - [ ] What happens when no more tiles
 - [x] Front end beauty
   - [x] Turn marker
-  - [ ] Rework turn marker
+  - [x] Rework turn marker
   - [x] Last played
   - [x] Action buttons
-  - [ ] Hover on tile
-  - [ ] Sorting hand
+  - [ ] Hover on tile 🔥
+  - [ ] Sorting hand 🔥
   - [ ] Rearranging tiles
   - [ ] Modals & SFX
 - [x] Networking to Firebase
   - [x] Should I be using Realtime > Firestore
   - [ ] Maybe user info should stay in Firestore though
-- [ ] Routes
+- [ ] Routes 🔥
 - [x] Random room generation
 - [ ] Design in between screens
 - [ ] Points systems
 - [ ] Handling disconnects; how easy would it be to move Engine to server
+- [x] Force players to be logged in before joining
+  - [ ] Allow no accounts 🔥
+  - [ ] Only host player can start game 🔥
 
 ## 🎒 Custom Rules
 
