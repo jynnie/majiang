@@ -3,7 +3,8 @@ import Box from "ui-box";
 
 import { EngineContext } from "../../../App";
 
-import Seat, { Orientation } from "../../../components/Seat/Seat";
+import Seat from "../../../components/Seat/Seat";
+
 import { getOrientation } from "./Table";
 
 const Player = ({ player }) => {
@@ -33,22 +34,6 @@ const Player = ({ player }) => {
 
   return (
     <Box className={"Player Player-" + orientation}>
-      {/* Player: {player.id} {player.seat} {isMyTurn && "👋🏼"} */}
-      <Box>
-        {availableActions.map((action) => (
-          <button
-            key={action.name}
-            onClick={() =>
-              action.onExecute({
-                executingPlayerId: player.id,
-                gameEngine: GE,
-              })
-            }
-          >
-            {action.name}
-          </button>
-        ))}
-      </Box>
       <Seat
         isSelf={isSelf}
         name={player.name}
@@ -57,6 +42,11 @@ const Player = ({ player }) => {
         closedHand={closedHand}
         openHand={openHand}
         onTileClick={handleTileClick}
+        availableActions={availableActions}
+        executingParams={{
+          executingPlayerId: player.id,
+          gameEngine: GE,
+        }}
       />
     </Box>
   );

@@ -1,0 +1,56 @@
+.AnAction {
+  --action-height: calc(var(--square-size) * 0.05317);
+
+  cursor: pointer;
+
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  /* FIXME: MinHeight */
+  height: var(--action-height);
+}
+
+.AnAction-CN {
+  position: absolute;
+
+  opacity: 0.2;
+  transition: opacity 0.2s;
+
+  font-size: var(--action-height);
+  font-family: "Noto Serif TC";
+  font-weight: bold;
+}
+
+.AnAction-EN {
+  margin-top: calc(var(--action-height) * 0.12);
+
+  text-transform: uppercase;
+  font-size: calc(var(--action-height) * 0.5);
+  font-family: "Space Mono";
+  font-weight: bold;
+}
+
+.AnAction:hover .AnAction-CN {
+  opacity: 0.35;
+}
+
+.Draw.AnAction {
+  color: var(--ink);
+}
+.Chi.AnAction {
+  color: var(--poppy);
+}
+.Peng.AnAction {
+  color: var(--jade);
+}
+.Gang.AnAction {
+  color: var(--liquid);
+}
+.Hu.AnAction {
+  color: var(--gold);
+}
+.Skip.AnAction {
+  color: var(--ash);
+}

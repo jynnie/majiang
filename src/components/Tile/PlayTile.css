@@ -20,7 +20,8 @@
 }
 
 /*------ HOVER STYLES ------*/
-.PlayTile-container:hover {
+.PlayTile-container:hover,
+.PlayTile-container:focus {
   box-shadow: var(--glowShadow-raised);
   transform: translateY(-12px);
   transition: all 0.54s;

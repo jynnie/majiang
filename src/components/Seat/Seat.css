@@ -1,5 +1,6 @@
 .Seat-tray {
   --tray-short-side: calc(var(--square-size) * 0.08);
+  --gap: calc(var(--square-size) * 0.03);
 
   position: relative;
 
@@ -61,14 +62,19 @@
   top: 0;
 }
 
+/*------ SEAT TILE NUMBER #01F2DF ------*/
+.Seat-actions {
+  position: absolute;
+  bottom: calc(var(--square-size) * 0.16);
+  left: calc(var(--square-size) * 0.042);
+}
+
 /*------ SEAT OPEN TILES #01F2DF ------*/
 .Seat-openTiles {
   position: absolute;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  --gap: calc(var(--square-size) * 0.03);
 }
 
 .Seat-bottom .Seat-openTiles {

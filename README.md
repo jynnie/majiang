@@ -13,14 +13,15 @@ This current iteration gives all clients access to other players information. Th
   - [x] Deal with conflicting Peng vs Chi
   - [x] Deal with conflicting X vs Hu
   - [ ] What happens when no more tiles
-- [ ] Front end beauty
+- [x] Front end beauty
   - [x] Turn marker
   - [ ] Rework turn marker
   - [x] Last played
-  - [ ] Action buttons
+  - [x] Action buttons
   - [ ] Hover on tile
   - [ ] Sorting hand
   - [ ] Rearranging tiles
+  - [ ] Modals & SFX
 - [x] Networking to Firebase
   - [x] Should I be using Realtime > Firestore
   - [ ] Maybe user info should stay in Firestore though

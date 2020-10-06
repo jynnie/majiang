@@ -2,6 +2,8 @@ import React from "react";
 import Box from "ui-box";
 
 import Tile from "../Tile/Tile";
+import Action from "../Action/Action";
+
 import { WindChinese } from "../../components/ZhongWenHelpers";
 
 import "./Seat.css";
@@ -22,6 +24,8 @@ interface SeatProps {
   closedHand: any[];
   openHand: any[][];
   onTileClick: (tile: any) => {};
+  availableActions: any[];
+  executingParams: any;
   props: any;
 }
 
@@ -41,6 +45,8 @@ export const Seat = ({
   closedHand = [],
   openHand = [],
   onTileClick,
+  availableActions = [],
+  executingParams,
   ...props
 }: SeatProps) => {
   const wind = SeatToWind[seat];
@@ -83,6 +89,17 @@ export const Seat = ({
             ))}
           </Box>
         ))}
+      </Box>
+
+      <Box className="Seat-actions">
+        {executingParams &&
+          availableActions.map((action) => (
+            <Action
+              key={action.name}
+              name={action.name}
+              onClick={() => action.onExecute(executingParams)}
+            />
+          ))}
       </Box>
     </Box>
   );
