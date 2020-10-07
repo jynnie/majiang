@@ -174,7 +174,7 @@
 }
 
 .Centerpiece-playedTiles .OpenTile-container {
-  --tile-width: calc(var(--center-square-size) * 0.14444);
+  --tile-width: calc(var(--center-square-size) * 0.15544);
 
   margin-top: calc(var(--center-square-size) * 0.01);
   margin-right: calc(var(--center-square-size) * 0.01);

@@ -8,13 +8,13 @@ This current iteration gives all clients access to other players information. Th
 
 - [ ] Front end
   - [ ] Hover on tile ✨
-  - [ ] Sorting hand 🔥
+  - [x] Sorting hand 🔥1
   - [ ] Rearranging tiles
   - [ ] Modals & SFX
-  - [ ] Make discard tiles bigger 🎨
+  - [x] Make discard tiles bigger 🎨
   - [x] Closed tiles are very light 🎨
-  - [ ] Chi show what is being taken 🔥
-  - [ ] Separate drawn tile from rest of hand 🔥
+  - [ ] Chi show what is being taken 🔥3
+  - [ ] Separate drawn tile from rest of hand 🔥2
 - [ ] Design end screen
   - [ ] Start new round and advance round win
 - [ ] What happens when no more tiles
