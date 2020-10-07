@@ -25,14 +25,15 @@ This current iteration gives all clients access to other players information. Th
 - [x] Networking to Firebase
   - [x] Should I be using Realtime > Firestore
   - [ ] Maybe user info should stay in Firestore though
-- [ ] Routes 🔥
+- [ ] Routes
 - [x] Random room generation
 - [ ] Design in between screens
 - [ ] Points systems
-- [ ] Handling disconnects; how easy would it be to move Engine to server
 - [x] Force players to be logged in before joining
-  - [ ] Allow no accounts 🔥
-  - [ ] Only host player can start game 🔥
+  - [x] Allow no accounts
+  - [x] Only host player can start game
+- [ ] Handling disconnects (ref.onDisconnect) 🔥
+- [ ] Consider: how easy would it be to move Engine to server
 
 ## 🎒 Custom Rules
 

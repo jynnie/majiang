@@ -1,10 +1,6 @@
 import expect from "expect.js";
-// import chai from "chai";
-// import chaiEnzyme from "chai-enzyme";
 
 import { sum, shuffle, oVal, oKey } from "./utils";
-
-// chai.use(chaiEnzyme());
 
 describe("sum", () => {
   it("sums numbers in an array", () => {

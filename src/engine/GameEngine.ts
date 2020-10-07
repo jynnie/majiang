@@ -53,6 +53,10 @@ export class GameEngine {
     this.localUpdater && this.localUpdater(Math.random());
   };
 
+  get isHost() {
+    return this.userId === this.hostPlayerId;
+  }
+
   get stage() {
     if (this.roomId === null) return Stages.noRoom;
     if (this.gameEnded === null) return Stages.inLobby;
@@ -84,9 +88,10 @@ export class GameEngine {
     };
   };
 
-  createRoom = (roomId?: string) => {
-    if (!this.userId) return;
+  createRoom = (name: string, roomId?: string) => {
+    this.user = { uid: this.randomId, displayName: name };
 
+    console.log(roomId, typeof roomId);
     this.roomId = typeof roomId === "string" ? roomId : this.randomId;
     this.roomRef = this.makeRoomRef(this.roomId);
 
@@ -99,8 +104,8 @@ export class GameEngine {
     this.joinRoom(this.roomId);
   };
 
-  joinRoom = async (roomId?: string) => {
-    if (!this.userId) return;
+  joinRoom = async (roomId: string, name?: string) => {
+    if (!this.userId && !name) return;
     if (!this.roomRef && !roomId) return;
 
     if (!this.roomRef() && roomId) {
@@ -108,11 +113,15 @@ export class GameEngine {
       this.roomRef = this.makeRoomRef(this.roomId);
     }
 
+    if (!this.userId) {
+      this.user = { uid: this.randomId, displayName: name };
+    }
+
     await this.roomRef()
       ?.once("value")
       .then(async (doc) => {
         const docExists = !!doc.val();
-        if (!docExists && roomId) this.createRoom(roomId);
+        if (!docExists && roomId && name) this.createRoom(name, roomId);
         else if (docExists && this.userId && this.username) {
           await this.addPlayerToRoom({ id: this.userId, name: this.username });
           this.updateReact();
@@ -122,6 +131,7 @@ export class GameEngine {
     this.subscribeToPlayerParams();
     this.subscribeToGameParams();
     this.subscribeToGameEnded();
+    this.subscribeToGameHost();
     this.subscribeToPlayers();
   };
 
@@ -214,6 +224,15 @@ export class GameEngine {
       this._gameEnded = doc.val();
       this.updateReact();
       console.log("👀 Received new game ended", this._gameEnded);
+    });
+    return unsubscribe;
+  };
+
+  subscribeToGameHost = () => {
+    const unsubscribe = this.roomRef("hostPlayerId")?.on("value", (doc) => {
+      this.hostPlayerId = doc.val();
+      this.updateReact();
+      console.log("👀 Received new host player id", this.hostPlayerId);
     });
     return unsubscribe;
   };
