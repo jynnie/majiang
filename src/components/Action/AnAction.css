@@ -5,6 +5,7 @@
 
   position: relative;
   display: inline-flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 
@@ -26,10 +27,16 @@
 .AnAction-EN {
   margin-top: calc(var(--action-height) * 0.12);
 
+  line-height: 1;
   text-transform: uppercase;
   font-size: calc(var(--action-height) * 0.5);
   font-family: "Space Mono";
   font-weight: bold;
+}
+
+.AnAction-details {
+  font-size: calc(var(--action-height) * 0.36);
+  line-height: 1;
 }
 
 .AnAction:hover .AnAction-CN {

@@ -13,7 +13,7 @@ This current iteration gives all clients access to other players information. Th
   - [ ] Modals & SFX
   - [x] Make discard tiles bigger 🎨
   - [x] Closed tiles are very light 🎨
-  - [ ] Chi show what is being taken 🔥3
+  - [x] Chi show what is being taken 🔥3
   - [ ] Separate drawn tile from rest of hand 🔥2
 - [ ] Design end screen
   - [ ] Start new round and advance round win

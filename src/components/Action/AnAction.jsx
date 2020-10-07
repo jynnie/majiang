@@ -4,7 +4,7 @@ import classnames from "classnames";
 
 import "./AnAction.css";
 
-const AnAction = ({ className, CN, EN, ...props }) => {
+const AnAction = ({ className, CN, EN, details, ...props }) => {
   return (
     <Box
       className={classnames(className, "AnAction")}
@@ -14,6 +14,7 @@ const AnAction = ({ className, CN, EN, ...props }) => {
     >
       <Box className="AnAction-CN">{CN}</Box>
       <Box className="AnAction-EN">{EN}</Box>
+      <Box className="AnAction-details">{details}</Box>
     </Box>
   );
 };
