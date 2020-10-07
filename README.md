@@ -6,33 +6,24 @@ This current iteration gives all clients access to other players information. Th
 
 ## 🐣 Progress
 
-- [ ] DianXin rule set
-  - [x] Hu execute
-  - [x] Deal with conflicting action vs Draw
-  - [x] Deal with conflicting Peng vs Draw
-  - [x] Deal with conflicting Peng vs Chi
-  - [x] Deal with conflicting X vs Hu
-  - [ ] What happens when no more tiles
-- [x] Front end beauty
-  - [x] Turn marker
-  - [x] Rework turn marker
-  - [x] Last played
-  - [x] Action buttons
-  - [ ] Hover on tile 🔥
+- [ ] Front end
+  - [ ] Hover on tile ✨
   - [ ] Sorting hand 🔥
   - [ ] Rearranging tiles
   - [ ] Modals & SFX
-- [x] Networking to Firebase
-  - [x] Should I be using Realtime > Firestore
-  - [ ] Maybe user info should stay in Firestore though
-- [ ] Routes
-- [x] Random room generation
-- [ ] Design in between screens
+  - [ ] Make discard tiles bigger 🎨
+  - [x] Closed tiles are very light 🎨
+  - [ ] Chi show what is being taken 🔥
+  - [ ] Separate drawn tile from rest of hand 🔥
+- [ ] Design end screen
+  - [ ] Start new round and advance round win
+- [ ] What happens when no more tiles
 - [ ] Points systems
-- [x] Force players to be logged in before joining
-  - [x] Allow no accounts
-  - [x] Only host player can start game
-- [ ] Handling disconnects (ref.onDisconnect) 🔥
+- [ ] Handling disconnects (ref.onDisconnect) ✨
+- [ ] Joining a started game ✨
+- [ ] Take out party crashing
+- [ ] Can peng yourself 🐛
+- [ ] Press enter to join/create 🐛
 - [ ] Consider: how easy would it be to move Engine to server
 
 ## 🎒 Custom Rules

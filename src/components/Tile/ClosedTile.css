@@ -13,7 +13,7 @@
 
   border: 1px solid var(--ink);
   background-color: var(--ink);
-  opacity: 20%;
+  opacity: 0.2;
 }
 
 .ClosedTile-vertical {
