@@ -128,6 +128,7 @@ export class GameEngine {
         }
       });
 
+    this.subscribeToSelf();
     this.subscribeToPlayerParams();
     this.subscribeToGameParams();
     this.subscribeToGameEnded();
@@ -141,6 +142,7 @@ export class GameEngine {
     return this.roomRef(`players/${id}`)?.set({
       id,
       name,
+      connected: true,
       timestamp: firebase.database.ServerValue.TIMESTAMP,
     });
   };
@@ -171,7 +173,6 @@ export class GameEngine {
       return initialParams;
     });
 
-    // TODO: Does this need to be networked?
     this.cards = pak.deck?.cards.map((card) => ({
       ...card,
       params: card.defaultParams,
@@ -189,6 +190,13 @@ export class GameEngine {
 
   //----------------------------------#01F2DF
   //-- Firebase Subscribers --//
+
+  subscribeToSelf = () => {
+    if (!this.userId) return;
+    const myRef = this.roomRef(`players/${this.userId}`);
+    myRef?.onDisconnect().update({ connected: false });
+    return myRef;
+  };
 
   subscribeToPlayers = () => {
     const unsubscribe = this.roomRef("players")?.on("value", (doc) => {

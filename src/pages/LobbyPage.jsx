@@ -9,7 +9,7 @@ const LobbyPage = () => {
   return (
     <Box>
       <h2>Lobby</h2>
-      <code>{GE.roomId}</code>
+      <code>Code: {GE.roomId}</code>
       {GE.players.map((p) => (
         <Box key={p.id}>{p.name}</Box>
       ))}
