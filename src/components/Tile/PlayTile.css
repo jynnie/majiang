@@ -19,6 +19,11 @@
   cursor: pointer;
 }
 
+/*------ JUST DRAWN ------*/
+.PlayTile-justDrawn {
+  margin-left: calc(var(--tile-width) * 0.5);
+}
+
 /*------ HOVER STYLES ------*/
 .PlayTile-container:hover,
 .PlayTile-container:focus {

@@ -70,6 +70,7 @@ export const Seat = ({
       <Box className="Seat-tiles">
         {closedHand.map((tile, i) => (
           <Tile
+            className={tile.justDrawn && "PlayTile-justDrawn"}
             key={i}
             closed={!isSelf}
             face={tile.visual}

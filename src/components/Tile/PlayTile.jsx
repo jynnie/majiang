@@ -1,12 +1,13 @@
 import React from "react";
 import Box from "ui-box";
+import classnames from "classnames";
 
 import "./PlayTile.css";
 
-export const PlayTile = ({ face = null, ...props }) => {
+export const PlayTile = ({ className, face = null, ...props }) => {
   return (
     <Box
-      className="PlayTile-container Tile-borderRadius"
+      className={classnames(className, "PlayTile-container Tile-borderRadius")}
       tabIndex="0"
       {...props}
     >

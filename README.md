@@ -14,7 +14,7 @@ This current iteration gives all clients access to other players information. Th
   - [x] Make discard tiles bigger 🎨
   - [x] Closed tiles are very light 🎨
   - [x] Chi show what is being taken 🔥3
-  - [ ] Separate drawn tile from rest of hand 🔥2
+  - [x] Separate drawn tile from rest of hand 🔥2
 - [ ] Design end screen
   - [ ] Start new round and advance round win
 - [ ] What happens when no more tiles

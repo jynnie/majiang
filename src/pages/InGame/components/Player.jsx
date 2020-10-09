@@ -10,12 +10,14 @@ import { getOrientation } from "./Table";
 const Player = ({ player }) => {
   const { GE } = useContext(EngineContext);
 
-  const closedHand = GE.pak?.getVisualsOf(player.closedHand).sort((a, b) => {
+  let closedHand = GE.pak?.getVisualsOf(player.closedHand).sort((a, b) => {
+    if (a.justDrawn) return 1;
     if (a.params.suit > b.params.suit) return -1;
     if (a.params.suit < b.params.suit) return 1;
     if (a.value > b.value) return 1;
     if (a.value < b.value) return -1;
   });
+
   const openHand = GE.pak
     ?.getOpenHand(player)
     .reduce((acc, meld) => [...acc, GE.pak?.getVisualsOf(meld)], []);

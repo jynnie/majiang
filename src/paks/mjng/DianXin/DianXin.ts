@@ -18,14 +18,6 @@ import { oVal, sum } from "../../../utils";
 
 import { TileMatrix } from "../TileMatrix";
 
-// TODO: Deal with conflicting Peng vs Draw
-// TODO: Deal with conflicting Peng vs Chi
-// TODO: Deal with conflicting X vs Hu
-// Proposed solution: Draw isn't available unless
-// everyone who has an available action skips,
-// which is saved as a player param and resets
-// to false on turn advance.
-
 //----------------------------------#01F2DF
 //- TILES
 const NUMBER_TILES = [
@@ -260,7 +252,8 @@ interface DianXinDeck extends Deck {
 export interface Tile extends Card {
   value: number | string;
   defaultParams: { suit: string };
-  params?: { suit: string; hide?: boolean };
+  params?: { suit: string; hide?: boolean; };
+  justDrawn?: boolean
 }
 
 interface DianXinPlayerParams {
@@ -355,9 +348,9 @@ class DianXin extends CardPak {
       if (!hasAFullHand || !tileIsInClosedHand) return;
 
       // Remove card from hand to played
-      const closedHand = playerParams.closedHand.filter(
-        (c: Card) => c.id !== card.id,
-      );
+      const closedHand = playerParams.closedHand
+        .filter((c: Card) => c.id !== card.id)
+        .map((t: Card) => ({ ...t, justDrawn: false }));
       const playedTiles = [...playerParams.playedTiles, card];
       const newPlayerParams = {
         ...playerParams,
@@ -396,7 +389,10 @@ class DianXin extends CardPak {
 
           const wall: Card[] = gameEngine.gameParams?.wall;
           const drawnTile = wall.shift();
-          const closedHand = [...playerParams.closedHand, drawnTile];
+          const closedHand = [
+            ...playerParams.closedHand,
+            { ...drawnTile, justDrawn: true },
+          ];
 
           const newPlayerParams = { closedHand };
 
