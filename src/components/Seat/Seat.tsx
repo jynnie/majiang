@@ -72,6 +72,7 @@ export const Seat = ({
           <Tile
             className={tile.justDrawn && "PlayTile-justDrawn"}
             key={i}
+            data={tile}
             closed={!isSelf}
             face={tile.visual}
             onClick={isSelf && (() => onTileClick(tile))}

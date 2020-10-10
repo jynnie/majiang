@@ -32,6 +32,24 @@
   transition: all 0.54s;
 }
 
+.PlayTile-tip {
+  border: 1px solid var(--ink);
+  font-size: calc(var(--square-size) * 0.021);
+  display: flex;
+}
+
+.PlayTile-tipValue {
+  color: var(--paper);
+  background: var(--ink);
+  padding: 0 4px;
+}
+
+.PlayTile-tipSuit {
+  color: var(--ink);
+  background: var(--paper);
+  padding: 0 4px;
+}
+
 /*------ TILE LAYERS ------*/
 .PlayTile-front {
   background-color: var(--white);
