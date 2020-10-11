@@ -12,5 +12,11 @@ export const sum = (array: Array<any>) => {
   return total;
 };
 
+export const onEnter = (handleEnter: () => void) => {
+  return (e: any) => {
+    if (e.key === "Enter") handleEnter();
+  };
+};
+
 export const oVal = Object.values;
 export const oKey = Object.keys;

@@ -7,18 +7,18 @@ This current iteration gives all clients access to other players information. Th
 ## 🐣 Progress
 
 - [ ] Front end
-  - [ ] Hover on tile ✨
+  - [ ] Hover on tile ⭐️
   - [ ] Rearranging tiles
   - [ ] Modals & SFX
 - [ ] Design end screen
-  - [ ] Start new round and advance round win
+  - [ ] Start new round and advance round win ⭐️
 - [ ] What happens when no more tiles
 - [ ] Points systems
 - [ ] Handling disconnects (ref.onDisconnect) ✨
 - [ ] Joining a started game ✨
 - [ ] Take out party crashing
 - [ ] Can peng yourself 🐛
-- [ ] Press enter to join/create 🐛
+- [x] Press enter to join/create 🐛
 - [ ] Consider: how easy would it be to move Engine to server
 
 ## 🎒 Custom Rules

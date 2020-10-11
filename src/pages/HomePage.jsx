@@ -1,20 +1,27 @@
 import React, { useState, useContext } from "react";
 import Box from "ui-box";
 
+import { onEnter } from "../utils";
 import { EngineContext } from "../App";
 
 const NewRoom = ({ onCreate, setMenu }) => {
   const [name, setName] = useState("");
 
+  const handleStart = () => onCreate(name);
+
   return (
     <>
       <Box>
         <label>Name</label>
-        <input value={name} onChange={(e) => setName(e.target.value)} />
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          onKeyDown={onEnter(handleStart)}
+        />
       </Box>
       <Box>
         <button onClick={() => setMenu("home")}>Back</button>
-        <button onClick={() => onCreate(name)}>Start</button>
+        <button onClick={handleStart}>Start</button>
       </Box>
     </>
   );
@@ -24,6 +31,8 @@ const JoinRoom = ({ onJoin, setMenu }) => {
   const [name, setName] = useState("");
   const [roomId, setRoomId] = useState("");
 
+  const handleJoin = () => onJoin(roomId, name);
+
   return (
     <>
       <Box>
@@ -32,11 +41,15 @@ const JoinRoom = ({ onJoin, setMenu }) => {
       </Box>
       <Box>
         <label>Name</label>
-        <input value={name} onChange={(e) => setName(e.target.value)} />
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          onKeyDown={onEnter(handleJoin)}
+        />
       </Box>
       <Box>
         <button onClick={() => setMenu("home")}>Back</button>
-        <button onClick={() => onJoin(roomId, name)}>Join</button>
+        <button onClick={handleJoin}>Join</button>
       </Box>
     </>
   );
