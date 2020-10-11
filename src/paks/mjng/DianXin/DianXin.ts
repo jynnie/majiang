@@ -252,8 +252,8 @@ interface DianXinDeck extends Deck {
 export interface Tile extends Card {
   value: number | string;
   defaultParams: { suit: string };
-  params?: { suit: string; hide?: boolean; };
-  justDrawn?: boolean
+  params?: { suit: string; hide?: boolean };
+  justDrawn?: boolean;
 }
 
 interface DianXinPlayerParams {
@@ -417,11 +417,12 @@ class DianXin extends CardPak {
           // FIXME: switch to get myParams
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
           const lastPlay = gameEngine.gameParams?.lastPlay;
+          const notMyPlay = lastPlay.by !== executingPlayerId;
           const makesAMeld = this.canIPeng(playerParams, lastPlay);
           const hasFullHand = this.hasAFullHand(playerParams);
           const alreadySkipped = playerParams.skipped;
 
-          return makesAMeld && !hasFullHand && !alreadySkipped;
+          return notMyPlay && makesAMeld && !hasFullHand && !alreadySkipped;
         },
         onExecute: ({ executingPlayerId, gameEngine }) => {
           const lastPlay = gameEngine.gameParams?.lastPlay;

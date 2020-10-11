@@ -17,7 +17,7 @@ This current iteration gives all clients access to other players information. Th
 - [ ] Handling disconnects (ref.onDisconnect) ✨
 - [ ] Joining a started game ✨
 - [ ] Take out party crashing
-- [ ] Can peng yourself 🐛
+- [x] Can peng yourself 🐛
 - [x] Press enter to join/create 🐛
 - [ ] Consider: how easy would it be to move Engine to server
 
