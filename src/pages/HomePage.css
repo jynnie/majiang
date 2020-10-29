@@ -1,0 +1,34 @@
+.HomePage-button {
+  outline: none;
+  border: none;
+  padding: 8px 12px;
+  font-size: 18px;
+
+  text-transform: lowercase;
+
+  background-image: none;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  cursor: pointer;
+}
+
+.HomePage-secondaryButton {
+  color: var(--ink);
+  font-family: "Noto Serif", serif;
+  font-weight: 600;
+}
+.HomePage-secondaryButton:hover {
+  background-image: url("/Brushes/InkyBrush.svg");
+}
+
+.HomePage-primaryButton {
+  color: var(--ink);
+  font-family: "Noto Serif", serif;
+  font-weight: 600;
+}
+.HomePage-primaryButton:hover {
+  color: var(--paper);
+  background-image: url("/Brushes/InkBrush.svg");
+}

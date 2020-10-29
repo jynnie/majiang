@@ -4,6 +4,8 @@ import Box from "ui-box";
 import { onEnter } from "../utils";
 import { EngineContext } from "../App";
 
+import "./HomePage.css";
+
 const NewRoom = ({ onCreate, setMenu }) => {
   const [name, setName] = useState("");
 
@@ -20,8 +22,18 @@ const NewRoom = ({ onCreate, setMenu }) => {
         />
       </Box>
       <Box>
-        <button onClick={() => setMenu("home")}>Back</button>
-        <button onClick={handleStart}>Start</button>
+        <button
+          className="HomePage-button HomePage-secondaryButton"
+          onClick={() => setMenu("home")}
+        >
+          Back
+        </button>
+        <button
+          className="HomePage-button HomePage-primaryButton"
+          onClick={handleStart}
+        >
+          Start
+        </button>
       </Box>
     </>
   );
@@ -48,8 +60,18 @@ const JoinRoom = ({ onJoin, setMenu }) => {
         />
       </Box>
       <Box>
-        <button onClick={() => setMenu("home")}>Back</button>
-        <button onClick={handleJoin}>Join</button>
+        <button
+          className="HomePage-button HomePage-secondaryButton"
+          onClick={() => setMenu("home")}
+        >
+          Back
+        </button>
+        <button
+          className="HomePage-button HomePage-primaryButton"
+          onClick={handleJoin}
+        >
+          Join
+        </button>
       </Box>
     </>
   );
@@ -58,10 +80,27 @@ const JoinRoom = ({ onJoin, setMenu }) => {
 const Home = ({ setMenu }) => {
   return (
     <Box>
-      <button onClick={() => setMenu("new")}>New Room</button>
-      <button onClick={() => setMenu("join")}>Join Room</button>
+      <button
+        className="HomePage-button HomePage-primaryButton"
+        onClick={() => setMenu("new")}
+      >
+        New Room
+      </button>
+      <button
+        className="HomePage-button HomePage-secondaryButton"
+        onClick={() => setMenu("join")}
+      >
+        Join Room
+      </button>
     </Box>
   );
+};
+
+const FlexColCenter = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
 };
 
 const HomePage = () => {
@@ -69,8 +108,15 @@ const HomePage = () => {
   const [menu, setMenu] = useState("home");
 
   return (
-    <Box>
-      <h1>Majiang</h1>
+    <Box {...FlexColCenter}>
+      <Box {...FlexColCenter} position="relative">
+        <Box is="h1" fontSize={72} opacity={0.2} margin={0}>
+          「麻将」
+        </Box>
+        <Box is="h1" position="absolute">
+          MAJIANG
+        </Box>
+      </Box>
       {menu === "home" && <Home setMenu={setMenu} />}
       {menu === "new" && <NewRoom onCreate={GE.createRoom} setMenu={setMenu} />}
       {menu === "join" && <JoinRoom onJoin={GE.joinRoom} setMenu={setMenu} />}
