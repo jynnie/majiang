@@ -6,7 +6,7 @@
 
   text-transform: lowercase;
 
-  background-image: none;
+  background: transparent;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -31,4 +31,20 @@
 .HomePage-primaryButton:hover {
   color: var(--paper);
   background-image: url("/Brushes/InkBrush.svg");
+}
+
+.HomePage-input {
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  background: none;
+  padding: 4px;
+
+  margin: 0 4px;
+}
+
+.HomePage-input:focus,
+.HomePage-input:focus-within,
+.HomePage-input:active {
+  outline: 3px #4753fc62 solid;
+  -moz-outline-radius: 4px;
 }

@@ -16,6 +16,7 @@ const NewRoom = ({ onCreate, setMenu }) => {
       <Box>
         <label>Name</label>
         <input
+          className="HomePage-input"
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={onEnter(handleStart)}
@@ -49,11 +50,16 @@ const JoinRoom = ({ onJoin, setMenu }) => {
     <>
       <Box>
         <label>Game Code</label>
-        <input value={roomId} onChange={(e) => setRoomId(e.target.value)} />
+        <input
+          className="HomePage-input"
+          value={roomId}
+          onChange={(e) => setRoomId(e.target.value)}
+        />
       </Box>
       <Box>
         <label>Name</label>
         <input
+          className="HomePage-input"
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={onEnter(handleJoin)}
