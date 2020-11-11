@@ -1,17 +1,27 @@
 import React, { useContext } from "react";
 import Box from "ui-box";
 
+import { FlexColCenter } from "../components/Flex";
 import { EngineContext } from "../App";
+
+import "./LobbyPage.css";
 
 const LobbyPage = () => {
   const { GE } = useContext(EngineContext);
 
   return (
-    <Box>
-      <h2>Lobby</h2>
-      <code>Code: {GE.roomId}</code>
+    <Box {...FlexColCenter}>
+      <Box is="h2" margin={0}>
+        LOBBY
+      </Box>
+      <Box is="code" marginBottom={16}>
+        Code: {GE.roomId}
+      </Box>
+
       {GE.players.map((p) => (
-        <Box key={p.id}>{p.name}</Box>
+        <Box className="LobbyPage-player" key={p.id}>
+          {p.name}
+        </Box>
       ))}
       {GE.isHost && <button onClick={GE.startGame}>Start Game</button>}
     </Box>

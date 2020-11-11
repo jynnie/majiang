@@ -1,0 +1,9 @@
+.LobbyPage-player {
+  padding: 0px 8px;
+  margin-bottom: 8px;
+  min-width: 120px;
+
+  text-align: center;
+  background: var(--ink);
+  color: var(--paper);
+}

@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import Box from "ui-box";
 
+import { FlexColCenter } from "../components/Flex";
 import { onEnter } from "../utils";
 import { EngineContext } from "../App";
 
@@ -100,13 +101,6 @@ const Home = ({ setMenu }) => {
       </button>
     </Box>
   );
-};
-
-const FlexColCenter = {
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
 };
 
 const HomePage = () => {
