@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import Box from "ui-box";
 
-import { EngineContext } from "../../../App";
+import { EngineContext } from "App";
+import { Orientation } from "components/Seat/Seat";
+import Centerpiece from "components/Centerpiece/Centerpiece";
 
-import { Orientation } from "../../../components/Seat/Seat";
-import Centerpiece from "../../../components/Centerpiece/Centerpiece";
 import Player from "./Player";
 
 import "./Table.css";

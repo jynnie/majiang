@@ -4,7 +4,7 @@ import classnames from "classnames";
 
 import { WindChinese } from "../ZhongWenHelpers";
 
-import Tile from "../../components/Tile/Tile";
+import Tile from "components/Tile/Tile";
 
 import "./Centerpiece.css";
 

@@ -5,8 +5,9 @@
  * determining whether a hand has proper melds.
  */
 
-import { Tile } from "./DianXin/DianXin";
-import { sum, oVal, oKey } from "../../utils";
+import { oKey, oVal, sum } from "utils";
+
+import { Tile } from "./DianXin";
 
 interface HandMatrix {
   [suit: string]: { [key: string]: number };

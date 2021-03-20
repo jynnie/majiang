@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 
-import { EngineContext } from "../../App";
+import { EngineContext } from "App";
 
 import Table from "./components/Table";
 

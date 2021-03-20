@@ -1,4 +1,4 @@
-import { VisualDeck } from "../../engine/CardPakTypes";
+import { VisualDeck } from "engine/CardPakTypes";
 
 export const DianXinDefault: VisualDeck = {
   id: "dx-traditional",

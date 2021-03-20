@@ -1,9 +1,9 @@
 import React from "react";
 import Box from "ui-box";
+import { WindChinese } from "components/ZhongWenHelpers";
 
 import Tile from "../Tile/Tile";
 import Action from "../Action/Action";
-import { WindChinese } from "../../components/ZhongWenHelpers";
 
 import "./Seat.css";
 
