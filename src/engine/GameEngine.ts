@@ -1,15 +1,8 @@
-/**
- * GameEngine card.pak v1
- *
- * Mostly just built to play diff. version of majiang
- */
+import firebase from "firebase";
 
 import Paks from "../paks/Paks";
 import { Action, Card } from "./CardPakTypes";
-
 import { oVal, shuffle } from "../utils";
-
-import firebase from "firebase";
 
 export enum Stages {
   noRoom = "NO_ROOM",
@@ -18,47 +11,82 @@ export enum Stages {
   gameEnd = "GAME_END",
 }
 
-//----------------------------------#01F2DF
+/**
+ * Game Engine Wukong
+ * card.pak engine v1
+ *
+ * Handles room management, writing to firebase,
+ * updating React when firebase changes are read, and
+ * handling ALL of game state.
+ * Mostly built to play diff. versions of majiang.
+ * @class
+ */
 export class GameEngine {
+  // Current user information
   userId?: string = undefined;
   username?: string = undefined;
 
+  // id of the cardpak being played
   pakId: string = "mhjng-dianxin";
-  roomId: string | null = null;
-  hostPlayerId: string | null = null;
+
+  // id of the game room
+  roomId?: string;
+
+  // id of the host player
+  hostPlayerId?: string;
+
+  // A copy of all the cards in the pak
   cards?: Card[];
-  gameParams: any = null;
-  playerParams: any = null;
+
+  // Parameters of the current game
+  gameParams?: any;
+
+  // Player parameters in current game
+  playerParams?: any[];
+
+  // Whether the current game has ended, used to determine
+  // the current state of the game
   _gameEnded: boolean | null = null;
+
+  // Array of all players in game
   players: { id: string }[] = [];
 
-  localUpdater: ((val: any) => void) | null = null;
-  db?: firebase.database.Database = undefined;
+  // A setState function used to update the top level React page
+  localUpdater?: (val: any) => void;
+
+  // The Firebase Realtime database
+  db?: firebase.database.Database;
+
+  // A Firebase Reference to the room of roomId
   roomRef: (ref?: string) => firebase.database.Reference | undefined = () =>
     undefined;
 
-  constructor(props?: any) {
+  //* Constructor
+
+  constructor() {
     console.log(".•˚•.Booting GameEngine˚•.•˚");
   }
 
-  attachReact = (setUpdate: (val: any) => void) => {
+  attachReact = (setUpdate: (val: any) => void): void => {
     this.localUpdater = setUpdate;
   };
 
-  attachFirebase = (db: firebase.database.Database) => {
+  attachFirebase = (db: firebase.database.Database): void => {
     this.db = db;
   };
 
-  updateReact = () => {
+  updateReact = (): void => {
     this.localUpdater && this.localUpdater(Math.random());
   };
+
+  //* General room getters & setters
 
   get isHost() {
     return this.userId === this.hostPlayerId;
   }
 
   get stage() {
-    if (this.roomId === null) return Stages.noRoom;
+    if (this.roomId === undefined) return Stages.noRoom;
     if (this.gameEnded === null) return Stages.inLobby;
     if (this.gameEnded === false) return Stages.inGame;
     if (this.gameEnded === true) return Stages.gameEnd;
@@ -78,8 +106,7 @@ export class GameEngine {
     this.username = user.displayName;
   }
 
-  //----------------------------------#01F2DF
-  //-- No Room --//
+  //* Methods for when part of no room
 
   makeRoomRef = (roomId: string) => {
     return (ref?: string): firebase.database.Reference | undefined => {
@@ -147,8 +174,7 @@ export class GameEngine {
     });
   };
 
-  //----------------------------------#01F2DF
-  //-- In Lobby --//
+  //* Methods for in game/room lobby
 
   startGame = async (cardPakId: string) => {
     this.gameEnded = false;
@@ -188,8 +214,7 @@ export class GameEngine {
     pak.rules.onGameStart(this);
   };
 
-  //----------------------------------#01F2DF
-  //-- Firebase Subscribers --//
+  //* Firebase Subscribers
 
   subscribeToSelf = () => {
     if (!this.userId) return;
@@ -253,8 +278,7 @@ export class GameEngine {
     this.roomRef("gameEnded")?.set(newEnd);
   }
 
-  //----------------------------------#01F2DF
-  //-- In Game --//
+  //* In Game Methods
 
   finishTurn = async () => {
     await this.updateGameParams({
@@ -280,8 +304,7 @@ export class GameEngine {
     // TODO: Remove player from room, etc
   };
 
-  //----------------------------------#01F2DF
-  //-- Helpful Getters for In Game --//
+  //* Helpful Getters for In Game
 
   getPlayer = (id: string) => {
     return this.players.find((player) => id === player.id);
@@ -289,7 +312,7 @@ export class GameEngine {
 
   getPlayerParams = (id?: string) => {
     if (!id) return this.pak.rules?.playerParams;
-    const storedParams = this.playerParams.find(
+    const storedParams = this.playerParams?.find(
       (player: any) => id === player.id,
     );
     return { ...this.pak.rules?.playerParams, ...storedParams };
@@ -341,8 +364,7 @@ export class GameEngine {
     return this.pak?.rules;
   }
 
-  //----------------------------------#01F2DF
-  //-- Helpers --//
+  //* Firebase Updaters for In Game
 
   updateGameParams = (newParams: any) => {
     const update = this.roomRef("gameParams")?.update(newParams);
