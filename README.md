@@ -7,7 +7,7 @@ This current iteration gives all clients access to other players information. Th
 ## 🐣 Progress
 
 - [ ] Front end
-  - [ ] Hover on tile ⭐️
+  - [x] Hover on tile ⭐️
   - [ ] Rearranging tiles
   - [ ] Modals & SFX
 - [ ] Design end screen
@@ -31,6 +31,12 @@ $ yarn install
 
 ```sh
 $ yarn start
+```
+
+To deploy
+
+```sh
+$ firebase deploy
 ```
 
 ## 💪🏼 Motivation

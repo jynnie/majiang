@@ -8,6 +8,7 @@
   display: inline-block;
   position: relative;
   transition: all 0.32s;
+  will-change: transform;
 
   width: var(--tile-width);
   height: var(--tile-container-height);
