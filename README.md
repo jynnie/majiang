@@ -8,6 +8,7 @@ This current iteration gives all clients access to other players information. Th
 
 - [ ] Front end
   - [x] Hover on tile ⭐️
+  - [ ] Hover on tile highlights other shown tiles
   - [ ] Rearranging tiles
   - [ ] Modals & SFX
 - [ ] Design end screen
@@ -15,6 +16,7 @@ This current iteration gives all clients access to other players information. Th
 - [ ] What happens when no more tiles
 - [ ] Points systems
 - [ ] Handling disconnects (ref.onDisconnect) ✨
+- [ ] Refresh doesn't boot you out of game
 - [ ] Joining a started game ✨
 - [ ] Take out party crashing
 - [ ] Consider: how easy would it be to move Engine to server

@@ -3,7 +3,6 @@ import Box from "ui-box";
 
 import Tile from "../Tile/Tile";
 import Action from "../Action/Action";
-
 import { WindChinese } from "../../components/ZhongWenHelpers";
 
 import "./Seat.css";
@@ -70,7 +69,7 @@ export const Seat = ({
       <Box className="Seat-tiles">
         {closedHand.map((tile, i) => (
           <Tile
-            className={tile.justDrawn && "PlayTile-justDrawn"}
+            className={isSelf && tile.justDrawn && "PlayTile-justDrawn"}
             key={i}
             data={tile}
             closed={!isSelf}

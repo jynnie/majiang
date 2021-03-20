@@ -22,7 +22,8 @@
 
 /*------ JUST DRAWN ------*/
 .PlayTile-justDrawn {
-  margin-left: calc(var(--tile-width) * 0.5);
+  margin-left: calc(var(--tile-width) * 0.35);
+  margin-right: calc(var(--tile-width) * 0.35);
 }
 
 /*------ HOVER STYLES ------*/
