@@ -6,16 +6,8 @@
  */
 
 import CardPak from "../../../engine/CardPak";
-import {
-  Card,
-  Deck,
-  Rules,
-  Action,
-  ActionParams,
-} from "../../../engine/CardPakTypes";
-
+import { Action, ActionParams, Card, Deck, Rules } from "../../../engine/CardPakTypes";
 import { oVal, sum } from "../../../utils";
-
 import { TileMatrix } from "../TileMatrix";
 
 //----------------------------------#01F2DF
@@ -417,7 +409,7 @@ class DianXin extends CardPak {
           // FIXME: switch to get myParams
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
           const lastPlay = gameEngine.gameParams?.lastPlay;
-          const notMyPlay = lastPlay.by !== executingPlayerId;
+          const notMyPlay = lastPlay?.by !== executingPlayerId;
           const makesAMeld = this.canIPeng(playerParams, lastPlay);
           const hasFullHand = this.hasAFullHand(playerParams);
           const alreadySkipped = playerParams.skipped;
