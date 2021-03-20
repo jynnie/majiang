@@ -4,26 +4,7 @@ A web-based platform for variations of Majiang (also written Mahjong); built on 
 
 This current iteration gives all clients access to other players information. Thus this is not meant for competitive play. To make this competitive, simply move the functions requiring more than your own information into a server.
 
-## 🐣 Progress
-
-- [ ] Front end
-  - [x] Hover on tile ⭐️
-  - [ ] Hover on tile highlights other shown tiles
-  - [ ] Rearranging tiles
-  - [ ] Modals & SFX
-- [ ] Design end screen
-  - [ ] Start new round and advance round win ⭐️
-- [ ] What happens when no more tiles
-- [ ] Points systems
-- [ ] Handling disconnects (ref.onDisconnect) ✨
-- [ ] Refresh doesn't boot you out of game
-- [ ] Joining a started game ✨
-- [ ] Take out party crashing
-- [ ] Consider: how easy would it be to move Engine to server
-
-## 🎒 Custom Rules
-
-> This section is still in progress!
+Progress being recorded in [devlog](https://jynnie.me/devlog/wukong/).
 
 ## 🔨 Development
 
@@ -35,11 +16,15 @@ $ yarn install
 $ yarn start
 ```
 
-To deploy
+To deploy to [majiang.web.app](https://majiang.web.app/).
 
 ```sh
 $ firebase deploy
 ```
+
+## 🎒 Custom Rules
+
+> This section is still in progress!
 
 ## 💪🏼 Motivation
 
