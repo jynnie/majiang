@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import { navigate } from "@reach/router";
 import Box from "ui-box";
 
 import { FlexColCenter } from "../components/Flex";
@@ -10,7 +11,10 @@ import "./HomePage.css";
 const NewRoom = ({ onCreate, setMenu }) => {
   const [name, setName] = useState("");
 
-  const handleStart = () => onCreate(name);
+  const handleStart = async () => {
+    const roomId = await onCreate(name);
+    navigate(`/${roomId}`);
+  };
 
   return (
     <>
@@ -45,7 +49,10 @@ const JoinRoom = ({ onJoin, setMenu }) => {
   const [name, setName] = useState("");
   const [roomId, setRoomId] = useState("");
 
-  const handleJoin = () => onJoin(roomId, name);
+  const handleJoin = async () => {
+    const finalRoomId = await onJoin(roomId, name);
+    navigate(`/${finalRoomId}`);
+  };
 
   return (
     <>

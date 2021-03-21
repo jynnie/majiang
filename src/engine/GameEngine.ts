@@ -75,7 +75,6 @@ export class GameEngine {
     if (allUsersToRooms) {
       try {
         this.allUsersToRooms = JSON.parse(allUsersToRooms) || {};
-        console.log(this.allUsersToRooms);
       } catch (e) {
         console.log(e);
       }
@@ -163,11 +162,13 @@ export class GameEngine {
       gameEnded: null,
     });
 
-    this.joinRoom(this.roomId);
+    return this.joinRoom(this.roomId);
   };
 
   joinRoom = async (roomId: string, name?: string) => {
-    const isNoUserInfo = !this.uid && !name;
+    let userForRoom = this.allUsersToRooms[roomId];
+
+    const isNoUserInfo = !this.uid && !name && !userForRoom;
     const isNoRoomInfo = !this.roomRef && !roomId;
     if (isNoUserInfo) return;
     if (isNoRoomInfo) return;
@@ -179,7 +180,6 @@ export class GameEngine {
     }
 
     // Set user data based on whether we're creating a new user or not
-    let userForRoom = this.allUsersToRooms[roomId];
     if (!userForRoom) {
       await this.createNewGameUser(roomId, name as string);
       userForRoom = this.allUsersToRooms[roomId];
@@ -216,6 +216,28 @@ export class GameEngine {
     this.subscribeToGameEnded();
     this.subscribeToGameHost();
     this.subscribeToPlayers();
+
+    return roomId;
+  };
+
+  /**
+   * Method run when a user tries to navigate to a room via uuid
+   * in the url
+   */
+  tryRoom = async (roomId: string) => {
+    const testRoomRef = this.makeRoomRef(roomId);
+    let roomExists = false;
+
+    // WORKAROUND: For some reason the await below the one here
+    // doesn't seem to actually be awaiting when assigned to the
+    // doc variable... But this one works?
+    await testRoomRef()?.get();
+    let doc = await testRoomRef()?.get();
+    roomExists = !!doc?.exists();
+
+    if (!roomExists) return false;
+
+    return this.joinRoom(roomId);
   };
 
   private addPlayerToRoom = async ({
@@ -236,7 +258,6 @@ export class GameEngine {
   };
 
   private reconnectPlayerToRoom = async (userId: string) => {
-    console.log("🅱️ - GameEngine.ts - line 238");
     if (!this.roomRef) return;
     return this.roomRef(`players/${userId}`)?.update({
       connected: true,

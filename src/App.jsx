@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import { Router } from "@reach/router";
 
 //- Component & Page Imports
 import HomePage from "./pages/HomePage";
-import LobbyPage from "./pages/LobbyPage";
-import GamePage from "./pages/InGame/InGame";
+import GamePage from "./pages";
 import "./App.css";
 
 //- Game Engine
-import { GameEngine, Stages } from "./engine/GameEngine";
+import { GameEngine } from "./engine/GameEngine";
 
 //- Firebase Imports
 import firebase from "firebase";
@@ -24,34 +24,17 @@ export const EngineContext = React.createContext({ GE: GE });
 
 //- App Setup
 const App = (props) => {
-  const [, setUpdate] = useState(null);
-
   useEffect(() => {
-    GE.attachReact(setUpdate);
     GE.attachFirebase(db);
   }, []);
-
-  let stagePage;
-  switch (GE.stage) {
-    case Stages.inLobby:
-      stagePage = <LobbyPage />;
-      break;
-    case Stages.inGame:
-      stagePage = <GamePage />;
-      break;
-    case Stages.gameEnd:
-      stagePage = "Game end";
-      break;
-    case Stages.noRoom:
-    default:
-      stagePage = <HomePage />;
-      break;
-  }
 
   return (
     <EngineContext.Provider value={{ GE }}>
       <FirebaseContext.Provider value={{ db }}>
-        {stagePage}
+        <Router>
+          <HomePage path="/" default />
+          <GamePage path="/:roomId" />
+        </Router>
       </FirebaseContext.Provider>
     </EngineContext.Provider>
   );
