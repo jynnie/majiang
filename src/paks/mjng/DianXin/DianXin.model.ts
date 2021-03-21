@@ -1,14 +1,9 @@
-import { Card, Deck, Rules } from "engine/CardPakTypes";
+import { Deck, Rules } from "engine/CardPakTypes";
+
+import { Tile } from "../Tiles.model";
 
 export interface DianXinDeck extends Deck {
   cards: Tile[];
-}
-
-export interface Tile extends Card {
-  value: number | string;
-  defaultParams: { suit: string };
-  params?: { suit: string; hide?: boolean };
-  justDrawn?: boolean;
 }
 
 export interface DianXinPlayerParams {
@@ -17,6 +12,7 @@ export interface DianXinPlayerParams {
   playedTiles: Tile[];
   points: number;
   skipped: boolean;
+  winner: boolean;
 }
 
 export interface InitializedPlayerParam extends DianXinPlayerParams {

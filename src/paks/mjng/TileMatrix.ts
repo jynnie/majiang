@@ -7,7 +7,7 @@
 
 import { oKey, oVal, sum } from "utils";
 
-import { Tile } from "./DianXin";
+import { Tile } from "./Tiles.model";
 
 interface HandMatrix {
   [suit: string]: { [key: string]: number };

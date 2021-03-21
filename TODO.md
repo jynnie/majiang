@@ -2,12 +2,10 @@
 
 🌶🌶🌶
 
-- [ ] Wukong updates to enable dev
+- [x] Wukong updates to enable dev
   - [x] Allow rejoin a game ✨
   - [x] Refresh doesn't boot you out of game ✨
   - [x] Change route based off of room code ✨
-  - [ ] Handling disconnects (ref.onDisconnect) ✨
-  - [ ] Joining a started game ✨
 - [ ] Design end screen
   - [ ] Start new round and advance round win ⭐️
   - [ ] End game when no more tiles
@@ -20,6 +18,8 @@
   - [ ] Hover on tile highlights other shown tiles
   - [ ] Rearranging tiles
   - [ ] Modals & SFX
+- [ ] Handling disconnects (ref.onDisconnect) ✨
+- [ ] Joining a started game ✨
 
 🌶
 
