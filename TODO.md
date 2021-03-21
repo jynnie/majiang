@@ -3,7 +3,9 @@
 🌶🌶🌶
 
 - [ ] Wukong updates to enable dev
+  - [x] Allow rejoin a game ✨
   - [ ] Refresh doesn't boot you out of game ✨
+  - [ ] Change route based off of room code ✨
   - [ ] Handling disconnects (ref.onDisconnect) ✨
   - [ ] Joining a started game ✨
 - [ ] Design end screen

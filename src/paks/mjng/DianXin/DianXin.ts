@@ -19,6 +19,7 @@ import type {
  *
  * This is the most basic version of Chinese majiang,
  * based off of Cantonese rules.
+ * @class
  */
 class DianXin extends CardPak {
   deck: DianXinDeck = {

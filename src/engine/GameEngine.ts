@@ -2,7 +2,7 @@ import firebase from "firebase";
 
 import Paks from "../paks/Paks";
 import { Action, Card } from "./CardPakTypes";
-import { oVal, shuffle } from "../utils";
+import { oKey, oVal, shuffle } from "../utils";
 
 export enum Stages {
   noRoom = "NO_ROOM",
@@ -23,8 +23,13 @@ export enum Stages {
  */
 export class GameEngine {
   // Current user information
-  userId?: string = undefined;
-  username?: string = undefined;
+  uid?: string = undefined;
+  displayName?: string = undefined;
+  // All your user data by games rooms you've joined
+  // Helps for reconnecting
+  allUsersToRooms: {
+    [roomId: string]: { uid: string; displayName: string };
+  } = {};
 
   // id of the cardpak being played
   pakId: string = "mhjng-dianxin";
@@ -65,6 +70,18 @@ export class GameEngine {
 
   constructor() {
     console.log(".•˚•.Booting GameEngine˚•.•˚");
+
+    const allUsersToRooms = window?.localStorage?.getItem("allUsersToRooms");
+    if (allUsersToRooms) {
+      try {
+        this.allUsersToRooms = JSON.parse(allUsersToRooms) || {};
+        console.log(this.allUsersToRooms);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+
+    (window as any).GE = this;
   }
 
   attachReact = (setUpdate: (val: any) => void): void => {
@@ -82,7 +99,7 @@ export class GameEngine {
   //* General room getters & setters
 
   get isHost() {
-    return this.userId === this.hostPlayerId;
+    return this.uid === this.hostPlayerId;
   }
 
   get stage() {
@@ -102,11 +119,15 @@ export class GameEngine {
   }
 
   set user(user: any) {
-    this.userId = user.uid;
-    this.username = user.displayName;
+    this.uid = user.uid;
+    this.displayName = user.displayName;
   }
 
-  //* Methods for when part of no room
+  get user() {
+    return { uid: this.uid, displayName: this.displayName };
+  }
+
+  //* Room Methods
 
   makeRoomRef = (roomId: string) => {
     return (ref?: string): firebase.database.Reference | undefined => {
@@ -115,16 +136,30 @@ export class GameEngine {
     };
   };
 
-  createRoom = (name: string, roomId?: string) => {
-    this.user = { uid: this.randomId, displayName: name };
+  private createNewGameUser = async (
+    roomId: string,
+    displayName: string,
+    givenUid?: string,
+  ) => {
+    const uid = givenUid || this.randomId;
 
-    console.log(roomId, typeof roomId);
+    this.user = { uid, displayName };
+    this.allUsersToRooms[roomId] = this.user;
+    await window.localStorage.setItem(
+      "allUsersToRooms",
+      JSON.stringify(this.allUsersToRooms),
+    );
+    return;
+  };
+
+  createRoom = (name: string, roomId?: string) => {
     this.roomId = typeof roomId === "string" ? roomId : this.randomId;
     this.roomRef = this.makeRoomRef(this.roomId);
 
+    this.createNewGameUser(this.roomId, name);
     this.roomRef()?.set({
       pakId: this.pakId,
-      hostPlayerId: this.userId,
+      hostPlayerId: this.uid,
       gameEnded: null,
     });
 
@@ -132,25 +167,45 @@ export class GameEngine {
   };
 
   joinRoom = async (roomId: string, name?: string) => {
-    if (!this.userId && !name) return;
-    if (!this.roomRef && !roomId) return;
+    const isNoUserInfo = !this.uid && !name;
+    const isNoRoomInfo = !this.roomRef && !roomId;
+    if (isNoUserInfo) return;
+    if (isNoRoomInfo) return;
 
-    if (!this.roomRef() && roomId) {
+    const isNewRoomToJoin = !this.roomRef() && !!roomId;
+    if (isNewRoomToJoin) {
       this.roomId = roomId;
       this.roomRef = this.makeRoomRef(this.roomId);
     }
 
-    if (!this.userId) {
-      this.user = { uid: this.randomId, displayName: name };
+    // Set user data based on whether we're creating a new user or not
+    let userForRoom = this.allUsersToRooms[roomId];
+    if (!userForRoom) {
+      await this.createNewGameUser(roomId, name as string);
+      userForRoom = this.allUsersToRooms[roomId];
     }
 
     await this.roomRef()
       ?.once("value")
       .then(async (doc) => {
         const docExists = !!doc.val();
-        if (!docExists && roomId && name) this.createRoom(name, roomId);
-        else if (docExists && this.userId && this.username) {
-          await this.addPlayerToRoom({ id: this.userId, name: this.username });
+        const userIdsInRoom = oKey(doc.val()?.players || {});
+
+        const isNewRoom = !docExists && !!roomId && !!name;
+        const isExistingRoom = docExists;
+        const hasUserInfo = !!this.uid && !!this.displayName;
+        const isReconnecting = userIdsInRoom.includes(userForRoom?.uid);
+
+        if (isNewRoom) {
+          this.createRoom(name as string, roomId);
+        } else if (isExistingRoom && isReconnecting) {
+          this.user = userForRoom;
+          await this.reconnectPlayerToRoom(userForRoom.uid);
+        } else if (isExistingRoom && hasUserInfo) {
+          await this.addPlayerToRoom({
+            id: this.uid as string,
+            name: this.displayName as string,
+          });
           this.updateReact();
         }
       });
@@ -163,7 +218,13 @@ export class GameEngine {
     this.subscribeToPlayers();
   };
 
-  addPlayerToRoom = async ({ id, name }: { id: string; name: string }) => {
+  private addPlayerToRoom = async ({
+    id,
+    name,
+  }: {
+    id: string;
+    name: string;
+  }) => {
     if (!this.roomRef) return;
 
     return this.roomRef(`players/${id}`)?.set({
@@ -172,6 +233,19 @@ export class GameEngine {
       connected: true,
       timestamp: firebase.database.ServerValue.TIMESTAMP,
     });
+  };
+
+  private reconnectPlayerToRoom = async (userId: string) => {
+    console.log("🅱️ - GameEngine.ts - line 238");
+    if (!this.roomRef) return;
+    return this.roomRef(`players/${userId}`)?.update({
+      connected: true,
+    });
+  };
+
+  leaveRoom = () => {
+    // TODO: Remove player from room, etc
+    // window?.localStorage?.removeItem("user");
   };
 
   //* Methods for in game/room lobby
@@ -217,8 +291,8 @@ export class GameEngine {
   //* Firebase Subscribers
 
   subscribeToSelf = () => {
-    if (!this.userId) return;
-    const myRef = this.roomRef(`players/${this.userId}`);
+    if (!this.uid) return;
+    const myRef = this.roomRef(`players/${this.uid}`);
     myRef?.onDisconnect().update({ connected: false });
     return myRef;
   };
@@ -300,10 +374,6 @@ export class GameEngine {
     this.updateReact();
   };
 
-  leaveRoom = () => {
-    // TODO: Remove player from room, etc
-  };
-
   //* Helpful Getters for In Game
 
   getPlayer = (id: string) => {
@@ -345,11 +415,11 @@ export class GameEngine {
   };
 
   get myParams() {
-    return this.getPlayerParams(this.userId);
+    return this.getPlayerParams(this.uid);
   }
 
   get mySeat() {
-    return this.getPlayerParams(this.userId).seat;
+    return this.getPlayerParams(this.uid).seat;
   }
 
   get lastPlayedCard() {

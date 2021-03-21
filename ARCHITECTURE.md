@@ -27,3 +27,7 @@ This section briefly outline various important directories.
 This section briefly talks about the various data structures and abstractions made.
 
 ### Rooms
+
+...
+
+When you join a room, your user data for that roomId gets saved to local storage (under the key `allUsersToRooms`). If you navigate back to the game's page (via game code), it'll then smartly rejoin you as the user saved in your user data.

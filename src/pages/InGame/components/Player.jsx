@@ -21,7 +21,7 @@ const Player = ({ player }) => {
     ?.getOpenHand(player)
     .reduce((acc, meld) => [...acc, GE.pak?.getVisualsOf(meld)], []);
 
-  const isSelf = GE.userId === player.id;
+  const isSelf = GE.uid === player.id;
 
   const orientation = getOrientation(player.seat, GE.mySeat);
 
