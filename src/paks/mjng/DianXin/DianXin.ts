@@ -400,7 +400,7 @@ class DianXin extends Majiang {
           else hand = [lastPlay.card, ...playerParams.closedHand];
 
           const points = playerParams.points + 1;
-          const newParams = { points, closedHand: hand };
+          const newParams = { points, closedHand: hand, winner: true };
 
           this.resetSkips(gameEngine);
           gameEngine.updatePlayer(executingPlayerId, newParams);

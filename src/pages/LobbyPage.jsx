@@ -23,7 +23,14 @@ const LobbyPage = () => {
           {p.name}
         </Box>
       ))}
-      {GE.isHost && <button onClick={GE.startGame}>Start Game</button>}
+      {GE.isHost && (
+        <button
+          className="HomePage-button HomePage-secondaryButton"
+          onClick={GE.startGame}
+        >
+          Start Game
+        </button>
+      )}
     </Box>
   );
 };

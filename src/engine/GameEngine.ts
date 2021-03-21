@@ -309,6 +309,13 @@ export class GameEngine {
     pak.rules.onGameStart(this);
   };
 
+  returnToLobby = async () => {
+    await this.roomRef()?.update({
+      gameEnded: null,
+    });
+    this.updateReact();
+  };
+
   //* Firebase Subscribers
 
   subscribeToSelf = () => {

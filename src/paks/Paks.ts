@@ -1,7 +1,7 @@
-import DianXinClass from "./mjng/DianXin/DianXin";
-import CardPak from "../engine/CardPak";
+import DianXinClass from "./mjng/DianXin";
+import BaseSet from "./mjng/BaseSet";
 
-const allPaks: { [id: string]: CardPak } = {};
+const allPaks: { [id: string]: BaseSet } = {};
 
 const DianXin = new DianXinClass({});
 

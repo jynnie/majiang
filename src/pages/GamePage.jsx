@@ -6,6 +6,7 @@ import { Stages } from "engine/GameEngine";
 import JoinPage from "./JoinPage";
 import LobbyPage from "./LobbyPage";
 import GamePage from "./InGame/InGame";
+import GameEndPage from "./GameEnd/GameEnd";
 import { EngineContext } from "../App";
 
 const BaseGamePage = (props) => {
@@ -39,7 +40,7 @@ const BaseGamePage = (props) => {
       stagePage = <GamePage />;
       break;
     case Stages.gameEnd:
-      stagePage = "Game end";
+      stagePage = <GameEndPage />;
       break;
     case Stages.noRoom:
     default:

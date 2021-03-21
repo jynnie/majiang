@@ -6,6 +6,7 @@ import { makeTiles } from "./Tiles";
 import { Tile } from "./Tiles.model";
 
 import type { Deck, Rules } from "engine/CardPakTypes";
+import type { GameEngine } from "engine/GameEngine";
 
 /**
  * Base Rule Set
@@ -233,6 +234,14 @@ class Majiang extends CardPak {
         return isAvailable && !skipped;
       });
     return sum(playersThatCan) > 0;
+  };
+
+  getWinner = (gameEngine: GameEngine) => {
+    const players: any[] = gameEngine.playerParams as any;
+    if (!players) return null;
+
+    const winner = players.filter((p) => p.winner);
+    return winner;
   };
 
   //* Helpers Filters
