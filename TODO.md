@@ -6,8 +6,8 @@
   - [x] Allow rejoin a game ✨
   - [x] Refresh doesn't boot you out of game ✨
   - [x] Change route based off of room code ✨
-- [ ] Design end screen
-  - [ ] Start new round and advance round win ⭐️
+- [x] Design end screen
+  - [x] Start new round and advance round win ⭐️
   - [ ] End game when no more tiles
 
 🌶🌶

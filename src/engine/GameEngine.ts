@@ -287,6 +287,7 @@ export class GameEngine {
         ...player,
         ...pak.rules?.playerParams,
         // FIXME: Actually check player seats
+        points: player.points || 0,
         seat: i,
       };
       this.updatePlayer(player.id, initialParams);
