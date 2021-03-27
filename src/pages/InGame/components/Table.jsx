@@ -8,6 +8,8 @@ import Centerpiece from "components/Centerpiece/Centerpiece";
 import Player from "./Player";
 
 import "./Table.css";
+import { WindChinese } from "components/ZhongWenHelpers";
+import { oKey } from "utils";
 
 export const getOrientation = (seat, mySeat) => {
   const ori = {
@@ -33,10 +35,13 @@ const Table = ({ players }) => {
     return { orientation, playedTiles, isTurn };
   });
 
+  const wind = oKey(WindChinese)[GE.gameParams?.wind || 0];
+
   return (
     <Box className="Table">
       <Centerpiece
         data={centerpieceData}
+        wind={wind}
         tilesRemaining={GE.gameParams?.wall?.length}
         lastPlayed={GE.gameParams?.lastPlay}
       />

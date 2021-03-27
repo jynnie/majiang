@@ -30,6 +30,7 @@ class Majiang extends CardPak {
       wall: [],
       deadWall: [],
       lastPlay: null,
+      wind: 0,
     },
     playerParams: {
       closedHand: [], // Tiles in any order
@@ -156,8 +157,8 @@ class Majiang extends CardPak {
       gameEngine.updatePlayer(winnerId, newWinnerParams);
     }
 
-    const seatTurn = ((gameEngine.gameParams?.seatTurn || 0) + 1) % 4;
-    const newGameParams = { lastPlay: null, seatTurn };
+    const wind = ((gameEngine.gameParams?.wind || 0) + 1) % 4;
+    const newGameParams = { lastPlay: null, wind };
     gameEngine.updateGameParams(newGameParams);
     gameEngine.endGame();
   };
