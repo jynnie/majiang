@@ -8,12 +8,15 @@
   - [x] Change route based off of room code ✨
 - [x] Design end screen
   - [x] Start new round and advance round win ⭐️
-  - [ ] End game when no more tiles
+  - [x] End game when no more tiles
+  - [x] Advance wind
 
 🌶🌶
 
 - [ ] Take out party crashing
-- [ ] Leave game
+- [ ] In game menu
+  - [ ] Leave game
+  - [ ] Restart game
 - [ ] Front end
   - [x] Hover on tile ⭐️
   - [ ] Hover on tile highlights other shown tiles

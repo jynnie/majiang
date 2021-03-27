@@ -33,6 +33,10 @@
   font-size: calc(var(--stamp-width) * 0.7);
 }
 
+.GameEnd-stamp-fill.draw {
+  font-size: calc(var(--stamp-width) * 0.32);
+}
+
 .GameEnd-textSpace {
   width: var(--text-width);
 }

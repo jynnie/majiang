@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import Box from "ui-box";
+import cn from "classnames";
 import Tile from "components/Tile/Tile";
 import { EngineContext } from "App";
 
@@ -20,14 +21,18 @@ const GamePage = () => {
       return 1;
     });
 
+  const hasWinner = !!winner?.name;
+
   return (
     <>
       <Box className="GameEnd-container">
         <Box className="GameEnd-stamp-border">
-          <Box className="GameEnd-stamp-fill">護</Box>
+          <Box className={cn("GameEnd-stamp-fill", { draw: !hasWinner })}>
+            {hasWinner ? "和" : "荒莊"}
+          </Box>
         </Box>
         <Box className="GameEnd-textSpace">
-          <Box is="h2">{winner?.name}</Box>
+          <Box is="h2">{winner?.name || "draw"}</Box>
           <Box>
             {closedHand.map((tile: any, i) => (
               <Tile
@@ -38,6 +43,7 @@ const GamePage = () => {
                 margin={1}
               />
             ))}
+            {!hasWinner && "ran out of tiles"}
           </Box>
         </Box>
       </Box>

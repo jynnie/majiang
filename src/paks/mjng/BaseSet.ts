@@ -143,8 +143,26 @@ class Majiang extends CardPak {
     super(props, id);
   }
 
-  //----------------------------------#01F2DF
-  //- Helper Setters
+  //* Helper Methods
+  endGame = (
+    gameEngine: GameEngine,
+    winnerId?: string,
+    winnerNewParams?: any,
+  ) => {
+    if (winnerId) {
+      const playerParams = gameEngine.getPlayerParams(winnerId);
+      const points = playerParams.points + 1;
+      const newWinnerParams = { points, ...winnerNewParams, winner: true };
+      gameEngine.updatePlayer(winnerId, newWinnerParams);
+    }
+
+    const seatTurn = ((gameEngine.gameParams?.seatTurn || 0) + 1) % 4;
+    const newGameParams = { lastPlay: null, seatTurn };
+    gameEngine.updateGameParams(newGameParams);
+    gameEngine.endGame();
+  };
+
+  //* Helper Setters
   resetSkips = (gameEngine: ActionParams["gameEngine"]) => {
     gameEngine.players.forEach((player) =>
       gameEngine.updatePlayer(player.id, { skipped: false }),

@@ -11,6 +11,7 @@ import type {
   DianXinRules,
 } from "./DianXin.model";
 import type { Tile } from "../Tiles.model";
+import type { GameEngine } from "engine/GameEngine";
 
 /**
  * DianXin 点心
@@ -100,6 +101,11 @@ class DianXin extends Majiang {
       });
       gameEngine.updatePlayer(executingPlayerId, newPlayerParams);
       gameEngine.finishTurn();
+
+      const isNoMoreWall = !gameEngine.gameParams?.wall;
+      if (isNoMoreWall) {
+        setTimeout(() => this.endGame(gameEngine), 1200);
+      }
     },
 
     playerActions: [
@@ -108,6 +114,7 @@ class DianXin extends Majiang {
       {
         name: "Draw",
         isAvailable: ({ executingPlayerId, gameEngine }) => {
+          const isWallEmpty = !gameEngine.gameParams?.wall;
           const isMyTurn = gameEngine.isPlayersTurn(executingPlayerId);
           const playerParams = gameEngine.getPlayerParams(executingPlayerId);
 
@@ -118,7 +125,8 @@ class DianXin extends Majiang {
             gameEngine,
           });
 
-          if (!isMyTurn || hasAFullHand || !awaitingNoOne) return false;
+          if (isWallEmpty || !isMyTurn || hasAFullHand || !awaitingNoOne)
+            return false;
           return true;
         },
         onExecute: ({ executingPlayerId, gameEngine }) => {
@@ -398,14 +406,10 @@ class DianXin extends Majiang {
           let hand;
           if (hasFullHand) hand = playerParams.closedHand;
           else hand = [lastPlay.card, ...playerParams.closedHand];
-
-          const points = playerParams.points + 1;
-          const newParams = { points, closedHand: hand, winner: true };
+          const newParams = { closedHand: hand };
 
           this.resetSkips(gameEngine);
-          gameEngine.updatePlayer(executingPlayerId, newParams);
-          gameEngine.updateGameParams({ lastPlay: null });
-          gameEngine.endGame();
+          this.endGame(gameEngine, executingPlayerId, newParams);
         },
       },
       //----------------------------------#01F2DF
@@ -438,8 +442,7 @@ class DianXin extends Majiang {
     super(props, "mhjng-dianxin");
   }
 
-  //----------------------------------#01F2DF
-  //- Helper Getters
+  //* Helper Getters
   canIPeng = (
     { closedHand }: DianXinPlayerParams,
     lastPlay: DianXinGameParams["lastPlay"],
