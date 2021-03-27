@@ -140,8 +140,10 @@ export class TileMatrix {
     // console.log("👀", "Suit with pair is", suitWithPair);
     let suitMatrix = this.getClosedSuitVals(suitWithPair);
 
+    const isPairInHonors = HONORS_SUITS.indexOf(suitWithPair) > -1;
+
     // Pair is in an honors suit
-    if (HONORS_SUITS.indexOf(suitWithPair) > -1) {
+    if (isPairInHonors) {
       let howManyPairs = 0;
       let theRestAreMelds = true;
       suitMatrix.forEach((count) => {
@@ -153,7 +155,7 @@ export class TileMatrix {
 
     // Pair is in a numbered suit
     else {
-      let suitWithPairOk = false;
+      let isSuitWithPairOk = false;
       const tilesWithMoreThanOne = suitMatrix.reduce(
         (acc: number[], count, i) => (count > 1 ? [...acc, i] : acc),
         [],
@@ -169,12 +171,25 @@ export class TileMatrix {
         // As long as one permutation of removing a
         // pair works, then this suit is okay.
         if (this.checkMeldsInNumberedSuit(suitMatrixCopy)) {
-          suitWithPairOk = true;
+          isSuitWithPairOk = true;
           return true;
         }
       });
       // console.log("👀", "Suit with pair okay", suitWithPairOk);
-      if (suitWithPairOk === false) return false;
+      if (isSuitWithPairOk === false) return false;
+
+      // Check that the honors also all fit into melds
+      let isHonorsOk = true;
+      HONORS_SUITS.forEach((suit) => {
+        const thisSuitMatrix = this.getClosedSuitVals(suit);
+        const isThisSuitOk = this.checkMeldsInHonorsSuit(thisSuitMatrix);
+        if (!isThisSuitOk) {
+          isHonorsOk = false;
+          return false;
+        }
+      });
+      // console.log("👀", "Is honors melds ok", isHonorsOk);
+      if (!isHonorsOk) return false;
     }
 
     return true;
