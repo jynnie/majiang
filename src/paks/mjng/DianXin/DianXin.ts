@@ -224,7 +224,7 @@ class DianXin extends Majiang {
               // Draw another tile
               const deadWall: Card[] = gameEngine.gameParams?.deadWall;
               const drawnTile = deadWall.shift();
-              closedHand.push(drawnTile);
+              closedHand.push({ ...drawnTile, justDrawn: true });
               const newPlayerParams = { openHand, closedHand };
 
               // Update params

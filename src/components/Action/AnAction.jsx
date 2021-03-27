@@ -32,15 +32,27 @@ const PengAction = (props) => (
 );
 
 const GangAction = (props) => (
-  <AnAction className="Gang" EN="gÀng" CN="剛" {...props} />
+  <AnAction className="Gang" EN="gÀng" CN="槓" {...props} />
+);
+
+const AnGangAction = (props) => (
+  <AnAction className="Gang" EN="Àn gÀng" CN="暗槓" {...props} />
 );
 
 const HuAction = (props) => (
-  <AnAction className="Hu" EN="hÚ" CN="護" {...props} />
+  <AnAction className="Hu" EN="hÚ" CN="和" {...props} />
 );
 
 const SkipAction = (props) => (
   <AnAction className="Skip" EN="Skip" CN="不" {...props} />
 );
 
-export { DrawAction, ChiAction, PengAction, GangAction, HuAction, SkipAction };
+export {
+  DrawAction,
+  ChiAction,
+  PengAction,
+  AnGangAction,
+  GangAction,
+  HuAction,
+  SkipAction,
+};

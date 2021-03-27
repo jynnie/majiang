@@ -13,6 +13,7 @@
 🌶🌶
 
 - [ ] Take out party crashing
+- [ ] Leave game
 - [ ] Front end
   - [x] Hover on tile ⭐️
   - [ ] Hover on tile highlights other shown tiles

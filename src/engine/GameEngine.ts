@@ -331,7 +331,7 @@ export class GameEngine {
       const data = doc.val();
       this.players = data ? oVal(data) : [];
       this.updateReact();
-      console.log("👀 Received new players", this.players);
+      // console.log("👀 Received new players", this.players);
     });
     return unsubscribe;
   };
@@ -341,7 +341,7 @@ export class GameEngine {
       const data = doc.val();
       this.playerParams = data ? oVal(data) : [];
       this.updateReact();
-      console.log("👀 Received new player params", this.playerParams);
+      // console.log("👀 Received new player params", this.playerParams);
     });
     return unsubscribe;
   };
@@ -350,7 +350,7 @@ export class GameEngine {
     const unsubscribe = this.roomRef("gameParams")?.on("value", (doc) => {
       this.gameParams = doc.val();
       this.updateReact();
-      console.log("👀 Received new game params", this.gameParams);
+      // console.log("👀 Received new game params", this.gameParams);
     });
     return unsubscribe;
   };
@@ -359,7 +359,7 @@ export class GameEngine {
     const unsubscribe = this.roomRef("gameEnded")?.on("value", (doc) => {
       this._gameEnded = doc.val();
       this.updateReact();
-      console.log("👀 Received new game ended", this._gameEnded);
+      // console.log("👀 Received new game ended", this._gameEnded);
     });
     return unsubscribe;
   };
@@ -368,7 +368,7 @@ export class GameEngine {
     const unsubscribe = this.roomRef("hostPlayerId")?.on("value", (doc) => {
       this.hostPlayerId = doc.val();
       this.updateReact();
-      console.log("👀 Received new host player id", this.hostPlayerId);
+      // console.log("👀 Received new host player id", this.hostPlayerId);
     });
     return unsubscribe;
   };
@@ -467,7 +467,7 @@ export class GameEngine {
 
   updateGameParams = (newParams: any) => {
     const update = this.roomRef("gameParams")?.update(newParams);
-    console.log("📙 Updated Game Params", newParams);
+    // console.log("📙 Updated Game Params", newParams);
     return update;
   };
 
@@ -475,7 +475,7 @@ export class GameEngine {
     const update = this.roomRef("playerParams/" + playerId)?.update({
       ...newParams,
     });
-    console.log("📙 Updated Player", playerId, newParams);
+    // console.log("📙 Updated Player", playerId, newParams);
     return update;
   };
 }
