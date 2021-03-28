@@ -165,9 +165,11 @@ class Majiang extends CardPak {
 
   //* Helper Setters
   resetSkips = (gameEngine: ActionParams["gameEngine"]) => {
-    gameEngine.players.forEach((player) =>
-      gameEngine.updatePlayer(player.id, { skipped: false }),
-    );
+    gameEngine.players
+      .filter((p) => !p.spectator)
+      .forEach((player) =>
+        gameEngine.updatePlayer(player.id, { skipped: false }),
+      );
   };
 
   removeLastPlayedTile = ({ gameEngine }: ActionParams) => {

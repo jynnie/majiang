@@ -12,13 +12,14 @@ import { WindChinese } from "components/ZhongWenHelpers";
 import { oKey } from "utils";
 
 export const getOrientation = (seat, mySeat) => {
+  const baseSeat = mySeat || 0;
   const ori = {
     0: Orientation.B,
     1: Orientation.R,
     2: Orientation.T,
     3: Orientation.L,
   };
-  let index = (seat - mySeat) % 4;
+  let index = (seat - baseSeat) % 4;
   index = index >= 0 ? index : index + 4;
   return ori[index];
 };

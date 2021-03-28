@@ -54,7 +54,7 @@ export class GameEngine {
   _gameEnded: boolean | null = null;
 
   // Array of all players in game
-  players: { id: string }[] = [];
+  players: { id: string; spectator?: boolean }[] = [];
 
   // A setState function used to update the top level React page
   localUpdater?: (val: any) => void;
@@ -195,6 +195,7 @@ export class GameEngine {
         const isExistingRoom = docExists;
         const hasUserInfo = !!this.uid && !!this.displayName;
         const isReconnecting = userIdsInRoom.includes(userForRoom?.uid);
+        const isGameStarted = doc.val()?.gameEnded === false;
 
         if (isNewRoom) {
           this.createRoom(name as string, roomId);
@@ -202,10 +203,13 @@ export class GameEngine {
           this.user = userForRoom;
           await this.reconnectPlayerToRoom(userForRoom.uid);
         } else if (isExistingRoom && hasUserInfo) {
-          await this.addPlayerToRoom({
-            id: this.uid as string,
-            name: this.displayName as string,
-          });
+          await this.addPlayerToRoom(
+            {
+              id: this.uid as string,
+              name: this.displayName as string,
+            },
+            isGameStarted,
+          );
           this.updateReact();
         }
       });
@@ -240,13 +244,16 @@ export class GameEngine {
     return this.joinRoom(roomId);
   };
 
-  private addPlayerToRoom = async ({
-    id,
-    name,
-  }: {
-    id: string;
-    name: string;
-  }) => {
+  private addPlayerToRoom = async (
+    {
+      id,
+      name,
+    }: {
+      id: string;
+      name: string;
+    },
+    isGameStarted?: boolean,
+  ) => {
     if (!this.roomRef) return;
 
     return this.roomRef(`players/${id}`)?.set({
@@ -254,6 +261,7 @@ export class GameEngine {
       name,
       connected: true,
       timestamp: firebase.database.ServerValue.TIMESTAMP,
+      spectator: isGameStarted,
     });
   };
 
@@ -291,7 +299,7 @@ export class GameEngine {
         seat: i,
       };
       this.updatePlayer(player.id, initialParams);
-      // this.roomRef("playerParams/" + player.id)?.set(initialParams);
+      this.roomRef("players/" + player.id)?.update({ spectator: false });
       return initialParams;
     });
 
@@ -384,8 +392,9 @@ export class GameEngine {
   //* In Game Methods
 
   finishTurn = async () => {
+    const activePlayers = this.players.filter((p) => !p?.spectator);
     await this.updateGameParams({
-      seatTurn: (this.gameParams.seatTurn + 1) % this.players.length,
+      seatTurn: (this.gameParams.seatTurn + 1) % activePlayers.length,
     });
     this.updateReact();
   };

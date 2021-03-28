@@ -42,8 +42,9 @@ const Centerpiece = ({
           </Box>
         </Box>
 
-        {data.map((p) => (
+        {data.map((p, i) => (
           <Box
+            key={i}
             className={classnames(
               "Centerpiece-turn",
               "Centerpiece-turn-" + p.orientation,

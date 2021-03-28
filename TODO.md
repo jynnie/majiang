@@ -13,7 +13,7 @@
 
 🌶🌶
 
-- [ ] Take out party crashing
+- [x] Take out party crashing
 - [ ] In game menu
   - [ ] Leave game
   - [ ] Restart game

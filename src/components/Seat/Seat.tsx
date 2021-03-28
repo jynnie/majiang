@@ -74,7 +74,7 @@ export const Seat = ({
             data={tile}
             closed={!isSelf}
             face={tile.visual}
-            onClick={isSelf && (() => onTileClick(tile))}
+            onClick={isSelf ? () => onTileClick(tile) : null}
             vertical={[Orientation.L, Orientation.R].includes(orientation)}
             margin={!isSelf && 1}
           />
