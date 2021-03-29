@@ -16,7 +16,12 @@ const Tip = ({ data }) => {
   );
 };
 
-export const PlayTile = ({ className, face = null, ...props }) => {
+export const PlayTile = ({
+  className,
+  face = null,
+  vertical = false,
+  ...props
+}) => {
   return (
     <Tippy placement="top" duration={0} content={<Tip {...props} />}>
       <Box

@@ -11,7 +11,6 @@ import type {
   DianXinRules,
 } from "./DianXin.model";
 import type { Tile } from "../Tiles.model";
-import type { GameEngine } from "engine/GameEngine";
 
 /**
  * DianXin 点心

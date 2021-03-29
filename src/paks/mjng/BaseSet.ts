@@ -140,10 +140,6 @@ class Majiang extends CardPak {
 
   FULL_HAND_SIZE = 14;
 
-  constructor(props: any, id: string) {
-    super(props, id);
-  }
-
   //* Helper Methods
   endGame = (
     gameEngine: GameEngine,

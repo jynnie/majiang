@@ -4,7 +4,16 @@ import classnames from "classnames";
 
 import "./OpenTile.css";
 
-export const OpenTile = ({ className = null, face = null, ...props }) => {
+export const OpenTile = ({
+  className,
+  face,
+  vertical = false,
+  ...props
+}: {
+  className?: string;
+  face?: string;
+  vertical?: boolean;
+}) => {
   return (
     <Box
       className={classnames(
@@ -13,7 +22,7 @@ export const OpenTile = ({ className = null, face = null, ...props }) => {
         "Tile-borderRadius",
       )}
       backgroundImage={face ? `url(${face})` : undefined}
-      tabIndex="0"
+      tabIndex={0}
       {...props}
     />
   );

@@ -17,8 +17,9 @@ const Centerpiece = ({
 }) => {
   return (
     <Box className="Centerpiece">
-      {data.map((p) => (
+      {data.map((p, i) => (
         <Box
+          key={i}
           className={
             "Centerpiece-playedTiles Centerpiece-tile-" + p.orientation
           }

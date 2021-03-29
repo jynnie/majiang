@@ -16,20 +16,21 @@ const BaseGamePage = (props) => {
 
   // From Reach Router
   const roomId = props.roomId;
-  const tryRoom = async () => {
-    const success = await GE.tryRoom(roomId);
-    if (success === false) navigate("/");
-    else setRoomExists(success !== false);
-  };
 
   useEffect(() => {
+    const tryRoom = async () => {
+      const success = await GE.tryRoom(roomId);
+      if (success === false) navigate("/");
+      else setRoomExists(success !== false);
+    };
+
     if (!roomId) navigate("/");
     else tryRoom();
-  }, [roomId]);
+  }, [roomId, GE]);
 
   useEffect(() => {
     GE.attachReact(setUpdate);
-  }, []);
+  }, [GE]);
 
   let stagePage;
   switch (GE.stage) {

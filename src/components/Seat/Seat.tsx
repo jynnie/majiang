@@ -76,7 +76,7 @@ export const Seat = ({
             face={tile.visual}
             onClick={isSelf ? () => onTileClick(tile) : null}
             vertical={[Orientation.L, Orientation.R].includes(orientation)}
-            margin={!isSelf && 1}
+            margin={!isSelf ? 1 : 0}
           />
         ))}
       </Box>
