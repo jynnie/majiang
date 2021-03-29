@@ -14,16 +14,16 @@
 🌶🌶
 
 - [x] Take out party crashing
-- [ ] In game menu
-  - [ ] Leave game
-  - [ ] Restart game
+- [x] In game menu
+  - [x] Leave game
+  - [x] Restart game
 - [ ] Front end
   - [x] Hover on tile ⭐️
   - [ ] Hover on tile highlights other shown tiles
   - [ ] Rearranging tiles
   - [ ] Modals & SFX
-- [ ] Handling disconnects (ref.onDisconnect) ✨
-- [ ] Joining a started game ✨
+- [x] Handling disconnects (ref.onDisconnect) ✨
+- [x] Joining a started game ✨
 
 🌶
 

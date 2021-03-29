@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import cn from "classnames";
 import Box from "ui-box";
 
 import { FlexColCenter } from "../components/Flex";
@@ -19,7 +20,10 @@ const LobbyPage = () => {
       </Box>
 
       {GE.players.map((p) => (
-        <Box className="LobbyPage-player" key={p.id}>
+        <Box
+          className={cn("LobbyPage-player", { disconnected: !p?.connected })}
+          key={p.id}
+        >
           {p.name}
         </Box>
       ))}

@@ -54,7 +54,7 @@ export class GameEngine {
   _gameEnded: boolean | null = null;
 
   // Array of all players in game
-  players: { id: string; spectator?: boolean }[] = [];
+  players: { id: string; connected?: boolean; spectator?: boolean }[] = [];
 
   // A setState function used to update the top level React page
   localUpdater?: (val: any) => void;
@@ -273,8 +273,27 @@ export class GameEngine {
   };
 
   leaveRoom = () => {
-    // TODO: Remove player from room, etc
-    // window?.localStorage?.removeItem("user");
+    if (!this.uid || !this.roomRef || !this.roomId) return;
+
+    // Remove your local reference to this game
+    delete this.allUsersToRooms[this.roomId];
+    window.localStorage.setItem(
+      "allUsersToRooms",
+      JSON.stringify(this.allUsersToRooms),
+    );
+
+    // If you are leaving, finish your turn for someone else
+    const seat = this.getPlayerParams(this.uid)?.seat;
+    if (seat === this.gameParams?.seatTurn) {
+      this.finishTurn();
+    }
+
+    // Remove your params
+    this.roomRef(`playerParams/${this.uid}`)?.set(null);
+    this.roomRef(`players/${this.uid}`)?.set(null);
+
+    // Go back to home
+    window.location.assign(window.location.origin);
   };
 
   //* Methods for in game/room lobby
@@ -290,7 +309,8 @@ export class GameEngine {
     const pak = this.pak;
     if (!pak || !pak.rules) return;
 
-    this.playerParams = await shuffle([...this.players]).map((player, i) => {
+    const connectedPlayers = [...this.players].filter((p) => !!p.connected);
+    this.playerParams = await shuffle(connectedPlayers).map((player, i) => {
       const initialParams = {
         ...player,
         ...pak.rules?.playerParams,

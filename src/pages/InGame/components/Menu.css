@@ -1,0 +1,81 @@
+.Menu-button {
+  font-family: "Noto Serif", serif;
+  font-weight: 600;
+  font-size: 18px;
+
+  outline: none;
+  border: none;
+  padding: 8px 12px;
+
+  background: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  cursor: pointer;
+
+  color: var(--paper);
+  opacity: 0.8;
+}
+.Menu-button:hover {
+  opacity: 1;
+}
+
+.Menu-openButton {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+
+  opacity: 1;
+  color: var(--ink);
+}
+.Menu-openButton:hover {
+  background-image: url("/Brushes/InkyBrush.svg");
+}
+
+.Menu-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  animation-name: fade-in;
+  animation-direction: normal;
+  animation-iteration-count: 1;
+  animation-duration: 0.2s;
+}
+
+.Menu-content {
+  color: var(--paper);
+  padding-bottom: 24px;
+  position: absolute;
+  z-index: 1;
+}
+
+.Menu-background {
+  z-index: 0;
+}
+
+.Menu-fadeOut {
+  animation-name: fade-out;
+  animation-direction: normal;
+  animation-iteration-count: 1;
+  animation-duration: 0.2s;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
