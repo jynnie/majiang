@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import Box from "ui-box";
 
 import { EngineContext } from "App";
-import Seat from "components/Seat/Seat";
+import Seat from "components/Seat";
 
 import { getOrientation } from "./Table";
 

@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import Box from "ui-box";
 import cn from "classnames";
-import Tile from "components/Tile/Tile";
+import Tile from "components/Tile";
 import { EngineContext } from "App";
 
 import "./GameEnd.css";
