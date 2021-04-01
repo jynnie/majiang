@@ -1,7 +1,7 @@
 import { Action, Card } from "engine/CardPakTypes";
 
 import Majiang from "../BaseSet";
-import { TileMatrix } from "../TileMatrix";
+import { TileMatrix, ConditionFunction } from "../TileMatrix";
 import { makeTiles } from "../Tiles";
 
 import type {
@@ -24,6 +24,7 @@ class DianXin extends Majiang {
     visualDeckId: "dx-traditional",
     cards: makeTiles(),
   };
+  additionalWinConditions: ConditionFunction[] = [];
   rules: DianXinRules = {
     minSeats: 3,
     maxSeats: 4,
@@ -394,7 +395,11 @@ class DianXin extends Majiang {
 
           if (hand.length === 0) return false;
 
-          const tileMatrix = new TileMatrix(hand);
+          const tileMatrix = new TileMatrix(
+            hand,
+            playerParams.openHand,
+            this.additionalWinConditions,
+          );
           return tileMatrix.isWinnable;
         },
         onExecute: ({ executingPlayerId, gameEngine }) => {
@@ -437,8 +442,8 @@ class DianXin extends Majiang {
 
   FULL_HAND_SIZE = 14;
 
-  constructor(props: any) {
-    super(props, "mhjng-dianxin");
+  constructor(props: any, id?: string) {
+    super(props, id || "mhjng-dianxin");
   }
 
   //* Helper Getters

@@ -235,8 +235,8 @@ export class GameEngine {
     // WORKAROUND: For some reason the await below the one here
     // doesn't seem to actually be awaiting when assigned to the
     // doc variable... But this one works?
-    await testRoomRef()?.get();
-    let doc = await testRoomRef()?.get();
+    await testRoomRef()?.once?.("value");
+    let doc = await testRoomRef()?.once("value");
     roomExists = !!doc?.exists();
 
     if (!roomExists) return false;

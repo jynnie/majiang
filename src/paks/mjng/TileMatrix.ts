@@ -20,9 +20,9 @@ type TotalsArray = {
   tm3: boolean;
 }[];
 
-type ConditionFunction = (
-  closedHandMatrix: HandMatrix,
-  openHandMatrix: HandMatrix,
+export type ConditionFunction = (
+  closedHandMatrix?: HandMatrix,
+  openHandMatrix?: HandMatrix,
 ) => boolean;
 
 const HONORS_SUITS = ["feng", "long"];
