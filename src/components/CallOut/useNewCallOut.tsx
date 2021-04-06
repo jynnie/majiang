@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
+import useSound from "use-sound";
 
 import "./CallOut.css";
+
+const TILE_SFX = require("sounds/tile-place.mp3");
 
 interface Callout {
   uid?: string;
@@ -19,6 +22,7 @@ export function useNewCallout({
   seatTurn?: number;
 }) {
   const [callout, setCallout] = useState<Callout | null>(null);
+  const [play] = useSound(TILE_SFX);
 
   useEffect(() => {
     let isDifferent = false;
@@ -32,6 +36,7 @@ export function useNewCallout({
           id: lastPlay.card.id,
           name: `${lastPlay.card.name}`,
         };
+        play();
         setCallout(newCallout);
       }
     } else if (claimReason) {

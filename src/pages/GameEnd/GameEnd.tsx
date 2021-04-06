@@ -6,7 +6,7 @@ import { EngineContext } from "App";
 
 import "./GameEnd.css";
 
-const GamePage = () => {
+const GameEnd = () => {
   const { GE } = useContext(EngineContext);
 
   const winner = GE.pak?.getWinner?.(GE)?.[0];
@@ -59,4 +59,4 @@ const GamePage = () => {
   );
 };
 
-export default GamePage;
+export default GameEnd;
