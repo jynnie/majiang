@@ -167,25 +167,25 @@ export const NUMBER_TILES = [
 
 export const DRAGON_WIND_TILES = [
   {
-    name: "dong",
+    name: "dongfeng",
     defaultParams: { suit: "feng" },
     value: "east",
     visualCardIndex: 27,
   },
   {
-    name: "nan",
+    name: "nanfeng",
     defaultParams: { suit: "feng" },
     value: "south",
     visualCardIndex: 28,
   },
   {
-    name: "xi",
+    name: "xifeng",
     defaultParams: { suit: "feng" },
     value: "west",
     visualCardIndex: 29,
   },
   {
-    name: "bei",
+    name: "beifeng",
     defaultParams: { suit: "feng" },
     value: "north",
     visualCardIndex: 30,

@@ -1,0 +1,50 @@
+.CallOut-container {
+  --tile-width: calc(var(--square-size) * 0.06208);
+  --tile-height: calc(var(--tile-width) * 4 / 3);
+  --pos-over-seat: calc(var(--square-size) * 0.5);
+  --pos-over-tiles: calc(var(--tile-height) * -3);
+
+  position: absolute;
+
+  animation-name: new-callout-animation;
+  animation-direction: normal;
+  animation-fill-mode: forwards;
+  animation-duration: 1.6s;
+  animation-timing-function: ease-out;
+}
+
+.Player-bottom .CallOut-container {
+  left: var(--pos-over-seat);
+  top: var(--pos-over-tiles);
+  transform: translate(-50%, 50%);
+}
+.Player-left .CallOut-container {
+  right: var(--pos-over-tiles);
+  top: var(--pos-over-seat);
+  transform: translateY(-50%);
+}
+.Player-right .CallOut-container {
+  left: var(--pos-over-tiles);
+  top: var(--pos-over-seat);
+  transform: translateY(-50%);
+}
+.Player-top .CallOut-container {
+  left: var(--pos-over-seat);
+  top: calc(-1 * var(--pos-over-tiles));
+  transform: translateX(-50%);
+}
+
+@keyframes new-callout-animation {
+  from {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

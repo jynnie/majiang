@@ -326,7 +326,7 @@ export class GameEngine {
     // Reset disconnected players
     [...this.players]
       .filter((p) => !p.connected)
-      .map((player: any) => {
+      .forEach((player: any) => {
         const initialParams = {
           id: player.id,
           name: player.name,
@@ -433,10 +433,11 @@ export class GameEngine {
     this.updateReact();
   };
 
-  claimTurn = (id: string) => {
+  claimTurn = (id: string, reason?: string) => {
     const player = this.getPlayerParams(id);
     this.updateGameParams({
       seatTurn: player.seat,
+      seatReason: reason || null,
     });
     this.updateReact();
   };

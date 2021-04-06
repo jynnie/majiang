@@ -4,13 +4,15 @@ import Majiang from "../BaseSet";
 import { TileMatrix, ConditionFunction } from "../TileMatrix";
 import { makeTiles } from "../Tiles";
 
-import type {
+import {
+  ClaimReason,
   DianXinDeck,
   DianXinGameParams,
   DianXinPlayerParams,
   DianXinRules,
 } from "./DianXin.model";
 import type { Tile } from "../Tiles.model";
+import { oVal } from "utils";
 
 /**
  * DianXin 点心
@@ -40,7 +42,7 @@ class DianXin extends Majiang {
       closedHand: [], // Tiles in any order
       openHand: {}, // Array of tiles open to be seen, grouped by meld
       playedTiles: [],
-      points: 0,
+      points: 0, // FIXME: Mark this key as to not reset
       skipped: false,
       winner: false,
     },
@@ -190,7 +192,7 @@ class DianXin extends Majiang {
           this.resetSkips(gameEngine);
           gameEngine.updatePlayer(executingPlayerId, newPlayerParams);
           gameEngine.updateGameParams({ lastPlay: null });
-          gameEngine.claimTurn(executingPlayerId);
+          gameEngine.claimTurn(executingPlayerId, ClaimReason.PENG);
         },
       },
       //----------------------------------#01F2DF
@@ -238,7 +240,7 @@ class DianXin extends Majiang {
               // Update params
               this.resetSkips(gameEngine);
               gameEngine.updatePlayer(executingPlayerId, newPlayerParams);
-              gameEngine.claimTurn(executingPlayerId);
+              gameEngine.claimTurn(executingPlayerId, ClaimReason.ANGANG);
             },
           }));
           return availableMelds;
@@ -292,7 +294,7 @@ class DianXin extends Majiang {
           this.resetSkips(gameEngine);
           gameEngine.updatePlayer(executingPlayerId, newPlayerParams);
           gameEngine.updateGameParams({ lastPlay: null, deadWall });
-          gameEngine.claimTurn(executingPlayerId);
+          gameEngine.claimTurn(executingPlayerId, ClaimReason.GANG);
         },
       },
       //----------------------------------#01F2DF
@@ -364,7 +366,7 @@ class DianXin extends Majiang {
               this.resetSkips(gameEngine);
               gameEngine.updatePlayer(executingPlayerId, newPlayerParams);
               gameEngine.updateGameParams({ lastPlay: null });
-              gameEngine.claimTurn(executingPlayerId);
+              gameEngine.claimTurn(executingPlayerId, ClaimReason.CHI);
             },
           }));
           if (availableMelds.length === 0) return false;
@@ -395,9 +397,10 @@ class DianXin extends Majiang {
 
           if (hand.length === 0) return false;
 
+          const openHand: Tile[] = oVal(playerParams?.openHand || {});
           const tileMatrix = new TileMatrix(
             hand,
-            playerParams.openHand,
+            openHand,
             this.additionalWinConditions,
           );
           return tileMatrix.isWinnable;

@@ -30,3 +30,11 @@ export interface DianXinRules extends Rules {
   gameParams: DianXinGameParams;
   playerParams: DianXinPlayerParams;
 }
+
+export enum ClaimReason {
+  PENG = "peng",
+  ANGANG = "angang",
+  GANG = "gang",
+  CHI = "chi",
+  HU = "hu",
+}

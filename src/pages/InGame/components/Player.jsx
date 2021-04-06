@@ -3,6 +3,7 @@ import Box from "ui-box";
 
 import { EngineContext } from "App";
 import Seat from "components/Seat";
+import CallOut from "components/CallOut";
 
 import { getOrientation } from "./Table";
 
@@ -37,6 +38,7 @@ const Player = ({ player }) => {
 
   return (
     <Box className={"Player Player-" + orientation}>
+      <CallOut seat={player.seat} uid={player.id} />
       <Seat
         isSelf={isSelf}
         name={player.name}

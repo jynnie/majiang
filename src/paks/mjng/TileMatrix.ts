@@ -56,11 +56,11 @@ export class TileMatrix {
     additionalConditions?: ConditionFunction[],
   ) {
     closedHand?.map((tile) => {
-      if (tile.defaultParams.suit)
+      if (tile?.defaultParams?.suit)
         this.closedHandMatrix[tile.defaultParams.suit][tile.value] += 1;
     });
-    openHand?.map((tile) => {
-      if (tile.defaultParams.suit)
+    openHand?.map?.((tile) => {
+      if (tile?.defaultParams?.suit)
         this.openHandMatrix[tile.defaultParams.suit][tile.value] += 1;
     });
     this.additionalConditions = additionalConditions;
