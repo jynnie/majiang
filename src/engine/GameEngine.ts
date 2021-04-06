@@ -312,16 +312,30 @@ export class GameEngine {
     const connectedPlayers = [...this.players].filter((p) => !!p.connected);
     this.playerParams = await shuffle(connectedPlayers).map((player, i) => {
       const initialParams = {
-        ...player,
+        id: player.id,
+        name: player.name,
         ...pak.rules?.playerParams,
-        // FIXME: Actually check player seats
         points: player.points || 0,
         seat: i,
       };
-      this.updatePlayer(player.id, initialParams);
+      this.roomRef("playerParams/" + player.id)?.set(initialParams);
       this.roomRef("players/" + player.id)?.update({ spectator: false });
       return initialParams;
     });
+
+    // Reset disconnected players
+    [...this.players]
+      .filter((p) => !p.connected)
+      .map((player: any) => {
+        const initialParams = {
+          id: player.id,
+          name: player.name,
+          ...pak.rules?.playerParams,
+          points: player.points || 0,
+        };
+        this.roomRef("playerParams/" + player.id)?.set(initialParams);
+        this.roomRef("players/" + player.id)?.update({ spectator: true });
+      });
 
     this.cards = pak.deck?.cards.map((card) => ({
       ...card,
@@ -471,6 +485,14 @@ export class GameEngine {
 
     return availableActions;
   };
+
+  get activePlayerParams() {
+    const result: any[] = [];
+    this.players
+      ?.filter((p) => !p?.spectator)
+      .forEach((player) => result.push(this.getPlayerParams(player.id)));
+    return result;
+  }
 
   get myParams() {
     return this.getPlayerParams(this.uid);

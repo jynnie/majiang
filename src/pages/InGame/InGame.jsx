@@ -10,7 +10,7 @@ const GamePage = () => {
 
   return (
     <>
-      <Table players={GE.playerParams} />
+      <Table players={GE.activePlayerParams} />
       <Menu />
     </>
   );
