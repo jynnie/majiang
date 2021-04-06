@@ -1,13 +1,13 @@
 import React from "react";
 import Box from "ui-box";
-import classnames from "classnames";
+import cn from "classnames";
 
 import "./AnAction.css";
 
 const AnAction = ({ className, CN, EN, details, ...props }) => {
   return (
     <Box
-      className={classnames(className, "AnAction")}
+      className={cn(className, "AnAction")}
       role="button"
       tabIndex="0"
       {...props}

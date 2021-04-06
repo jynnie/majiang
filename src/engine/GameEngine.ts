@@ -343,7 +343,7 @@ export class GameEngine {
     }));
 
     // Set initial gameParams
-    this.updateGameParams(pak.rules.gameParams);
+    this.roomRef("gameParams")?.set(pak.rules.gameParams);
 
     if (pak.rules.turnBased) {
       this.updateGameParams({ seatTurn: 0 });

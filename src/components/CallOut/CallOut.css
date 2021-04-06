@@ -3,35 +3,106 @@
   --tile-height: calc(var(--tile-width) * 4 / 3);
   --pos-over-seat: calc(var(--square-size) * 0.5);
   --pos-over-tiles: calc(var(--tile-height) * -3);
+  --padding: calc(var(--tile-width) * 0.8);
 
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: absolute;
+  transform-origin: center;
 
   animation-name: new-callout-animation;
   animation-direction: normal;
   animation-fill-mode: forwards;
   animation-duration: 1.6s;
   animation-timing-function: ease-out;
+
+  text-align: center;
+  font-family: "Source Serif Pro";
+  font-size: calc(var(--tile-height) * 0.6);
+
+  height: calc(var(--tile-height));
+  padding: 0 var(--padding);
+  z-index: 9;
 }
 
 .Player-bottom .CallOut-container {
   left: var(--pos-over-seat);
   top: var(--pos-over-tiles);
-  transform: translate(-50%, 50%);
+  transform: translate(-50%);
 }
 .Player-left .CallOut-container {
   right: var(--pos-over-tiles);
   top: var(--pos-over-seat);
-  transform: translateY(-50%);
+  transform: translate(20%, -50%);
 }
 .Player-right .CallOut-container {
   left: var(--pos-over-tiles);
   top: var(--pos-over-seat);
-  transform: translateY(-50%);
+  transform: translate(-20%, -50%);
 }
 .Player-top .CallOut-container {
   left: var(--pos-over-seat);
   top: calc(-1 * var(--pos-over-tiles));
+  transform: translate(-50%, -20%);
+}
+
+.CallOut-EN {
+  position: relative;
+  z-index: 1;
+}
+
+.CallOut-CN {
+  position: absolute;
+  left: -6%;
+  bottom: calc(var(--tile-height) * -0.3);
+  z-index: 1;
+
+  color: var(--paper);
+  font-family: "Noto Serif TC";
+  font-size: calc(var(--tile-height) * 1);
+}
+
+.CallOut-tile {
+  color: var(--ink);
+
+  background-image: url("/Brushes/InkyBrush.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.CallOut-take {
+  color: var(--paper);
+  font-weight: 600;
+  font-size: calc(var(--tile-height) * 0.6);
+  text-transform: uppercase;
+}
+
+.CallOut-take .CallOut-EN {
+  text-align: left;
+  margin-top: 16%;
+  transform: translateX(calc(var(--tile-width) * 0.5));
+}
+
+.CallOut-brush {
+  width: calc(var(--tile-width) * 5);
+  left: 50%;
   transform: translateX(-50%);
+  position: absolute;
+}
+
+.CallOut-brush.CallOut-gang {
+  color: var(--liquid);
+}
+.CallOut-brush.CallOut-peng {
+  color: var(--jade);
+}
+.CallOut-brush.CallOut-chi {
+  color: var(--poppy);
+}
+.CallOut-brush.CallOut-hu {
+  color: var(--gold);
 }
 
 @keyframes new-callout-animation {
