@@ -14,10 +14,14 @@ import HomePage from "./pages/HomePage";
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 export const FirebaseContext = React.createContext(null);
+// FIXME: We actually don't need to create a Firebase Ctx, we could instead create
+// a firebase.ts file that directly exports the db object. This would be cleaner.
 
 //- Game Engine Setup
 const GE = new GameEngine();
 export const EngineContext = React.createContext({ GE: GE });
+// FIXME: We actually don't need to create a GE Ctx, we could instead directly export
+// the GE object. This would be cleaner.
 
 //- App Setup
 const App = (props) => {

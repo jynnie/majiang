@@ -22,11 +22,6 @@ function HomePage() {
         <Box is="h1" position="absolute">
           MAJIANG
         </Box>
-        <Box is="p" textAlign="center">
-          Play Majiang with friends.
-          <br />
-          Create a room and share the code.
-        </Box>
       </Box>
       {menu === "home" && <Home setMenu={setMenu} />}
       {menu === "new" && <NewRoom onCreate={GE.createRoom} setMenu={setMenu} />}
@@ -98,7 +93,7 @@ function JoinRoom({
 
   return (
     <>
-      <Box>
+      <Box marginBottom={8}>
         <label>Game Code</label>
         <input
           className="HomePage-input"
@@ -106,7 +101,7 @@ function JoinRoom({
           onChange={(e) => setRoomId(e.target.value)}
         />
       </Box>
-      <Box>
+      <div>
         <label>Name</label>
         <input
           className="HomePage-input"
@@ -114,8 +109,8 @@ function JoinRoom({
           onChange={(e) => setName(e.target.value)}
           onKeyDown={onEnter(handleJoin)}
         />
-      </Box>
-      <Box>
+      </div>
+      <div>
         <button
           className="HomePage-button HomePage-secondaryButton"
           onClick={() => setMenu("home")}
@@ -128,7 +123,7 @@ function JoinRoom({
         >
           Join
         </button>
-      </Box>
+      </div>
     </>
   );
 }
@@ -136,18 +131,26 @@ function JoinRoom({
 function Home({ setMenu }: { setMenu: (name: string) => void }) {
   return (
     <Box>
-      <button
-        className="HomePage-button HomePage-primaryButton"
-        onClick={() => setMenu("new")}
-      >
-        New Room
-      </button>
-      <button
-        className="HomePage-button HomePage-secondaryButton"
-        onClick={() => setMenu("join")}
-      >
-        Join Room
-      </button>
+      <Box is="p" textAlign="center">
+        Play Majiang with friends.
+        <br />
+        Create a room and share the code.
+      </Box>
+
+      <Box display="flex" justifyContent="center">
+        <button
+          className="HomePage-button HomePage-primaryButton"
+          onClick={() => setMenu("new")}
+        >
+          New Room
+        </button>
+        <button
+          className="HomePage-button HomePage-secondaryButton"
+          onClick={() => setMenu("join")}
+        >
+          Join Room
+        </button>
+      </Box>
     </Box>
   );
 }
