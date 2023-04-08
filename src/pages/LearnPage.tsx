@@ -1,8 +1,20 @@
 import { EngineContext } from "App";
 import { GameEngine } from "engine/GameEngine";
+import {
+  LEARN_GAME_PARAMS,
+  LEARN_PLAYERS,
+  LEARN_PLAYER_PARAMS,
+} from "paks/mjng/DianXin/Learn.constants";
 import React, { useContext, useEffect, useState } from "react";
 
 import Table from "./InGame/components/Table";
+
+// Majiang is a turn based, competitive, four player game
+// How to win
+// What are the basic tiles
+// Let's jump into a game and teach you the basics
+// On your turn, you first draw a tile
+// Hmm, let's see what you got
 
 export function LearnPage() {
   const { GE } = useContext(EngineContext);
@@ -39,6 +51,7 @@ export function LearnPage() {
   );
 }
 
+// WORKAROUND: This is very specific to DianXin rules
 async function setupLocalGame(GE: GameEngine) {
   GE.uid = "tuzi";
   GE.displayName = "Little Rabbit";
@@ -49,45 +62,8 @@ async function setupLocalGame(GE: GameEngine) {
 
   // GE setupNewGame Method Rewritten for Local
   // Setup players
-  GE.players = [
-    {
-      id: "tuzi",
-      connected: true,
-    },
-    { id: "houzi", connected: true },
-    { id: "laohu", connected: true },
-    { id: "niu", connected: true },
-  ];
-  GE.playerParams = [
-    {
-      id: "tuzi",
-      name: "Little Rabbit",
-      ...pak.rules?.playerParams,
-      points: 0,
-      seat: 0,
-    },
-    {
-      id: "houzi",
-      name: "Monkey",
-      ...pak.rules?.playerParams,
-      points: 0,
-      seat: 1,
-    },
-    {
-      id: "laohu",
-      name: "Tiger",
-      ...pak.rules?.playerParams,
-      points: 0,
-      seat: 2,
-    },
-    {
-      id: "niu",
-      name: "Ox",
-      ...pak.rules?.playerParams,
-      points: 0,
-      seat: 3,
-    },
-  ];
+  GE.players = LEARN_PLAYERS;
+  GE.playerParams = LEARN_PLAYER_PARAMS;
 
   // Setup cards
   GE.cards = pak.deck?.cards.map((card) => ({
@@ -95,12 +71,7 @@ async function setupLocalGame(GE: GameEngine) {
     params: card.defaultParams,
   }));
 
-  GE.gameParams = pak.rules?.gameParams;
-  if (pak.rules.turnBased) {
-    GE.gameParams.seatTurn = 0;
-  }
-
-  pak.rules.onGameStart(GE);
+  GE.gameParams = LEARN_GAME_PARAMS;
 
   GE.updateReact();
 }

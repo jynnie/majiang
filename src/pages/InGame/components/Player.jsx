@@ -1,9 +1,8 @@
+import { EngineContext } from "App";
+import CallOut from "components/CallOut";
+import Seat from "components/Seat";
 import React, { useContext } from "react";
 import Box from "ui-box";
-
-import { EngineContext } from "App";
-import Seat from "components/Seat";
-import CallOut from "components/CallOut";
 
 import { getOrientation } from "./Table";
 
