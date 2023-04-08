@@ -1,14 +1,50 @@
-import React, { useState, useContext } from "react";
-import { navigate } from "@reach/router";
-import Box from "ui-box";
-
-import { FlexColCenter } from "../components/Flex";
-import { onEnter } from "../utils";
-import { EngineContext } from "../App";
-
 import "./HomePage.css";
 
-const NewRoom = ({ onCreate, setMenu }) => {
+import React, { useContext, useState } from "react";
+import Box from "ui-box";
+
+import { navigate } from "@reach/router";
+
+import { EngineContext } from "../App";
+import { FlexColCenter } from "../components/Flex";
+import { onEnter } from "../utils";
+
+function HomePage() {
+  const { GE } = useContext(EngineContext);
+  const [menu, setMenu] = useState("home");
+
+  return (
+    <Box {...FlexColCenter}>
+      <Box {...FlexColCenter} position="relative">
+        <Box is="h1" fontSize={72} opacity={0.2} margin={0}>
+          「麻将」
+        </Box>
+        <Box is="h1" position="absolute">
+          MAJIANG
+        </Box>
+        <Box is="p" textAlign="center">
+          Play Majiang with friends.
+          <br />
+          Create a room and share the code.
+        </Box>
+      </Box>
+      {menu === "home" && <Home setMenu={setMenu} />}
+      {menu === "new" && <NewRoom onCreate={GE.createRoom} setMenu={setMenu} />}
+      {menu === "join" && <JoinRoom onJoin={GE.joinRoom} setMenu={setMenu} />}
+    </Box>
+  );
+}
+
+function NewRoom({
+  onCreate,
+  setMenu,
+}: {
+  onCreate: (
+    name: string,
+    roomId?: string | undefined,
+  ) => Promise<string | undefined>;
+  setMenu: (name: string) => void;
+}) {
   const [name, setName] = useState("");
 
   const handleStart = async () => {
@@ -43,9 +79,15 @@ const NewRoom = ({ onCreate, setMenu }) => {
       </Box>
     </>
   );
-};
+}
 
-const JoinRoom = ({ onJoin, setMenu }) => {
+function JoinRoom({
+  onJoin,
+  setMenu,
+}: {
+  onJoin: (roomId: string, name?: string) => Promise<string | undefined>;
+  setMenu: (name: string) => void;
+}) {
   const [name, setName] = useState("");
   const [roomId, setRoomId] = useState("");
 
@@ -89,9 +131,9 @@ const JoinRoom = ({ onJoin, setMenu }) => {
       </Box>
     </>
   );
-};
+}
 
-const Home = ({ setMenu }) => {
+function Home({ setMenu }: { setMenu: (name: string) => void }) {
   return (
     <Box>
       <button
@@ -108,27 +150,6 @@ const Home = ({ setMenu }) => {
       </button>
     </Box>
   );
-};
-
-const HomePage = () => {
-  const { GE } = useContext(EngineContext);
-  const [menu, setMenu] = useState("home");
-
-  return (
-    <Box {...FlexColCenter}>
-      <Box {...FlexColCenter} position="relative">
-        <Box is="h1" fontSize={72} opacity={0.2} margin={0}>
-          「麻将」
-        </Box>
-        <Box is="h1" position="absolute">
-          MAJIANG
-        </Box>
-      </Box>
-      {menu === "home" && <Home setMenu={setMenu} />}
-      {menu === "new" && <NewRoom onCreate={GE.createRoom} setMenu={setMenu} />}
-      {menu === "join" && <JoinRoom onJoin={GE.joinRoom} setMenu={setMenu} />}
-    </Box>
-  );
-};
+}
 
 export default HomePage;

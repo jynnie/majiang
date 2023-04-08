@@ -30,7 +30,7 @@ We're still working on adding in Custom Rules and creating an interface to selec
 
 ## 💪🏼 Motivation
 
-Majiang.pak was built to support many variations of the rules of Majiang. Aside from Riichi Mahjong, variations like Honkong and Sichuan Mahjong are difficult if not impossible to find online and for free. This platform was built for people to play those games with their friends and even write/contribute their own variations.
+Majiang.pak was built to support many variations of the rules of Majiang. Aside from Riichi Mahjong, variations like Hongkong and Sichuan Mahjong are difficult if not impossible to find online and for free. This platform was built for people to play those games with their friends and even write/contribute their own variations.
 
 ## 🎠 card.pak engine
 

@@ -1,17 +1,14 @@
-import React, { useEffect } from "react";
-import { Router } from "@reach/router";
-
-//- Component & Page Imports
-import HomePage from "./pages/HomePage";
-import GamePage from "./pages";
 import "./App.css";
 
-//- Game Engine
-import { GameEngine } from "./engine/GameEngine";
-
-//- Firebase Imports
 import firebase from "firebase";
-import firebaseConfig from "./firebaseConfig";
+import React, { useEffect } from "react";
+
+import { Router } from "@reach/router";
+
+import { GameEngine } from "./engine/GameEngine";
+import { firebaseConfig } from "./firebaseConfig";
+import GamePage from "./pages";
+import HomePage from "./pages/HomePage";
 
 //- Firebase Setup
 firebase.initializeApp(firebaseConfig);
