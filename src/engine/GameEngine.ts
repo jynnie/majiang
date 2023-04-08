@@ -520,6 +520,12 @@ export class GameEngine {
   updateGameParams = (newParams: any) => {
     const update = this.roomRef("gameParams")?.update(newParams);
     // console.log("📙 Updated Game Params", newParams);
+
+    // Update locally
+    if (this.roomId === "LEARN") {
+      this.gameParams = { ...this.gameParams, ...newParams };
+    }
+
     return update;
   };
 
@@ -527,6 +533,18 @@ export class GameEngine {
     const update = this.roomRef("playerParams/" + playerId)?.update({
       ...newParams,
     });
+
+    // Update locally
+    if (this.roomId === "LEARN" && this.playerParams) {
+      this.playerParams = this.playerParams.map((player: any) => {
+        if (player.id === playerId) {
+          return { ...player, ...newParams };
+        } else {
+          return player;
+        }
+      });
+    }
+
     // console.log("📙 Updated Player", playerId, newParams);
     return update;
   };

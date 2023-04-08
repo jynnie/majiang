@@ -39,12 +39,15 @@ export function LearnPage() {
   );
 }
 
-function setupLocalGame(GE: GameEngine) {
+async function setupLocalGame(GE: GameEngine) {
   GE.uid = "tuzi";
   GE.displayName = "Little Rabbit";
   GE.roomId = "LEARN";
   GE.hostPlayerId = "tuzi";
 
+  const pak = GE.pak;
+
+  // GE setupNewGame Method Rewritten for Local
   // Setup players
   GE.players = [
     {
@@ -59,32 +62,45 @@ function setupLocalGame(GE: GameEngine) {
     {
       id: "tuzi",
       name: "Little Rabbit",
-      ...GE.pak.rules?.playerParams,
+      ...pak.rules?.playerParams,
       points: 0,
       seat: 0,
     },
     {
       id: "houzi",
       name: "Monkey",
-      ...GE.pak.rules?.playerParams,
+      ...pak.rules?.playerParams,
       points: 0,
       seat: 1,
     },
     {
       id: "laohu",
       name: "Tiger",
-      ...GE.pak.rules?.playerParams,
+      ...pak.rules?.playerParams,
       points: 0,
       seat: 2,
     },
     {
       id: "niu",
       name: "Ox",
-      ...GE.pak.rules?.playerParams,
+      ...pak.rules?.playerParams,
       points: 0,
       seat: 3,
     },
   ];
+
+  // Setup cards
+  GE.cards = pak.deck?.cards.map((card) => ({
+    ...card,
+    params: card.defaultParams,
+  }));
+
+  GE.gameParams = pak.rules?.gameParams;
+  if (pak.rules.turnBased) {
+    GE.gameParams.seatTurn = 0;
+  }
+
+  pak.rules.onGameStart(GE);
 
   GE.updateReact();
 }

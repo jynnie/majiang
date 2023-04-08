@@ -1,9 +1,10 @@
 import { Action, Card } from "engine/CardPakTypes";
+import { oVal } from "utils";
 
 import Majiang from "../BaseSet";
-import { TileMatrix, ConditionFunction } from "../TileMatrix";
+import { ConditionFunction, TileMatrix } from "../TileMatrix";
 import { makeTiles } from "../Tiles";
-
+import type { Tile } from "../Tiles.model";
 import {
   ClaimReason,
   DianXinDeck,
@@ -11,8 +12,6 @@ import {
   DianXinPlayerParams,
   DianXinRules,
 } from "./DianXin.model";
-import type { Tile } from "../Tiles.model";
-import { oVal } from "utils";
 
 /**
  * DianXin 点心
@@ -218,9 +217,8 @@ class DianXin extends Majiang {
             name: `An Gang ${tile.name}`,
             isAvailable: () => true,
             onExecute: ({ executingPlayerId, gameEngine }) => {
-              const playerParams = gameEngine.getPlayerParams(
-                executingPlayerId,
-              );
+              const playerParams =
+                gameEngine.getPlayerParams(executingPlayerId);
 
               // Put the tile and your matching tiles in openHand
               const meld = playerParams.closedHand
@@ -345,9 +343,8 @@ class DianXin extends Majiang {
             isAvailable: () => true,
             onExecute: ({ executingPlayerId, gameEngine }) => {
               const lastPlay = gameEngine.gameParams?.lastPlay;
-              const playerParams = gameEngine.getPlayerParams(
-                executingPlayerId,
-              );
+              const playerParams =
+                gameEngine.getPlayerParams(executingPlayerId);
 
               // Remove the tile from playedTiles of other player
               this.removeLastPlayedTile({ executingPlayerId, gameEngine });
