@@ -1,8 +1,8 @@
 import firebase from "firebase";
 
 import Paks from "../paks/Paks";
-import { Action, Card } from "./CardPakTypes";
 import { oKey, oVal, shuffle } from "../utils";
+import { Action, Card } from "./CardPakTypes";
 
 export enum Stages {
   noRoom = "NO_ROOM",
