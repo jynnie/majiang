@@ -1,6 +1,7 @@
 import "./App.css";
 
 import firebase from "firebase";
+import { LearnPage } from "pages/LearnPage";
 import React, { useEffect } from "react";
 
 import { Router } from "@reach/router";
@@ -34,6 +35,7 @@ const App = (props) => {
       <FirebaseContext.Provider value={{ db }}>
         <Router>
           <HomePage path="/" default />
+          <LearnPage path="/learn" exact />
           <GamePage path="/:roomId" />
         </Router>
       </FirebaseContext.Provider>
