@@ -1,3 +1,27 @@
+import { Card } from "engine/CardPakTypes";
+
+import { TILES } from "../Tiles";
+import { DianXinDefault } from "../VisualDeck";
+
+function getVisualsOf(hand: Card[]) {
+  if (!Array.isArray(hand)) return [];
+  return hand?.map((tile) => ({
+    ...tile,
+    visual: DianXinDefault.visualCards[tile.visualCardIndex],
+  }));
+}
+
+export function getTileData(ids: string[]) {
+  return getVisualsOf(
+    ids
+      .map((t) => TILES.find((tile) => tile.name === t))
+      .filter((t) => !!t)
+      .map((t) => ({ ...t, params: { ...t?.defaultParams } })) as Card[],
+  );
+}
+
+//* For Mock Game
+
 export const LEARN_PLAYERS = [
   {
     id: "tuzi",

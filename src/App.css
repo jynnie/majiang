@@ -52,3 +52,15 @@ body {
   height: 100vh;
   overflow: hidden;
 }
+
+.text-poppy {
+  color: var(--poppy);
+}
+
+.text-jade {
+  color: var(--jade);
+}
+
+.bold {
+  font-weight: 700;
+}
