@@ -151,6 +151,17 @@ function Home({ setMenu }: { setMenu: (name: string) => void }) {
           Join Room
         </button>
       </Box>
+
+      <Box is="p" textAlign="center" fontSize="0.8em">
+        Basics of Majiang{" "}
+        <a
+          href="https://www.dropbox.com/s/8cwoefc0b0cer0l/Majiang%20Cheatsheet.pdf?dl=0"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Cheatsheet
+        </a>
+      </Box>
     </Box>
   );
 }
